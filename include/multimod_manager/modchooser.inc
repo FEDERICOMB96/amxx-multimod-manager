@@ -273,17 +273,17 @@ public OnTaskCheckVoteMod()
 			// Ganador, extender el modo
 			if(iWinner == MAX_SELECTMODS)
 			{
-				new Float:fExtendMap = extendMap();
+				new Float:flExtendMod = ExtendActualMod();
 				
-				client_print_color(0, print_team_blue, "%s^1 El modo actual se extenderá^3 %d minutos más ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalPrefix, floatround(fExtendMap), iResult, g_VoteModCount, (g_VoteModCount != 1) ? "s" : "", (g_VoteModCount > 0) ? ((iResult * 100) / g_VoteModCount) : 0); // , (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[MAX_SELECTMODS] * 100) / g_VoteModCount) : 0
+				client_print_color(0, print_team_blue, "%s^1 El modo actual se extenderá^3 %d minutos más ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalPrefix, floatround(flExtendMod), iResult, g_VoteModCount, (g_VoteModCount != 1) ? "s" : "", (g_VoteModCount > 0) ? ((iResult * 100) / g_VoteModCount) : 0); // , (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[MAX_SELECTMODS] * 100) / g_VoteModCount) : 0
 				
 				ModChooser_ResetAllData();
 
-				fExtendMap -= 3;
-				fExtendMap *= 60;
+				flExtendMod -= 3;
+				flExtendMod *= 60;
 				
-				set_task(fExtendMap, "OnTaskVoteNextMod", TASK_VOTEMOD);
-				set_task(fExtendMap - 10.0, "OnTaskSpamStartVote", TASK_SHOWTIME);
+				set_task(flExtendMod, "OnTaskVoteNextMod", TASK_VOTEMOD);
+				set_task(flExtendMod - 10.0, "OnTaskSpamStartVote", TASK_SHOWTIME);
 				
 				g_ShowTime = 10;
 				return;
@@ -467,24 +467,24 @@ public OnTaskCheckVoteModFIX()
 		// Ganador, extender el mapa
 		if(iWinner == -1)
 		{
-			new Float:fExtendMap = extendMap();
+			new Float:flExtendMod = ExtendActualMod();
 
 			if(j > 1)
 			{
 				client_print_color(0, print_team_default, "%s^1 Ningún mapa superó^4 la mayoría de los votos^1 por segunda vez.", g_GlobalPrefix);
-				client_print_color(0, print_team_blue, "%s^1 Entre los más votados, el mapa ganador al azar es:^3 Extender el mapa %dm.", g_GlobalPrefix, floatround(fExtendMap));
-				client_print_color(0, print_team_default, "%s^1 El mapa actual se extenderá^3 %d minutos más", g_GlobalPrefix, floatround(fExtendMap));
+				client_print_color(0, print_team_blue, "%s^1 Entre los más votados, el mapa ganador al azar es:^3 Extender el mapa %dm.", g_GlobalPrefix, floatround(flExtendMod));
+				client_print_color(0, print_team_default, "%s^1 El mapa actual se extenderá^3 %d minutos más", g_GlobalPrefix, floatround(flExtendMod));
 			}
 			else
-				client_print_color(0, print_team_blue, "%s^1 El mapa actual se extenderá^3 %d minutos más ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalPrefix, floatround(fExtendMap), iResult, g_VoteModCount, (g_VoteModCount != 1) ? "s" : "", (g_VoteModCount > 0) ? ((iResult * 100) / g_VoteModCount) : 0);
+				client_print_color(0, print_team_blue, "%s^1 El mapa actual se extenderá^3 %d minutos más ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalPrefix, floatround(flExtendMod), iResult, g_VoteModCount, (g_VoteModCount != 1) ? "s" : "", (g_VoteModCount > 0) ? ((iResult * 100) / g_VoteModCount) : 0);
 
 			ModChooser_ResetAllData();
 
-			fExtendMap -= 3;
-			fExtendMap *= 60;
+			flExtendMod -= 3;
+			flExtendMod *= 60;
 			
-			set_task(fExtendMap, "OnTaskVoteNextMod", TASK_VOTEMOD);
-			set_task(fExtendMap - 10.0, "OnTaskSpamStartVote", TASK_SHOWTIME);
+			set_task(flExtendMod, "OnTaskVoteNextMod", TASK_VOTEMOD);
+			set_task(flExtendMod - 10.0, "OnTaskSpamStartVote", TASK_SHOWTIME);
 			
 			g_ShowTime = 10;
 			return;
@@ -534,6 +534,14 @@ public OnTaskCheckVoteModFIX()
 
 		MapChooser_InitNextVoteMap();
 	}
+}
+
+Float:ExtendActualMod()
+{
+	new Float:fExtendMod = Float:mm_extendmap_step;
+	set_cvar_float("mp_timelimit", (mm_timelimit + fExtendMod));
+
+	return fExtendMod;
 }
 
 IsModInMenu(const i)

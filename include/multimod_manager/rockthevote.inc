@@ -21,17 +21,12 @@ new g_SVM_MyNominate[MAX_USERS];
 
 RockTheVote_ResetUserData(const id)
 {
-	for(new i = 0; i < MAX_USERS; ++i)
-	{
-		g_HasVoteRTV[i] = 0;
-		g_SVM_Nominate[i] = 0;
-		g_SVM_MyNominate[i] = 0;
-	}
+	g_HasVoteRTV[id] = 0;
+	g_SVM_Nominate[id] = 0;
+	g_SVM_MyNominate[id] = 0;
 }
 
 RockTheVote_ClientPutInServer(const id)
 {
-	g_HasVoteRTV[id] = 0;
-	g_SVM_Nominate[id] = 0;
-	g_SVM_MyNominate[id] = 0;
+	RockTheVote_ResetUserData(id);
 }
