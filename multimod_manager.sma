@@ -19,6 +19,8 @@ new g_LastMap[32];
 new g_iCurrentMod;
 new g_NoMoreTime = 0;
 new g_ShowTime = 0;
+new g_HUD_Vote = 0;
+new g_HUD_Alert = 0;
 
 
 #include <multimod_manager/cvars>
@@ -58,6 +60,9 @@ public plugin_init()
 
 	get_mapname(g_CurrentMap, charsmax(g_CurrentMap));
 	get_localinfo("mm_lastmap", g_LastMap, charsmax(g_LastMap));
+
+	g_HUD_Vote = CreateHudSyncObj();
+	g_HUD_Alert = CreateHudSyncObj();
 }
 
 public plugin_cfg()
@@ -212,14 +217,15 @@ public OnTaskSpamStartVote()
 {
 	if(!g_ShowTime)
 	{
-		client_print(0, print_center, "");
+		ClearSyncHud(0, g_HUD_Alert);
 		return;
 	}
 
 	if(g_ShowTime == 10)
 		client_cmd(0, "spk ^"get red(e80) ninety(s45) to check(e20) use bay(s18) mass(e42) cap(s50)^"");
 
-	client_print(0, print_center, "La votación comenzará en %d segundo%s", g_ShowTime, (g_ShowTime != 1) ? "s" : "");
+	set_hudmessage(255, 255, 255, -1.0, 0.35, 0, 0.0, 1.1, 0.0, 0.0, -1);
+	ShowSyncHudMsg(0, g_HUD_Alert, "La votación comenzará en %d segundo%s", g_ShowTime, (g_ShowTime != 1) ? "s" : "");
 
 	if(g_ShowTime <= 5)
 		client_cmd(0, "spk ^"fvox/%s^"", g_SOUND_CountDown[g_ShowTime]);
