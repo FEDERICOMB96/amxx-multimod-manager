@@ -1,0 +1,360 @@
+new const PLUGIN_NAME[] = "MultiMod Manager";
+new const PLUGIN_VERSION[] = "v2021.08.02";
+
+#include <amxmodx>
+#include <amxmisc>
+#include <reapi>
+#include <engine>
+#include <json>
+#include <multimod_manager/defines>
+
+new g_bConnected;
+
+new g_GlobalPrefix[21];
+
+new Array:g_aModNames;
+
+new g_iCurrentMod;
+new g_iNextMod;
+new g_NoMoreTime = 0;
+new g_ShowTime = 0;
+new g_VoteHasStarted = 0;
+
+
+#include <multimod_manager/cvars>
+#include <multimod_manager/rockthevote>
+#include <multimod_manager/modchooser>
+#include <multimod_manager/mapchooser>
+
+
+public plugin_precache()
+{
+	precache_sound(g_SOUND_ExtendTime);
+	
+	for(new i = 0; i < sizeof(g_SOUND_GmanChoose); ++i)
+		precache_sound(g_SOUND_GmanChoose[i]);
+	
+	for(new i = 0; i < sizeof(g_SOUND_CountDown); ++i)
+	{
+		formatex(sBuffer, charsmax(sBuffer), "fvox/%s.wav", g_SOUND_CountDown[i]);
+		precache_sound(sBuffer);
+	}
+}
+
+public plugin_init()
+{
+	register_plugin(PLUGIN_NAME, PLUGIN_VERSION, "FEDERICOMB");
+
+	CvarsInit();
+	MultiModInit();
+	ModChooser_Init();
+	MapChooser_Init();
+
+	register_event_ex("TextMsg", "OnEvent_GameRestart", RegisterEvent_Global, "2&#Game_C", "2&#Game_w");
+	register_event_ex("TextMsg", "OnEvent_GameRestart", RegisterEvent_Global, "2&#Game_will_restart_in");
+	
+	register_event_ex("HLTV", "OnEvent_HLTV", RegisterEvent_Global, "1=0", "2=0");
+	register_logevent("OnLogevent_RoundEnd", 2, "1=Round_End");
+
+	// MultiMod_SetNextMod(1);
+}
+
+
+public plugin_cfg()
+{
+	server_cmd("amx_pausecfg add ^"%s^"", PLUGIN_NAME);
+	server_cmd("sv_restart 1");
+}
+
+public client_putinserver(id)
+{
+	SetPlayerBit(g_bConnected, id);
+
+	MapChooser_ClientPutInServer(id);
+}
+
+public client_disconnected(id, bool:drop, message[], maxlen)
+{
+	ClearPlayerBit(g_bConnected, id);
+
+	MapChooser_ClientDisconnected(id);
+}
+
+MultiModInit()
+{
+	new szFileName[128], szConfigDir[128];
+	get_configsdir(szConfigDir, charsmax(szConfigDir));
+
+	formatex(szFileName, charsmax(szFileName), "%s/multimod_manager/configs.json", szConfigDir);
+
+	if(!file_exists(szFileName))
+	{
+		set_fail_state("[MULTIMOD] Archivo '%s' no se encuentra!", szFileName);
+		return;
+	}
+
+	new JSON:jsonConfigsFile = json_parse(szFileName, true);
+
+	if(jsonConfigsFile == Invalid_JSON)
+	{
+		set_fail_state("[MULTIMOD] Archivo JSON invalido '%s'", szFileName);
+		return;
+	}
+
+	g_aModNames = ArrayCreate(32);
+
+	json_object_get_string(jsonConfigsFile, "global_chat_prefix", g_GlobalPrefix, charsmax(g_GlobalPrefix));
+
+	new JSON:jsonObjectMods = json_object_get_value(jsonConfigsFile, "mods");
+	new iCount = json_array_get_count(jsonObjectMods);
+
+	for(new i = 0,
+		szBuffer[32],
+		JSON:jsonArrayValue; i < iCount; ++i)
+	{
+		jsonArrayValue = json_array_get_value(jsonObjectMods, i);
+
+		json_object_get_string(jsonArrayValue, "modname", szBuffer, charsmax(szBuffer));
+		ArrayPushString(g_aModNames, szBuffer);
+
+		json_free(jsonArrayValue);
+	}
+
+	json_free(jsonObjectMods);
+	json_free(jsonConfigsFile);
+
+	if(!iCount)
+	{
+		set_fail_state("[MULTIMOD] No se detectaron modos cargados!");
+		return;
+	}
+
+	if(iCount > 1)
+	{
+		remove_task(TASK_VOTEMOD);
+		set_task(10.0, "OnTaskCheckVoteNextMod", TASK_VOTEMOD);
+	}
+}
+
+public OnEvent_GameRestart()
+{
+	if(!g_NoMoreTime && !g_SelectedNextMap)
+	{
+		if(g_MapsNum)
+		{
+			remove_task(TASK_VOTEMOD);
+			set_task(10.0, "OnTaskCheckVoteNextMod", TASK_VOTEMOD);
+		}
+	}
+}
+
+public OnEvent_HLTV()
+{
+	g_EndRound = 0;
+
+	if((g_NoMoreTime == 1 && !g_ChangeMapOneMoreRound) || (g_VoteRtvResult && g_NoMoreTime == 1))
+	{
+		new sTempMap[32];
+		get_pcvar_string(g_pCVAR_NextMap, sTempMap, 31);
+		
+		g_NoMoreTime = 2;
+		
+		set_task(2.0, "taskChangeMap", _, sTempMap, 32);
+		
+		message_begin(MSG_ALL, SVC_INTERMISSION);
+		message_end();
+		
+		client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será: ^3%s", GLOBAL_PREFIX, sTempMap);
+		
+		new iReturn;
+		ExecuteForward(g_Forward_ChangeMap, iReturn);
+	}
+
+	if(g_ChangeMapOneMoreRound) {
+		g_ChangeMapOneMoreRound = 0;
+
+		//executeChangeTimeleft();
+
+		client_cmd(0, "spk ^"%s^"", g_SOUND_ExtendTime);
+		client_print_color(0, print_team_default, "%s^1 El mapa cambiará al finalizar la ronda!", GLOBAL_PREFIX);
+
+		new iReturn;
+		ExecuteForward(g_Forward_LastRound, iReturn);
+	}
+}
+
+public OnLogevent_RoundEnd()
+{
+	g_EndRound = 1;
+}
+
+
+
+public OnTaskCheckVoteNextMod()
+{
+	g_ShowTime = 10;
+
+	new iTimeStartVote = 0;
+	new Float:fTimeStartVote = 0.0;
+	
+	iTimeStartVote = get_pcvar_num(g_pCVAR_TimeLimit);
+	iTimeStartVote -= 3;
+	iTimeStartVote *= 60;
+	
+	fTimeStartVote = float(iTimeStartVote);
+	
+	remove_task(TASK_VOTEMOD);
+	set_task(fTimeStartVote, "OnTaskVoteNextMod", TASK_VOTEMOD);
+	
+	remove_task(TASK_SHOWTIME);
+	set_task(fTimeStartVote - 10.0, "OnTaskSpamStartVoteNextMod", TASK_SHOWTIME);
+}
+
+
+public OnTaskSpamStartVote()
+{
+	if(!g_ShowTime)
+	{
+		client_print(0, print_center, "");
+		return;
+	}
+
+	if(g_ShowTime == 10)
+		client_cmd(0, "spk ^"get red(e80) ninety(s45) to check(e20) use bay(s18) mass(e42) cap(s50)^"");
+
+	client_print(0, print_center, "La votación comenzará en %d segundo%s", g_ShowTime, (g_ShowTime != 1) ? "s" : "");
+
+	if(g_ShowTime <= 5)
+		client_cmd(0, "spk ^"fvox/%s^"", g_SOUND_CountDown[g_ShowTime]);
+	
+	--g_ShowTime;
+	
+	remove_task(TASK_SHOWTIME);
+	set_task(1.0, "OnTaskSpamStartVote", TASK_SHOWTIME);
+}
+
+
+MultiMod_SetNextMod(const iMod)
+{
+	new szFileName[128], szConfigDir[128];
+	get_configsdir(szConfigDir, charsmax(szConfigDir));
+
+	formatex(szFileName, charsmax(szFileName), "%s/multimod_manager/configs.json", szConfigDir);
+
+	if(!file_exists(szFileName))
+	{
+		set_fail_state("[MULTIMOD] MultiMod_SetNextMod: Archivo '%s' no se encuentra!", szFileName);
+		return;
+	}
+
+	new szPluginsFile[256];
+	formatex(szPluginsFile, charsmax(szPluginsFile), "%s/plugins-multimodmanager.ini", szConfigDir);
+	
+	new pPluginsFile = fopen(szPluginsFile, "w+");
+
+	if(pPluginsFile)
+	{
+		new JSON:jsonConfigsFile = json_parse(szFileName, true);
+
+		if(jsonConfigsFile == Invalid_JSON)
+		{
+			fclose(pPluginsFile);
+			return;
+		}
+
+		new JSON:jsonObjectMods = json_object_get_value(jsonConfigsFile, "mods");
+		new JSON:jsonArrayMods = json_array_get_value(jsonObjectMods, iMod);
+
+		new szModName[32];
+		json_object_get_string(jsonArrayMods, "modname", szModName, charsmax(szModName));
+
+		fprintf(pPluginsFile, "; Mod: ^"%s^"^n^n", szModName);
+
+		new JSON:jsonObjectPlugins = json_object_get_value(jsonArrayMods, "plugins");
+		new iPlugins = json_array_get_count(jsonObjectPlugins);
+
+		for(new i = 0, szPluginName[32]; i < iPlugins; ++i)
+		{
+			json_array_get_string(jsonObjectPlugins, i, szPluginName, charsmax(szPluginName));
+			fprintf(pPluginsFile, "%s^n", szPluginName);
+		}
+
+		new szMapFile[128];
+		json_object_get_string(jsonArrayMods, "mapsfile", szMapFile, charsmax(szMapFile));
+		format(szMapFile, charsmax(szMapFile), "%s/multimod_manager/%s", szConfigDir, szMapFile);
+		MapChooser_LoadMaps(szMapFile);
+
+		json_free(jsonObjectPlugins);
+		json_free(jsonArrayMods);
+		json_free(jsonObjectMods);
+		json_free(jsonConfigsFile);
+
+		fclose(pPluginsFile);
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*
+
+{
+	"global_chat_prefix": "!g[MULTIMOD]",
+	"mods":
+	[
+		{
+			"modname":"GunGame",
+			"mapsfile":"gungame_maps.ini",
+			"cvars":
+			[
+				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 45"
+			],
+			"plugins":
+			[
+				"plugin1.amxx", "plugin2.amxx"
+			]
+		},
+		{
+			"modname":"DeathMatch",
+			"mapsfile":"deathmatch_maps.ini",
+			"cvars":
+			[
+				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 20"
+			],
+			"plugins":
+			[
+				"plugin1.amxx"
+			]
+		},
+		{
+			"modname":"Fruta",
+			"mapsfile":"fruta_maps.ini",
+			"cvars":
+			[
+				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 30"
+			],
+			"plugins":
+			[
+				"plugin1.amxx", "plugin2.amxx", "plugin3.amxx", "plugin4.amxx"
+			]
+		}
+	]
+}
+
+*/
