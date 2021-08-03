@@ -28,3 +28,10 @@ const KEYSMENU = (1<<0) | (1<<1) | (1<<2) | (1<<3) | (1<<4) | (1<<5) | (1<<6) | 
 new const g_SOUND_ExtendTime[] = "fvox/time_remaining.wav";
 new const g_SOUND_GmanChoose[][] = {"Gman/Gman_Choose1.wav", "Gman/Gman_Choose2.wav"};
 new const g_SOUND_CountDown[][] = {"one", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
+
+enum ChangeMap_e
+{
+	CHANGEMAP_TIMELEFT,
+	CHANGEMAP_END_OF_ROUND,
+	CHANGEMAP_ONE_MORE_ROUND
+};

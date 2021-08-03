@@ -11,16 +11,15 @@ new const PLUGIN_VERSION[] = "v2021.08.02";
 new g_bConnected;
 
 new g_GlobalPrefix[21];
+new ChangeMap_e:g_ChangeMapType;
 new Array:g_aModNames;
 
 new g_CurrentMap[32];
 new g_LastMap[32];
 new g_iCurrentMod;
-new g_iNextMod;
 new g_EndRound = 0;
 new g_NoMoreTime = 0;
 new g_ShowTime = 0;
-new g_VoteHasStarted = 0;
 
 
 #include <multimod_manager/cvars>
@@ -79,6 +78,7 @@ public client_putinserver(id)
 {
 	SetPlayerBit(g_bConnected, id);
 
+	ModChooser_ClientPutInServer(id);
 	MapChooser_ClientPutInServer(id);
 }
 
@@ -86,6 +86,7 @@ public client_disconnected(id, bool:drop, message[], maxlen)
 {
 	ClearPlayerBit(g_bConnected, id);
 
+	ModChooser_ClientDisconnected(id);
 	MapChooser_ClientDisconnected(id);
 }
 
@@ -113,6 +114,12 @@ MultiModInit()
 	g_aModNames = ArrayCreate(32);
 
 	json_object_get_string(jsonConfigsFile, "global_chat_prefix", g_GlobalPrefix, charsmax(g_GlobalPrefix));
+
+	replace_string(g_GlobalPrefix, charsmax(g_GlobalPrefix), "!y" , "^1");
+	replace_string(g_GlobalPrefix, charsmax(g_GlobalPrefix), "!t" , "^3");
+	replace_string(g_GlobalPrefix, charsmax(g_GlobalPrefix), "!g" , "^4");
+
+	g_ChangeMapType = ChangeMap_e:json_object_get_number(jsonConfigsFile, "change_map_type");
 
 	new JSON:jsonObjectMods = json_object_get_value(jsonConfigsFile, "mods");
 	new iCount = json_array_get_count(jsonObjectMods);
@@ -210,9 +217,8 @@ public OnTaskCheckVoteNextMod()
 	set_task(fTimeStartVote, "OnTaskVoteNextMod", TASK_VOTEMOD);
 	
 	remove_task(TASK_SHOWTIME);
-	set_task(fTimeStartVote - 10.0, "OnTaskSpamStartVoteNextMod", TASK_SHOWTIME);
+	set_task(fTimeStartVote - 10.0, "OnTaskSpamStartVote", TASK_SHOWTIME);
 }
-
 
 public OnTaskSpamStartVote()
 {

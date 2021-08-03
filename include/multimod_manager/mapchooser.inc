@@ -16,10 +16,10 @@ new g_VoteCountGlobal[MAX_SELECTMAPS + 2];
 new g_SVM_MapInMenu[MAX_SELECTMAPS + 1];
 new g_SVM_MapInMenu__FuckingFIX[MAX_SELECTMAPS + 1];
 new g_SVM_MapName[MAX_SELECTMAPS + 1][64];
-new g_SVM_SecondRound = 0;
-new g_SVM_Nominations = 0;
+new g_SVM_MapSecondRound = 0;
 new g_MapVoteNum = 0;
 new g_SelectedNextMap = 0;
+new g_VoteMapHasStarted = 0;
 new g_ChangeMapTime = 10;
 new g_ChangeMapOneMoreRound = 0;
 new g_RecentMaps[MAX_RECENT_MAPS][32];
@@ -31,60 +31,6 @@ new g_EntHudVote = 0;
 new g_VoteMapId[MAX_USERS];
 
 new Array:g_Array_MapName;
-
-
-
-ResetAllData()
-{
-	for(new i = 0; i < (MAX_SELECTMAPS + 2); ++i)
-		g_VoteCountGlobal[i] = 0;
-
-	for(new i = 0; i < (MAX_SELECTMAPS + 1); ++i)
-	{
-		g_SVM_MapInMenu[i] = -1;
-		g_SVM_MapInMenu__FuckingFIX[i] = -1;
-		g_SVM_MapName[i][0] = EOS;
-	}
-
-	g_VoteCount = 0;
-	g_SVM_SecondRound = 0;
-	g_SVM_Nominations = 0;
-	g_MapVoteNum = 0;
-	g_ChangeMapTime = 10;
-	g_NoMoreTime = 0;
-	g_ShowTime = 10;
-	g_ChangeMapOneMoreRound = 0;
-	g_VoteHasStarted = 0;
-
-	for(new i = 0; i <= MAX_USERS; ++i)
-	{
-		g_HasVoteRTV[i] = 0;
-		g_SVM_Nominate[i] = 0;
-		g_SVM_MyNominate[i] = 0;
-		g_VoteMapId[i] = 0;
-	}
-
-	remove_task(TASK_TIMELEFT);
-	remove_task(TASK_VOTEMAP);
-	remove_task(TASK_SHOWTIME);
-}
-
-Float:extendMap() {
-	new Float:fExtendMap = mm_extendmap_step;
-	set_cvar_float("mp_timelimit", (mm_timelimit + fExtendMap));
-
-	return fExtendMap;
-}
-
-changeTimeleft() {
-	remove_task(TASK_TIMELEFT);
-
-	if(true /* cambio de mapa al finalizar el tiempo */) {
-		set_task((float(get_timeleft()) - 10.1), "taskSpamChangeMap", TASK_TIMELEFT);
-	} else {
-		set_task((float(get_timeleft()) - 1.1), "taskChangeTimeLeft", TASK_TIMELEFT);
-	}
-}
 
 
 MapChooser_Init()
@@ -115,6 +61,40 @@ MapChooser_Init()
 	}
 }
 
+MapChooser_ResetAllData()
+{
+	for(new i = 0; i < (MAX_SELECTMAPS + 2); ++i)
+		g_VoteCountGlobal[i] = 0;
+
+	for(new i = 0; i < (MAX_SELECTMAPS + 1); ++i)
+	{
+		g_SVM_MapInMenu[i] = -1;
+		g_SVM_MapInMenu__FuckingFIX[i] = -1;
+		g_SVM_MapName[i][0] = EOS;
+	}
+
+	g_VoteCount = 0;
+	g_SVM_MapSecondRound = 0;
+	g_MapVoteNum = 0;
+	g_ChangeMapTime = 10;
+	g_NoMoreTime = 0;
+	g_ShowTime = 10;
+	g_ChangeMapOneMoreRound = 0;
+	g_VoteMapHasStarted = 0;
+
+	for(new i = 0; i < MAX_USERS; ++i)
+	{
+		RockTheVote_ResetUserData(i);
+		g_VoteMapId[i] = 0;
+	}
+
+	remove_task(TASK_VOTEMAP);
+	remove_task(TASK_VOTEMOD);
+	remove_task(TASK_TIMELEFT);
+	remove_task(TASK_RTV);
+	remove_task(TASK_SHOWTIME);
+}
+
 MapChooser_InitNextVoteMap()
 {
 	g_ShowTime = 10;
@@ -137,52 +117,14 @@ MapChooser_InitNextVoteMap()
 
 MapChooser_ClientPutInServer(const id)
 {
-	
-	g_HasVoteRTV[id] = 0;
-	g_SVM_Nominate[id] = 0;
-	g_SVM_MyNominate[id] = 0;
 	g_VoteMapId[id] = 0;
 }
 
-MapChooser_ClientDisconnected(const id) {
-	
-	if(g_HasVoteRTV[id]) {
-		g_HasVoteRTV[id] = 0;
-		
-		--g_VoteCountRtv;
-		
-		if(g_VoteCountRtv < 0) {
-			g_VoteCountRtv = 0;
-		}
-	}
-
-	if(g_SVM_Nominate[id] && !g_VoteHasStarted) {
-		new i;
-		new sText[32];
-		
-		for(i = 0; i < (MAX_SELECTMAPS + 1); ++i) {
-			if(g_SVM_MapInMenu[i] == -1) {
-				continue;
-			}
-			
-			if(g_SVM_MyNominate[id] != g_SVM_MapInMenu[i]) {
-				continue;
-			}
-			
-			formatex(sText, 31, "%a", ArrayGetStringHandle(g_Array_MapName, g_SVM_MapInMenu[i]));
-			
-			if(equali(g_SVM_MapName[i], sText)) {
-				g_SVM_Nominate[id] = 0;
-				
-				g_SVM_MapInMenu[i] = -1;
-				g_SVM_MapName[i][0] = EOS;
-				
-				--g_SVM_Nominations;
-			}
-		}
-	}
-
-	if(g_VoteMapId[id] && g_VoteHasStarted) {
+MapChooser_ClientDisconnected(const id)
+{
+	// Si votó y se fue antes de terminar la votacion, su voto es removido!
+	if(g_VoteMapId[id] && g_VoteMapHasStarted)
+	{
 		--g_VoteCountGlobal[g_VoteMapId[id]-1];
 		--g_VoteCount;
 
@@ -201,8 +143,8 @@ public OnTaskVoteNextMap()
 	new iStart;
 	new iOk;
 
-	iMenuKeys = (1<<MAX_SELECTMAPS + 1);
 	iMaxMaps = (g_MapsNum > MAX_SELECTMAPS) ? MAX_SELECTMAPS : g_MapsNum;
+	iMenuKeys = (1<<iMaxMaps + 1);
 	
 	iLen = formatex(sMenu, charsmax(sMenu), "\yElige el próximo mapa: ¡VOTÁ AHORA!^n^n");
 	j = 0;
@@ -214,7 +156,7 @@ public OnTaskVoteNextMap()
 			iOk = 1;
 			iStart = iRandom = random_num(0, (g_MapsNum - 1));
 			
-			while(isInMenu(iRandom))
+			while(IsMapInMenu(iRandom))
 			{
 				if(++iRandom >= g_MapsNum)
 					iRandom = 0; // = random_num(0, (g_MapsNum - 1));
@@ -241,8 +183,8 @@ public OnTaskVoteNextMap()
 		g_VoteCountGlobal[j] = 0;
 	
 	g_VoteCount = 0;
-	g_VoteHasStarted = 1;
-	g_SVM_SecondRound = 0;
+	g_VoteMapHasStarted = 1;
+	g_SVM_MapSecondRound = 0;
 
 	iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r%d.\y Seleccionar al azar", ((iMaxMaps + 2) > 9) ? 0 : (iMaxMaps + 2));
 	
@@ -347,8 +289,8 @@ public OnTaskCheckVotesMap()
 		// Hubo 2 o más..
 		if(j > 1)
 		{
-			g_VoteHasStarted = 0;
-			g_SVM_SecondRound = 1;
+			g_VoteMapHasStarted = 0;
+			g_SVM_MapSecondRound = 1;
 			g_ShowTime = 5;
 			g_MapVoteNum = j;
 
@@ -368,7 +310,7 @@ public OnTaskCheckVotesMap()
 
 			client_print_color(0, print_team_blue, "%sVotación finalizada, el mapa ganador es ^3%s ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalPrefix, sMap, iResult, g_VoteCount, (g_VoteCount != 1) ? "s" : "", (g_VoteCount > 0) ? ((iResult * 100) / g_VoteCount) : 0); // , (g_VoteCount > 0) ? ((g_VoteCountGlobal[j] * 100) / g_VoteCount) : 0
 			
-			ResetAllData();
+			MapChooser_ResetAllData();
 
 			g_SelectedNextMap = 1;
 
@@ -391,25 +333,10 @@ public OnTaskCheckVotesMap()
 	}
 	else
 	{
-		if(g_IsRtv)
-		{
-			g_IsRtv = 0;
-			g_VoteRtvResult = 0;
-			g_VoteCountRtv = 0;
-			g_IsVotingRtv = 0;
-			g_VoteHasStarted = 0;
-			
-			ResetAllData();
-			
-			client_print_color(0, print_team_red, "%s^3La votación solicitada por los usuarios no tuvo exito!", g_GlobalPrefix);
-			return;
-		}
-
 		get_cvar_string("amx_nextmap", sMap, 31);
-
 		client_print_color(0, print_team_blue, "%sVotación finalizada, el mapa ganador fue seleccionado al azar con^4 0^1 votos!", g_GlobalPrefix, sMap);
 		
-		ResetAllData();
+		MapChooser_ResetAllData();
 
 		g_SelectedNextMap = 1;
 
@@ -438,13 +365,12 @@ public OnTaskVoteNextMap__FIX()
 
 	iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n^n\d(SEGUNDA VOTACIÓN)");
 
-	for(i = 0; i < (MAX_SELECTMAPS + 2); ++i) {
+	for(i = 0; i < (MAX_SELECTMAPS + 2); ++i)
 		g_VoteCountGlobal[i] = 0;
-	}
 
 	g_VoteCount = 0;
-	g_VoteHasStarted = 1;
-	g_SVM_SecondRound = 1;
+	g_VoteMapHasStarted = 1;
+	g_SVM_MapSecondRound = 1;
 
 	show_menu(0, iMenuKeys, sMenu, 15, "VoteMapFIX_Menu");
 	set_task(15.1, "OnTaskCheckVotesMapFIX");
@@ -545,7 +471,7 @@ public OnTaskCheckVotesMapFIX()
 		else
 			client_print_color(0, print_team_blue, "%sVotación finalizada, el mapa ganador es ^3%s ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalPrefix, sMap, iResult, g_VoteCount, (g_VoteCount != 1) ? "s" : "", (g_VoteCount > 0) ? ((iResult * 100) / g_VoteCount) : 0);
 		
-		ResetAllData();
+		MapChooser_ResetAllData();
 
 		g_SelectedNextMap = 1;
 
@@ -567,25 +493,10 @@ public OnTaskCheckVotesMapFIX()
 	}
 	else
 	{
-		if(g_IsRtv)
-		{
-			g_IsRtv = 0;
-			g_VoteRtvResult = 0;
-			g_VoteCountRtv = 0;
-			g_IsVotingRtv = 0;
-			g_VoteHasStarted = 0;
-			
-			ResetAllData();
-			
-			client_print_color(0, print_team_red, "%s^3La votación solicitada por los usuarios no tuvo exito!", g_GlobalPrefix);
-			return;
-		}
-
 		get_cvar_string("amx_nextmap", sMap, 31);
-		
 		client_print_color(0, print_team_blue, "%sNingún voto fue emitido, por lo tanto el mapa ganador al azar es:^3 %s", g_GlobalPrefix, sMap);
 		
-		ResetAllData();
+		MapChooser_ResetAllData();
 
 		g_SelectedNextMap = 1;
 
@@ -598,7 +509,7 @@ public OnTaskCheckVotesMapFIX()
 }
 
 public think__HudVote(const ent) {
-	if(!g_VoteHasStarted) {
+	if(!g_VoteMapHasStarted) {
 		return;
 	}
 
@@ -624,10 +535,10 @@ public think__HudVote(const ent) {
 	new sHud[256];
 	new sMap[32];
 
-	iLoop = (g_SVM_SecondRound) ? g_MapVoteNum : (g_MapVoteNum + 1);
+	iLoop = (g_SVM_MapSecondRound) ? g_MapVoteNum : (g_MapVoteNum + 1);
 	
 	for(i = 0; i < iLoop; ++i) {
-		iMapId[i] = (g_SVM_SecondRound) ? g_SVM_MapInMenu__FuckingFIX[i] : g_SVM_MapInMenu[i];
+		iMapId[i] = (g_SVM_MapSecondRound) ? g_SVM_MapInMenu__FuckingFIX[i] : g_SVM_MapInMenu[i];
 		iVoteMaps[i] = g_VoteCountGlobal[i];
 		iExtendMap[i] = (i == MAX_SELECTMAPS || iMapId[i] == -1) ? 1 : 0;
 	}
@@ -677,16 +588,19 @@ public think__HudVote(const ent) {
 public taskChangeTimeLeft()
 {
 	g_NoMoreTime = 1;
-
 	set_cvar_float("mp_timelimit", 0.0);
-	
-	if(!g_EndRound) {
-		//executeChangeTimeleft();
 
-		client_cmd(0, "spk ^"%s^"", g_SOUND_ExtendTime);
-		client_print_color(0, print_team_default, "%s^1El mapa cambiará al finalizar la ronda!", g_GlobalPrefix);
-	} else {
-		g_ChangeMapOneMoreRound = 1;
+	switch(g_ChangeMapType)
+	{
+		case CHANGEMAP_END_OF_ROUND:
+		{
+			client_cmd(0, "spk ^"%s^"", g_SOUND_ExtendTime);
+			client_print_color(0, print_team_default, "%s^1El mapa cambiará al finalizar la ronda!", g_GlobalPrefix);
+		}
+		case CHANGEMAP_ONE_MORE_ROUND:
+		{
+			g_ChangeMapOneMoreRound = 1;
+		}
 	}
 }
 
@@ -721,6 +635,22 @@ public taskSpamChangeMap()
 public taskChangeMap(sMap[])
 {
 	engine_changelevel(sMap);
+}
+
+Float:extendMap() {
+	new Float:fExtendMap = mm_extendmap_step;
+	set_cvar_float("mp_timelimit", (mm_timelimit + fExtendMap));
+
+	return fExtendMap;
+}
+
+changeTimeleft()
+{
+	remove_task(TASK_TIMELEFT);
+
+	(g_ChangeMapType == CHANGEMAP_TIMELEFT)
+		? set_task((float(get_timeleft()) - 10.1), "taskSpamChangeMap", TASK_TIMELEFT)
+		: set_task((float(get_timeleft()) - 1.1), "taskChangeTimeLeft", TASK_TIMELEFT);
 }
 
 MapChooser_LoadMaps(const szFileName[])
@@ -824,7 +754,7 @@ stock validMap(mapname[]) {
 	return 0;
 }
 
-stock isInMenu(const i) {
+stock IsMapInMenu(const i) {
 	new j;
 	for(j = 0; j < (MAX_SELECTMAPS + 1); ++j) {
 		if(i == g_SVM_MapInMenu[j]) {

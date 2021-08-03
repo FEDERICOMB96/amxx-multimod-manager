@@ -15,9 +15,9 @@ new g_SVM_ModInMenu[MAX_SELECTMODS + 1];
 new g_SVM_ModInMenu__FuckingFIX[MAX_SELECTMODS + 1];
 new g_SVM_ModName[MAX_SELECTMODS + 1][64];
 new g_SVM_ModSecondRound = 0;
-new g_SVM_ModNominations = 0;
 new g_ModVoteNum = 0;
 new g_SelectedNextMod = 0;
+new g_VoteModHasStarted = 0;
 
 new g_VoteModId[MAX_USERS];
 
@@ -31,7 +31,7 @@ ModChooser_Init()
 	}
 
 	register_menu("VoteMod_Menu", KEYSMENU, "menu__CountVoteMod");
-	register_menu("VoteMapFIX_Menu", KEYSMENU, "menu__CountVoteModFIX");
+	register_menu("VoteModFIX_Menu", KEYSMENU, "menu__CountVoteModFIX");
 }
 
 ModChooser_ResetAllData()
@@ -48,23 +48,39 @@ ModChooser_ResetAllData()
 
 	g_VoteModCount = 0;
 	g_SVM_ModSecondRound = 0;
-	g_SVM_ModNominations = 0;
 	g_ModVoteNum = 0;
 	g_NoMoreTime = 0;
 	g_ShowTime = 10;
-	g_VoteHasStarted = 0;
+	g_VoteModHasStarted = 0;
 
-	for(new i = 0; i <= MAX_USERS; ++i)
+	for(new i = 0; i < MAX_USERS; ++i)
 	{
-		g_HasVoteRTV[i] = 0;
-		g_SVM_Nominate[i] = 0;
-		g_SVM_MyNominate[i] = 0;
+		RockTheVote_ResetUserData(i);
 		g_VoteModId[i] = 0;
 	}
 
-	remove_task(TASK_TIMELEFT);
 	remove_task(TASK_VOTEMAP);
+	remove_task(TASK_VOTEMOD);
+	remove_task(TASK_TIMELEFT);
+	remove_task(TASK_RTV);
 	remove_task(TASK_SHOWTIME);
+}
+
+ModChooser_ClientPutInServer(const id)
+{
+	g_VoteModId[id] = 0;
+}
+
+ModChooser_ClientDisconnected(const id)
+{
+	// Si votó y se fue antes de terminar la votacion, su voto es removido!
+	if(g_VoteModId[id] && g_VoteModHasStarted)
+	{
+		--g_VoteModCountGlobal[g_VoteModId[id]-1];
+		--g_VoteModCount;
+
+		g_VoteModId[id] = 0;
+	}
 }
 
 public OnTaskVoteNextMod()
@@ -79,8 +95,8 @@ public OnTaskVoteNextMod()
 	new iOk;
 	new iArraySizeMods = ArraySize(g_aModNames);
 
-	iMenuKeys = (1<<MAX_SELECTMODS + 1);
 	iMaxMods = (iArraySizeMods > MAX_SELECTMODS) ? MAX_SELECTMODS : iArraySizeMods;
+	iMenuKeys = (1<<iMaxMods + 1);
 	
 	iLen = formatex(sMenu, charsmax(sMenu), "\yElige el próximo modo: ¡VOTÁ AHORA!^n^n");
 	j = 0;
@@ -92,7 +108,7 @@ public OnTaskVoteNextMod()
 			iOk = 1;
 			iStart = iRandom = random_num(0, (iArraySizeMods - 1));
 			
-			while(isInMenu(iRandom))
+			while(IsModInMenu(iRandom))
 			{
 				if(++iRandom >= iArraySizeMods)
 					iRandom = 0;
@@ -119,7 +135,7 @@ public OnTaskVoteNextMod()
 		g_VoteModCountGlobal[j] = 0;
 	
 	g_VoteModCount = 0;
-	g_VoteHasStarted = 1;
+	g_VoteModHasStarted = 1;
 	g_SVM_ModSecondRound = 0;
 
 	if((mm_timelimit < mm_extendmap_max) && !g_IsRtv)
@@ -158,7 +174,7 @@ public menu__CountVoteMod(const id, const iKey)
 	}
 	else if(iKey < MAX_SELECTMODS)
 	{
-		ArrayGetString(g_aModNames, g_SVM_ModInMenu[iKey], szMod, 31);
+		ArrayGetString(g_aModNames, g_SVM_ModInMenu[iModId], szMod, 31);
 		
 		client_print_color(id, print_team_blue, "%s^1 Has elegido el modo^3 %s", g_GlobalPrefix, szMod);
 		
@@ -212,7 +228,6 @@ public OnTaskCheckVoteMod()
 	for(i = 0; i < g_ModVoteNum; ++i)
 	{
 		ArrayGetString(g_aModNames, g_SVM_ModInMenu[i], sMod, 31);
-		
 		client_print(0, print_console, "Modo: %s - Votos: %d - Porcentaje: %d%%", sMod, g_VoteModCountGlobal[i], (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[i] * 100) / g_VoteModCount) : 0);
 	}
 	
@@ -239,7 +254,7 @@ public OnTaskCheckVoteMod()
 		// Hubo 2 o más..
 		if(j > 1)
 		{
-			g_VoteHasStarted = 0;
+			g_VoteModHasStarted = 0;
 			g_SVM_ModSecondRound = 1;
 			g_ShowTime = 5;
 			g_ModVoteNum = j;
@@ -294,7 +309,7 @@ public OnTaskCheckVoteMod()
 			g_VoteRtvResult = 0;
 			g_VoteCountRtv = 0;
 			g_IsVotingRtv = 0;
-			g_VoteHasStarted = 0;
+			g_VoteModHasStarted = 0;
 			
 			ModChooser_ResetAllData();
 			
@@ -344,7 +359,7 @@ public OnTaskVoteNextMod__FIX()
 		g_VoteModCountGlobal[i] = 0;
 
 	g_VoteModCount = 0;
-	g_VoteHasStarted = 1;
+	g_VoteModHasStarted = 1;
 	g_SVM_ModSecondRound = 1;
 
 	show_menu(0, iMenuKeys, sMenu, 15, "VoteModFIX_Menu");
@@ -499,7 +514,7 @@ public OnTaskCheckVoteModFIX()
 			g_VoteRtvResult = 0;
 			g_VoteCountRtv = 0;
 			g_IsVotingRtv = 0;
-			g_VoteHasStarted = 0;
+			g_VoteModHasStarted = 0;
 			
 			ModChooser_ResetAllData();
 			
@@ -519,4 +534,15 @@ public OnTaskCheckVoteModFIX()
 
 		MapChooser_InitNextVoteMap();
 	}
+}
+
+IsModInMenu(const i)
+{
+	for(new j = 0; j < (MAX_SELECTMODS + 1); ++j)
+	{
+		if(i == g_SVM_ModInMenu[j])
+			return 1;
+	}
+
+	return 0;
 }
