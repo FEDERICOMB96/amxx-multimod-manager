@@ -17,7 +17,6 @@ new Array:g_aModNames;
 new g_CurrentMap[32];
 new g_LastMap[32];
 new g_iCurrentMod;
-new g_EndRound = 0;
 new g_NoMoreTime = 0;
 new g_ShowTime = 0;
 
@@ -53,9 +52,7 @@ public plugin_init()
 
 	register_event_ex("TextMsg", "OnEvent_GameRestart", RegisterEvent_Global, "2&#Game_C", "2&#Game_w");
 	register_event_ex("TextMsg", "OnEvent_GameRestart", RegisterEvent_Global, "2&#Game_will_restart_in");
-	
 	register_event_ex("HLTV", "OnEvent_HLTV", RegisterEvent_Global, "1=0", "2=0");
-	register_logevent("OnLogevent_RoundEnd", 2, "1=Round_End");
 
 	// MultiMod_SetNextMod(1);
 
@@ -166,8 +163,6 @@ public OnEvent_GameRestart()
 
 public OnEvent_HLTV()
 {
-	g_EndRound = 0;
-
 	if((g_NoMoreTime == 1 && !g_ChangeMapOneMoreRound) || (g_VoteRtvResult && g_NoMoreTime == 1))
 	{
 		new sTempMap[32];
@@ -192,13 +187,6 @@ public OnEvent_HLTV()
 		client_print_color(0, print_team_default, "%s^1 El mapa cambiará al finalizar la ronda!", g_GlobalPrefix);
 	}
 }
-
-public OnLogevent_RoundEnd()
-{
-	g_EndRound = 1;
-}
-
-
 
 public OnTaskCheckVoteNextMod()
 {
