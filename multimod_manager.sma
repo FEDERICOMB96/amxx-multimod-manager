@@ -11,11 +11,13 @@ new const PLUGIN_VERSION[] = "v2021.08.02";
 new g_bConnected;
 
 new g_GlobalPrefix[21];
-
 new Array:g_aModNames;
 
+new g_CurrentMap[32];
+new g_LastMap[32];
 new g_iCurrentMod;
 new g_iNextMod;
+new g_EndRound = 0;
 new g_NoMoreTime = 0;
 new g_ShowTime = 0;
 new g_VoteHasStarted = 0;
@@ -34,10 +36,10 @@ public plugin_precache()
 	for(new i = 0; i < sizeof(g_SOUND_GmanChoose); ++i)
 		precache_sound(g_SOUND_GmanChoose[i]);
 	
-	for(new i = 0; i < sizeof(g_SOUND_CountDown); ++i)
+	for(new i = 0, szBuffer[64]; i < sizeof(g_SOUND_CountDown); ++i)
 	{
-		formatex(sBuffer, charsmax(sBuffer), "fvox/%s.wav", g_SOUND_CountDown[i]);
-		precache_sound(sBuffer);
+		formatex(szBuffer, charsmax(szBuffer), "fvox/%s.wav", g_SOUND_CountDown[i]);
+		precache_sound(szBuffer);
 	}
 }
 
@@ -57,13 +59,20 @@ public plugin_init()
 	register_logevent("OnLogevent_RoundEnd", 2, "1=Round_End");
 
 	// MultiMod_SetNextMod(1);
-}
 
+	get_mapname(g_CurrentMap, charsmax(g_CurrentMap));
+	get_localinfo("mm_lastmap", g_LastMap, charsmax(g_LastMap));
+}
 
 public plugin_cfg()
 {
 	server_cmd("amx_pausecfg add ^"%s^"", PLUGIN_NAME);
 	server_cmd("sv_restart 1");
+}
+
+public plugin_end()
+{
+	set_localinfo("mm_lastmap", g_CurrentMap);
 }
 
 public client_putinserver(id)
@@ -155,7 +164,7 @@ public OnEvent_HLTV()
 	if((g_NoMoreTime == 1 && !g_ChangeMapOneMoreRound) || (g_VoteRtvResult && g_NoMoreTime == 1))
 	{
 		new sTempMap[32];
-		get_pcvar_string(g_pCVAR_NextMap, sTempMap, 31);
+		get_cvar_string("amx_nextmap", sTempMap, 31);
 		
 		g_NoMoreTime = 2;
 		
@@ -164,10 +173,7 @@ public OnEvent_HLTV()
 		message_begin(MSG_ALL, SVC_INTERMISSION);
 		message_end();
 		
-		client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será: ^3%s", GLOBAL_PREFIX, sTempMap);
-		
-		new iReturn;
-		ExecuteForward(g_Forward_ChangeMap, iReturn);
+		client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será: ^3%s", g_GlobalPrefix, sTempMap);
 	}
 
 	if(g_ChangeMapOneMoreRound) {
@@ -176,10 +182,7 @@ public OnEvent_HLTV()
 		//executeChangeTimeleft();
 
 		client_cmd(0, "spk ^"%s^"", g_SOUND_ExtendTime);
-		client_print_color(0, print_team_default, "%s^1 El mapa cambiará al finalizar la ronda!", GLOBAL_PREFIX);
-
-		new iReturn;
-		ExecuteForward(g_Forward_LastRound, iReturn);
+		client_print_color(0, print_team_default, "%s^1 El mapa cambiará al finalizar la ronda!", g_GlobalPrefix);
 	}
 }
 
@@ -197,7 +200,7 @@ public OnTaskCheckVoteNextMod()
 	new iTimeStartVote = 0;
 	new Float:fTimeStartVote = 0.0;
 	
-	iTimeStartVote = get_pcvar_num(g_pCVAR_TimeLimit);
+	iTimeStartVote = mm_timelimit;
 	iTimeStartVote -= 3;
 	iTimeStartVote *= 60;
 	

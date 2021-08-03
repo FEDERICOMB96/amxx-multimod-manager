@@ -7,29 +7,8 @@
 #include <multimod_manager/defines>
 #include <multimod_manager/cvars>
 
-
 #define MAX_SELECTMAPS			5
-#define MAX_TIMELIMIT			25		// Tiempo total del mapa
-#define RTV_TIME				620 	// En segundos, 5 minutos
-#define RTV_PERCENT				75		// Porcentaje de jugadores que tienen que hacer rtv para que funcione
 #define MAX_RECENT_MAPS			5
-
-
-
-// CVARS
-new g_PCVAR_MaxExtendMap = 0;
-new g_PCVAR_ExtendMap_Time = 0;
-
-// POINTERS
-new g_pCVAR_TimeLimit = 0;
-new g_pCVAR_NextMap = 0;
-new g_pCVAR_VoteAnswers = 0;
-
-new g_CurrentMap[32];
-new g_LastMap[32];
-new g_EndRound = 0;
-
-
 
 new g_MapsNum = 0;
 new g_VoteCount = 0;
@@ -50,9 +29,6 @@ new g_EntHudVote = 0;
 
 
 new g_VoteMapId[MAX_USERS];
-
-new g_MaxUsers = 0;
-
 
 new Array:g_Array_MapName;
 
@@ -94,8 +70,8 @@ ResetAllData()
 }
 
 Float:extendMap() {
-	new Float:fExtendMap = get_pcvar_float(g_PCVAR_ExtendMap_Time);
-	set_pcvar_float(g_pCVAR_TimeLimit, (get_pcvar_float(g_pCVAR_TimeLimit) + fExtendMap));
+	new Float:fExtendMap = mm_extendmap_step;
+	set_cvar_float("mp_timelimit", (mm_timelimit + fExtendMap));
 
 	return fExtendMap;
 }
@@ -103,7 +79,7 @@ Float:extendMap() {
 changeTimeleft() {
 	remove_task(TASK_TIMELEFT);
 
-	if(g_Server[DEATHMATCH] || g_Server[DEATHMATCH_ONLY_HEAD] || g_Server[CTF]) {
+	if(true /* cambio de mapa al finalizar el tiempo */) {
 		set_task((float(get_timeleft()) - 10.1), "taskSpamChangeMap", TASK_TIMELEFT);
 	} else {
 		set_task((float(get_timeleft()) - 1.1), "taskChangeTimeLeft", TASK_TIMELEFT);
@@ -120,8 +96,8 @@ MapChooser_Init()
 		g_SVM_MapInMenu__FuckingFIX[i] = -1;
 	}
 
-	register_menu("VoteMap_Menu", KEYSMENU, "menu__CountVote");
-	register_menu("VoteMapFIX_Menu", KEYSMENU, "menu__CountVoteFIX");
+	register_menu("VoteMap_Menu", KEYSMENU, "menu__CountVoteMap");
+	register_menu("VoteMapFIX_Menu", KEYSMENU, "menu__CountVoteMapFIX");
 	
 	g_Array_MapName = ArrayCreate(32);
 
@@ -146,7 +122,7 @@ MapChooser_InitNextVoteMap()
 	new iTimeStartVote = 0;
 	new Float:fTimeStartVote = 0.0;
 	
-	iTimeStartVote = get_pcvar_num(g_pCVAR_TimeLimit);
+	iTimeStartVote = mm_timelimit;
 	iTimeStartVote -= 2;
 	iTimeStartVote *= 60;
 	
@@ -283,7 +259,7 @@ public OnTaskVoteNextMap()
 	}
 }
 
-public menu__CountVote(const id, const iKey)
+public menu__CountVoteMap(const id, const iKey)
 {
 	if(!GetPlayerBit(g_bConnected, id))
 		return;
@@ -351,7 +327,7 @@ public OnTaskCheckVotesMap()
 		client_print(0, print_console, "Mapa: %s - Votos: %d - Porcentaje: %d%%", sMap, g_VoteCountGlobal[i], (g_VoteCount > 0) ? ((g_VoteCountGlobal[i] * 100) / g_VoteCount) : 0);
 	}
 	
-	client_print(0, print_console, "Extender mapa: %dm - Votos: %d - Porcentaje: %d%%", get_pcvar_num(g_PCVAR_ExtendMap_Time), g_VoteCountGlobal[MAX_SELECTMAPS], (g_VoteCount > 0) ? ((g_VoteCountGlobal[MAX_SELECTMAPS] * 100) / g_VoteCount) : 0);
+	client_print(0, print_console, "Extender mapa: %dm - Votos: %d - Porcentaje: %d%%", mm_extendmap_step, g_VoteCountGlobal[MAX_SELECTMAPS], (g_VoteCount > 0) ? ((g_VoteCountGlobal[MAX_SELECTMAPS] * 100) / g_VoteCount) : 0);
 
 	// Hubo votos emitidos..
 	if(iResult)
@@ -388,7 +364,7 @@ public OnTaskCheckVotesMap()
 		else
 		{
 			ArrayGetString(g_Array_MapName, g_SVM_MapInMenu[iWinner], sMap, 31);
-			set_pcvar_string(g_pCVAR_NextMap, sMap);
+			set_cvar_string("amx_nextmap", sMap);
 
 			client_print_color(0, print_team_blue, "%sVotación finalizada, el mapa ganador es ^3%s ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalPrefix, sMap, iResult, g_VoteCount, (g_VoteCount != 1) ? "s" : "", (g_VoteCount > 0) ? ((iResult * 100) / g_VoteCount) : 0); // , (g_VoteCount > 0) ? ((g_VoteCountGlobal[j] * 100) / g_VoteCount) : 0
 			
@@ -429,7 +405,7 @@ public OnTaskCheckVotesMap()
 			return;
 		}
 
-		get_pcvar_string(g_pCVAR_NextMap, sMap, 31);
+		get_cvar_string("amx_nextmap", sMap, 31);
 
 		client_print_color(0, print_team_blue, "%sVotación finalizada, el mapa ganador fue seleccionado al azar con^4 0^1 votos!", g_GlobalPrefix, sMap);
 		
@@ -483,7 +459,7 @@ public OnTaskVoteNextMap__FIX()
 	}
 }
 
-public menu__CountVoteFIX(const id, const iKey)
+public menu__CountVoteMapFIX(const id, const iKey)
 {
 	if(!GetPlayerBit(g_bConnected, id))
 		return;
@@ -495,8 +471,8 @@ public menu__CountVoteFIX(const id, const iKey)
 	
 	client_print_color(id, print_team_blue, "%s^1Has elegido el mapa^3 %s", g_GlobalPrefix, sMap);
 	
-	if(get_pcvar_float(g_pCVAR_VoteAnswers))
-		client_print(0, print_console, "%n ha votado por el mapa: %s", CONSOLE_PREFIX, id, sMap);
+	if(mm_vote_answers)
+		client_print(0, print_console, "%n ha votado por el mapa: %s", id, sMap);
 
 	++g_VoteCountGlobal[iMapId];
 	++g_VoteCount;
@@ -559,7 +535,7 @@ public OnTaskCheckVotesMapFIX()
 			iWinner = iMapsId[random_num(0, (j - 1))];
 
 		ArrayGetString(g_Array_MapName, iWinner, sMap, 31);
-		set_pcvar_string(g_pCVAR_NextMap, sMap);
+		set_cvar_string("amx_nextmap", sMap);
 		
 		if(j > 1)
 		{
@@ -605,7 +581,7 @@ public OnTaskCheckVotesMapFIX()
 			return;
 		}
 
-		get_pcvar_string(g_pCVAR_NextMap, sMap, 31);
+		get_cvar_string("amx_nextmap", sMap, 31);
 		
 		client_print_color(0, print_team_blue, "%sNingún voto fue emitido, por lo tanto el mapa ganador al azar es:^3 %s", g_GlobalPrefix, sMap);
 		
@@ -690,7 +666,7 @@ public think__HudVote(const ent) {
 			ArrayGetString(g_Array_MapName, iMapId[i], sMap, 31);
 			iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "%s: %d voto%s (%d%%%%)", sMap, iVoteMaps[i], (iVoteMaps[i] == 1) ? "" : "s", (g_VoteCount > 0) ? ((iVoteMaps[i] * 100) / g_VoteCount) : 0);
 		} else {
-			iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "Extender mapa %dm: %d voto%s (%d%%%%)", get_pcvar_num(g_PCVAR_ExtendMap_Time), iVoteMaps[i], (iVoteMaps[i] == 1) ? "" : "s", (g_VoteCount > 0) ? ((iVoteMaps[i] * 100) / g_VoteCount) : 0);
+			iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "Extender mapa %dm: %d voto%s (%d%%%%)", mm_extendmap_step, iVoteMaps[i], (iVoteMaps[i] == 1) ? "" : "s", (g_VoteCount > 0) ? ((iVoteMaps[i] * 100) / g_VoteCount) : 0);
 		}
 	}
 
@@ -702,7 +678,7 @@ public taskChangeTimeLeft()
 {
 	g_NoMoreTime = 1;
 
-	set_pcvar_num(g_pCVAR_TimeLimit, 0);
+	set_cvar_float("mp_timelimit", 0.0);
 	
 	if(!g_EndRound) {
 		//executeChangeTimeleft();
@@ -720,7 +696,7 @@ public taskSpamChangeMap()
 	{
 
 		new sTempMap[32];
-		get_pcvar_string(g_pCVAR_NextMap, sTempMap, 31);
+		get_cvar_string("amx_nextmap", sTempMap, 31);
 		
 		g_NoMoreTime = 2;
 		
