@@ -24,14 +24,12 @@ new g_ChangeMapTime = 10;
 new g_ChangeMapOneMoreRound = 0;
 new g_RecentMaps[MAX_RECENT_MAPS][32];
 new g_RecentMapsCount = 0;
-new g_HudVote = 0;
-new g_EntHudVote = 0;
 
+new g_EntHudVote = 0;
 
 new g_VoteMapId[MAX_USERS];
 
 new Array:g_Array_MapName;
-
 
 MapChooser_Init()
 {
@@ -46,8 +44,6 @@ MapChooser_Init()
 	register_menu("VoteMapFIX_Menu", KEYSMENU, "menu__CountVoteMapFIX");
 	
 	g_Array_MapName = ArrayCreate(32);
-
-	g_HudVote = CreateHudSyncObj();
 
 	g_EntHudVote = create_entity("info_target");
 	if(is_valid_ent(g_EntHudVote))
@@ -194,7 +190,7 @@ public OnTaskVoteNextMap()
 	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
 	client_print_color(0, print_team_default, "%sEs momento de elegir el próximo mapa!", g_GlobalPrefix);
 	
-	client_print(0, print_center, "");
+	ClearSyncHud(0, g_HUD_Alert);
 
 	if(is_valid_ent(g_EntHudVote)) {
 		entity_set_float(g_EntHudVote, EV_FL_nextthink, get_gametime() + 0.000001);
@@ -314,21 +310,21 @@ public OnTaskCheckVotesMap()
 
 			g_SelectedNextMap = 1;
 
-			ClearSyncHud(0, g_HudVote);
+			ClearSyncHud(0, g_HUD_Vote);
 
 			if(g_IsRtv)
 			{
 				g_VoteRtvResult = 1;
 				
 				remove_task(TASK_TIMELEFT);
-				set_task(1.0, "taskChangeTimeLeft", TASK_TIMELEFT);
+				set_task(1.0, "OnTaskChangeTimeLeft", TASK_TIMELEFT);
 				
 				return;
 			}
 
 			g_ChangeMapTime = 10;
 
-			changeTimeleft();
+			ExecChangeTimeleft();
 		}
 	}
 	else
@@ -340,11 +336,11 @@ public OnTaskCheckVotesMap()
 
 		g_SelectedNextMap = 1;
 
-		ClearSyncHud(0, g_HudVote);
+		ClearSyncHud(0, g_HUD_Vote);
 
 		g_ChangeMapTime = 10;
 
-		changeTimeleft();
+		ExecChangeTimeleft();
 	}
 }
 
@@ -378,7 +374,7 @@ public OnTaskVoteNextMap__FIX()
 	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
 	client_print_color(0, print_team_default, "%sEs momento de elegir el próximo mapa (SEGUNDA VOTACIÓN)!", g_GlobalPrefix);
 	
-	client_print(0, print_center, "");
+	ClearSyncHud(0, g_HUD_Alert);
 
 	if(is_valid_ent(g_EntHudVote)) {
 		entity_set_float(g_EntHudVote, EV_FL_nextthink, get_gametime() + 0.000001);
@@ -475,21 +471,21 @@ public OnTaskCheckVotesMapFIX()
 
 		g_SelectedNextMap = 1;
 
-		ClearSyncHud(0, g_HudVote);
+		ClearSyncHud(0, g_HUD_Vote);
 
 		if(g_IsRtv)
 		{
 			g_VoteRtvResult = 1;
 			
 			remove_task(TASK_TIMELEFT);
-			set_task(1.0, "taskChangeTimeLeft", TASK_TIMELEFT);
+			set_task(1.0, "OnTaskChangeTimeLeft", TASK_TIMELEFT);
 			
 			return;
 		}
 
 		g_ChangeMapTime = 10;
 
-		changeTimeleft();
+		ExecChangeTimeleft();
 	}
 	else
 	{
@@ -500,11 +496,11 @@ public OnTaskCheckVotesMapFIX()
 
 		g_SelectedNextMap = 1;
 
-		ClearSyncHud(0, g_HudVote);
+		ClearSyncHud(0, g_HUD_Vote);
 
 		g_ChangeMapTime = 10;
 
-		changeTimeleft();
+		ExecChangeTimeleft();
 	}
 }
 
@@ -518,7 +514,7 @@ public think__HudVote(const ent) {
 	if(!g_VoteCount)
 	{
 		set_hudmessage(255, 255, 255, 0.75, 0.35, 0, 0.0, 0.2, 0.0, 0.0, -1);
-		ShowSyncHudMsg(0, g_HudVote, "Sin votos emitidos");
+		ShowSyncHudMsg(0, g_HUD_Vote, "Sin votos emitidos");
 		return;
 	}
 
@@ -582,10 +578,10 @@ public think__HudVote(const ent) {
 	}
 
 	set_hudmessage(255, 255, 255, 0.75, 0.35, 0, 0.0, 0.3, 0.0, 0.0, -1);
-	ShowSyncHudMsg(0, g_HudVote, sHud);
+	ShowSyncHudMsg(0, g_HUD_Vote, sHud);
 }
 
-public taskChangeTimeLeft()
+public OnTaskChangeTimeLeft()
 {
 	g_NoMoreTime = 1;
 	set_cvar_float("mp_timelimit", 0.0);
@@ -604,11 +600,10 @@ public taskChangeTimeLeft()
 	}
 }
 
-public taskSpamChangeMap()
+public OnTaskAlertChangeMap()
 {
 	if(!g_ChangeMapTime)
 	{
-
 		new sTempMap[32];
 		get_cvar_string("amx_nextmap", sTempMap, 31);
 		
@@ -623,13 +618,15 @@ public taskSpamChangeMap()
 		return;
 	}
 	
-	client_print(0, print_center, "El mapa cambiará en %d segundo%s", g_ChangeMapTime, (g_ChangeMapTime != 1) ? "s" : "");
+	set_hudmessage(255, 255, 255, -1.0, 0.35, 0, 0.0, 1.1, 0.0, 0.0, -1);
+	ShowSyncHudMsg(0, g_HUD_Alert, "El mapa cambiará en %d segundo%s", g_ChangeMapTime, (g_ChangeMapTime != 1) ? "s" : "");
+
 	client_cmd(0, "spk ^"fvox/%s^"", g_SOUND_CountDown[g_ChangeMapTime]);
 
 	--g_ChangeMapTime;
 	
 	remove_task(TASK_TIMELEFT);
-	set_task(1.0, "taskSpamChangeMap", TASK_TIMELEFT);
+	set_task(1.0, "OnTaskAlertChangeMap", TASK_TIMELEFT);
 }
 
 public taskChangeMap(sMap[])
@@ -637,20 +634,13 @@ public taskChangeMap(sMap[])
 	engine_changelevel(sMap);
 }
 
-Float:extendMap() {
-	new Float:fExtendMap = mm_extendmap_step;
-	set_cvar_float("mp_timelimit", (mm_timelimit + fExtendMap));
-
-	return fExtendMap;
-}
-
-changeTimeleft()
+ExecChangeTimeleft()
 {
 	remove_task(TASK_TIMELEFT);
 
 	(g_ChangeMapType == CHANGEMAP_TIMELEFT)
-		? set_task((float(get_timeleft()) - 10.1), "taskSpamChangeMap", TASK_TIMELEFT)
-		: set_task((float(get_timeleft()) - 1.1), "taskChangeTimeLeft", TASK_TIMELEFT);
+		? set_task((float(get_timeleft()) - 10.1), "OnTaskAlertChangeMap", TASK_TIMELEFT)
+		: set_task((float(get_timeleft()) - 1.1), "OnTaskChangeTimeLeft", TASK_TIMELEFT);
 }
 
 MapChooser_LoadMaps(const szFileName[])
