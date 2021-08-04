@@ -1,6 +1,8 @@
 new const PLUGIN_NAME[] = "MultiMod Manager";
 new const PLUGIN_VERSION[] = "v2021.08.02";
 
+new const PLUGINS_FILENAME[] = "plugins-multimodmanager.ini";
+
 #include <amxmodx>
 #include <amxmisc>
 #include <reapi>
@@ -14,9 +16,9 @@ new g_GlobalPrefix[21];
 new ChangeMap_e:g_ChangeMapType;
 new Array:g_aModNames;
 
-new g_CurrentMap[32];
-new g_LastMap[32];
-new g_iCurrentMod;
+new g_CurrentMap[64];
+new g_LastMap[64];
+new g_CurrentMod[64];
 new g_NoMoreTime = 0;
 new g_ShowTime = 0;
 new g_HUD_Vote = 0;
@@ -56,10 +58,11 @@ public plugin_init()
 	register_event_ex("TextMsg", "OnEvent_GameRestart", RegisterEvent_Global, "2&#Game_will_restart_in");
 	register_event_ex("HLTV", "OnEvent_HLTV", RegisterEvent_Global, "1=0", "2=0");
 
-	// MultiMod_SetNextMod(1);
-
 	get_mapname(g_CurrentMap, charsmax(g_CurrentMap));
+	mb_strtolower(g_CurrentMap);
+
 	get_localinfo("mm_lastmap", g_LastMap, charsmax(g_LastMap));
+	mb_strtolower(g_LastMap);
 
 	g_HUD_Vote = CreateHudSyncObj();
 	g_HUD_Alert = CreateHudSyncObj();
@@ -94,8 +97,11 @@ public client_disconnected(id, bool:drop, message[], maxlen)
 
 MultiModInit()
 {
-	new szFileName[128], szConfigDir[128];
+	new szConfigDir[STRLEN_PATH], szFileName[STRLEN_PATH], szPluginsFile[STRLEN_PATH];
 	get_configsdir(szConfigDir, charsmax(szConfigDir));
+
+	formatex(szPluginsFile, charsmax(szPluginsFile), "%s/%s", szConfigDir, PLUGINS_FILENAME);
+	MultiMod_GetCurrentMod(szPluginsFile, g_CurrentMod, charsmax(g_CurrentMod));
 
 	formatex(szFileName, charsmax(szFileName), "%s/multimod_manager/configs.json", szConfigDir);
 
@@ -126,20 +132,46 @@ MultiModInit()
 	new JSON:jsonObjectMods = json_object_get_value(jsonConfigsFile, "mods");
 	new iCount = json_array_get_count(jsonObjectMods);
 
+	new Array:aExecCFGs = ArrayCreate(128);
+
 	for(new i = 0,
-		szBuffer[32],
+		szModName[32],
 		JSON:jsonArrayValue; i < iCount; ++i)
 	{
 		jsonArrayValue = json_array_get_value(jsonObjectMods, i);
 
-		json_object_get_string(jsonArrayValue, "modname", szBuffer, charsmax(szBuffer));
-		ArrayPushString(g_aModNames, szBuffer);
+		json_object_get_string(jsonArrayValue, "modname", szModName, charsmax(szModName));
+		ArrayPushString(g_aModNames, szModName);
+
+		// Modo actual? Ejecutar CFGs
+		if(equali(g_CurrentMod, szModName))
+		{
+			new JSON:jsonObjectCvars = json_object_get_value(jsonArrayValue, "cvars");
+			new iCvars = json_array_get_count(jsonObjectCvars);
+
+			for(new j = 0,
+				szCvarName[128]; j < iCvars; ++j)
+			{
+				json_array_get_string(jsonObjectCvars, j, szCvarName, charsmax(szCvarName));
+				ArrayPushString(aExecCFGs, szCvarName);
+			}
+
+			json_free(jsonObjectCvars);
+		}
 
 		json_free(jsonArrayValue);
 	}
 
 	json_free(jsonObjectMods);
 	json_free(jsonConfigsFile);
+
+	new iCfgsCount = ArraySize(aExecCFGs);
+	for(new i = 0; i < iCfgsCount; ++i)
+	{
+		server_cmd("%a", ArrayGetStringHandle(aExecCFGs, i));
+	}
+
+	ArrayDestroy(aExecCFGs);
 
 	if(!iCount)
 	{
@@ -151,6 +183,28 @@ MultiModInit()
 	{
 		remove_task(TASK_VOTEMOD);
 		set_task(10.0, "OnTaskCheckVoteNextMod", TASK_VOTEMOD);
+	}
+}
+
+MultiMod_GetCurrentMod(const szFilePath[STRLEN_PATH], szOut[], const iLen)
+{
+	if(file_exists(szFilePath))
+	{
+		new iFile = fopen(szFilePath, "r");
+
+		if(iFile)
+		{
+			new szLine[128];
+			fgets(iFile, szLine, charsmax(szLine));
+			trim(szLine);
+
+			replace_string(szLine, charsmax(szLine), ";Mod:", "");
+			replace_string(szLine, charsmax(szLine), "^"", "");
+			
+			copy(szOut, iLen, szLine);
+
+			fclose(iFile);
+		}
 	}
 }
 
@@ -195,7 +249,7 @@ public OnTaskCheckVoteNextMod()
 	g_ShowTime = 10;
 
 	new Float:flTimeStartVote = (get_pcvar_float(mp_timelimit) - 3.0) * 60.0;
-	
+
 	remove_task(TASK_VOTEMOD);
 	set_task(flTimeStartVote, "OnTaskVoteNextMod", TASK_VOTEMOD);
 	
@@ -241,7 +295,7 @@ MultiMod_SetNextMod(const iMod)
 	}
 
 	new szPluginsFile[256];
-	formatex(szPluginsFile, charsmax(szPluginsFile), "%s/plugins-multimodmanager.ini", szConfigDir);
+	formatex(szPluginsFile, charsmax(szPluginsFile), "%s/%s", szConfigDir, PLUGINS_FILENAME);
 	
 	new pPluginsFile = fopen(szPluginsFile, "w+");
 
@@ -261,7 +315,7 @@ MultiMod_SetNextMod(const iMod)
 		new szModName[32];
 		json_object_get_string(jsonArrayMods, "modname", szModName, charsmax(szModName));
 
-		fprintf(pPluginsFile, "; Mod: ^"%s^"^n^n", szModName);
+		fprintf(pPluginsFile, ";Mod:^"%s^"^n^n", szModName);
 
 		new JSON:jsonObjectPlugins = json_object_get_value(jsonArrayMods, "plugins");
 		new iPlugins = json_array_get_count(jsonObjectPlugins);
