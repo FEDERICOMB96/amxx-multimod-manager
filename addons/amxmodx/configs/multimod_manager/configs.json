@@ -1,0 +1,91 @@
+{
+	"global_chat_prefix": "!g[MULTIMOD]",
+	"change_map_type": 1,
+	"mods":
+	[
+		{
+			"modname":"GunGame",
+			"mapsfile":"gungame_maps.ini",
+			"cvars":
+			[
+				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 45"
+			],
+			"plugins":
+			[
+				"plugin10.amxx", "plugin20.amxx"
+			]
+		},
+		{
+			"modname":"DeathMatch",
+			"mapsfile":"deathmatch_maps.ini",
+			"cvars":
+			[
+				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 20"
+			],
+			"plugins":
+			[
+				"plugin11.amxx", "plugin21.amxx", "plugin33.amxx", "plugin44.amxx", "plugin5.amxx"
+			]
+		},
+		{
+			"modname":"Fruta",
+			"mapsfile":"fruta_maps.ini",
+			"cvars":
+			[
+				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 30"
+			],
+			"plugins":
+			[
+				"plugin12.amxx", "plugin22.amxx", "plugin32.amxx", "plugin42.amxx"
+			]
+		},
+		{
+			"modname":"Zombie Plague",
+			"mapsfile":"zp_maps.ini",
+			"cvars":
+			[
+				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 30"
+			],
+			"plugins":
+			[
+				"plugin13.amxx", "plugin23.amxx", "plugin33.amxx", "plugin43.amxx", "plugin53.amxx", "plugin63.amxx", "plugin73.amxx"
+			]
+		},
+		{
+			"modname":"PaintBall",
+			"mapsfile":"paintball_maps.ini",
+			"cvars":
+			[
+				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 20"
+			],
+			"plugins":
+			[
+				"plugin14.amxx", "plugin24.amxx", "plugin34.amxx", "plugin44.amxx"
+			]
+		},
+		{
+			"modname":"HNS",
+			"mapsfile":"hns_maps.ini",
+			"cvars":
+			[
+				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 30"
+			],
+			"plugins":
+			[
+				"plugin15.amxx", "plugin25.amxx", "plugin35.amxx", "plugin45.amxx"
+			]
+		},
+		{
+			"modname":"Surf",
+			"mapsfile":"surf_maps.ini",
+			"cvars":
+			[
+				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 30"
+			],
+			"plugins":
+			[
+				"plugin15.amxx", "plugin25.amxx", "plugin35.amxx"
+			]
+		},
+	]
+}
