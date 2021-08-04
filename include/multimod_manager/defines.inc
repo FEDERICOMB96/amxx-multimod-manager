@@ -14,6 +14,8 @@
 #define ClearPlayerBit(%0,%1) 			( IsPlayer(%1) && ( %0 &= ~( 1 << ( %1 & 31 ) ) ) )
 #define SwitchPlayerBit(%0,%1) 			( IsPlayer(%1) && ( %0 ^= ( 1 << ( %1 & 31 ) ) ) )
 
+#define STRLEN_PATH						256
+
 enum 
 {
 	TASK_VOTEMAP = MAX_USERS,
