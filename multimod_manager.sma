@@ -170,17 +170,14 @@ public OnEvent_HLTV()
 {
 	if((g_NoMoreTime == 1 && !g_ChangeMapOneMoreRound) || (g_VoteRtvResult && g_NoMoreTime == 1))
 	{
-		new sTempMap[32];
-		get_cvar_string("amx_nextmap", sTempMap, 31);
-		
 		g_NoMoreTime = 2;
 		
-		set_task(2.0, "taskChangeMap", _, sTempMap, 32);
+		set_task(2.0, "taskChangeMap", _, amx_nextmap, sizeof(amx_nextmap));
 		
 		message_begin(MSG_ALL, SVC_INTERMISSION);
 		message_end();
 		
-		client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será: ^3%s", g_GlobalPrefix, sTempMap);
+		client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será: ^3%s", g_GlobalPrefix, amx_nextmap);
 	}
 
 	if(g_ChangeMapOneMoreRound) {
@@ -197,20 +194,13 @@ public OnTaskCheckVoteNextMod()
 {
 	g_ShowTime = 10;
 
-	new iTimeStartVote = 0;
-	new Float:fTimeStartVote = 0.0;
-	
-	iTimeStartVote = mm_timelimit;
-	iTimeStartVote -= 3;
-	iTimeStartVote *= 60;
-	
-	fTimeStartVote = float(iTimeStartVote);
+	new Float:flTimeStartVote = (get_pcvar_float(mp_timelimit) - 3.0) * 60.0;
 	
 	remove_task(TASK_VOTEMOD);
-	set_task(fTimeStartVote, "OnTaskVoteNextMod", TASK_VOTEMOD);
+	set_task(flTimeStartVote, "OnTaskVoteNextMod", TASK_VOTEMOD);
 	
 	remove_task(TASK_SHOWTIME);
-	set_task(fTimeStartVote - 10.0, "OnTaskSpamStartVote", TASK_SHOWTIME);
+	set_task(flTimeStartVote - 10.0, "OnTaskSpamStartVote", TASK_SHOWTIME);
 }
 
 public OnTaskSpamStartVote()

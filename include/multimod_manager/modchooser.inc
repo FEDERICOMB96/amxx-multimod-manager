@@ -138,9 +138,9 @@ public OnTaskVoteNextMod()
 	g_VoteModHasStarted = 1;
 	g_SVM_ModSecondRound = 0;
 
-	if((mm_timelimit < mm_extendmap_max) && !g_IsRtv)
+	if((get_pcvar_float(mp_timelimit) < Float:amx_extendmap_max) && !g_IsRtv)
 	{
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r%d.\w Extender el modo %dm^n", iMaxMods + 1, mm_extendmap_step);
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r%d.\w Extender el modo %dm^n", iMaxMods + 1, amx_extendmap_step);
 		iMenuKeys |= (1<<iMaxMods);
 
 		g_SVM_ModInMenu[g_ModVoteNum] = g_ModVoteNum;
@@ -167,10 +167,10 @@ public menu__CountVoteMod(const id, const iKey)
 	
 	if(iKey == MAX_SELECTMODS)
 	{
-		client_print_color(id, print_team_blue, "%s^1 Has elegido extender el modo^3 %d minutos más", g_GlobalPrefix, mm_extendmap_step);
+		client_print_color(id, print_team_blue, "%s^1 Has elegido extender el modo^3 %d minutos más", g_GlobalPrefix, amx_extendmap_step);
 		
-		if(mm_vote_answers)
-			client_print(0, print_console, "%n ha votado por: extender el modo %d minutos más", id, mm_extendmap_step);
+		if(amx_vote_answers)
+			client_print(0, print_console, "%n ha votado por: extender el modo %d minutos más", id, amx_extendmap_step);
 	}
 	else if(iKey < MAX_SELECTMODS)
 	{
@@ -178,7 +178,7 @@ public menu__CountVoteMod(const id, const iKey)
 		
 		client_print_color(id, print_team_blue, "%s^1 Has elegido el modo^3 %s", g_GlobalPrefix, szMod);
 		
-		if(mm_vote_answers)
+		if(amx_vote_answers)
 			client_print(0, print_console, "%n ha votado por el modo: %s", id, szMod);
 	}
 	else
@@ -189,7 +189,7 @@ public menu__CountVoteMod(const id, const iKey)
 
 		client_print_color(id, print_team_blue, "%sHas elegido el modo^3 %s^4 [ELECCIÓN ALEATORIA]", g_GlobalPrefix, szMod);
 		
-		if(mm_vote_answers)
+		if(amx_vote_answers)
 			client_print(0, print_console, "%n ha votado por el modo: %s [ELECCIÓN ALEATORIA]", id, szMod);
 	}
 	
@@ -231,7 +231,7 @@ public OnTaskCheckVoteMod()
 		client_print(0, print_console, "Modo: %s - Votos: %d - Porcentaje: %d%%", sMod, g_VoteModCountGlobal[i], (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[i] * 100) / g_VoteModCount) : 0);
 	}
 	
-	client_print(0, print_console, "Extender modo: %dm - Votos: %d - Porcentaje: %d%%", mm_extendmap_step, g_VoteModCountGlobal[MAX_SELECTMODS], (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[MAX_SELECTMODS] * 100) / g_VoteModCount) : 0);
+	client_print(0, print_console, "Extender modo: %dm - Votos: %d - Porcentaje: %d%%", amx_extendmap_step, g_VoteModCountGlobal[MAX_SELECTMODS], (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[MAX_SELECTMODS] * 100) / g_VoteModCount) : 0);
 	
 	// Hubo votos emitidos..
 	if(iResult)
@@ -346,7 +346,7 @@ public OnTaskVoteNextMod__FIX()
 
 		if(g_SVM_ModInMenu__FuckingFIX[i] == -1)
 		{
-			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w Extender el modo %dm^n", i+1, mm_extendmap_step);
+			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w Extender el modo %dm^n", i+1, amx_extendmap_step);
 			continue;
 		}
 
@@ -381,10 +381,10 @@ public menu__CountVoteModFIX(const id, const iKey)
 	
 	if(g_SVM_ModInMenu__FuckingFIX[iModId] == -1)
 	{
-		client_print_color(id, print_team_blue, "%s^1 Has elegido extender el modo^3 %d minutos más", g_GlobalPrefix, mm_extendmap_step);
+		client_print_color(id, print_team_blue, "%s^1 Has elegido extender el modo^3 %d minutos más", g_GlobalPrefix, amx_extendmap_step);
 		
-		if(mm_vote_answers)
-			client_print(0, print_console, "%n ha votado por: extender el modo %d minutos más", id, mm_extendmap_step);
+		if(amx_vote_answers)
+			client_print(0, print_console, "%n ha votado por: extender el modo %d minutos más", id, amx_extendmap_step);
 	}
 	else
 	{
@@ -392,7 +392,7 @@ public menu__CountVoteModFIX(const id, const iKey)
 		
 		client_print_color(id, print_team_blue, "%s^1 Has elegido el modo^3 %s", g_GlobalPrefix, sMod);
 		
-		if(mm_vote_answers)
+		if(amx_vote_answers)
 			client_print(0, print_console, "%n ha votado por el modo: %s", id, sMod);
 	}
 	
@@ -432,7 +432,7 @@ public OnTaskCheckVoteModFIX()
 	{
 		if(g_SVM_ModInMenu__FuckingFIX[i] == -1)
 		{
-			client_print(0, print_console, "Extender mapa: %d' - Votos: %d - Porcentaje: %d%%", mm_extendmap_step, g_VoteModCountGlobal[i], (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[i] * 100) / g_VoteModCount) : 0);
+			client_print(0, print_console, "Extender mapa: %d' - Votos: %d - Porcentaje: %d%%", amx_extendmap_step, g_VoteModCountGlobal[i], (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[i] * 100) / g_VoteModCount) : 0);
 			continue;
 		}
 
@@ -538,8 +538,8 @@ public OnTaskCheckVoteModFIX()
 
 Float:ExtendActualMod()
 {
-	new Float:fExtendMod = Float:mm_extendmap_step;
-	set_cvar_float("mp_timelimit", (mm_timelimit + fExtendMod));
+	new Float:fExtendMod = Float:amx_extendmap_step;
+	set_pcvar_float(mp_timelimit, (get_pcvar_float(mp_timelimit) + fExtendMod));
 
 	return fExtendMod;
 }
