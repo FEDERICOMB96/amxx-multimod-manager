@@ -10,7 +10,6 @@
 #define MAX_SELECTMAPS			5
 #define MAX_RECENT_MAPS			5
 
-new g_MapsNum = 0;
 new g_VoteCount = 0;
 new g_VoteCountGlobal[MAX_SELECTMAPS + 2];
 new g_SVM_MapInMenu[MAX_SELECTMAPS + 1];
@@ -81,7 +80,7 @@ MapChooser_ResetAllData()
 MapChooser_InitNextVoteMap()
 {
 	g_ShowTime = 10;
-	
+
 	new Float:flTimeStartVote = (get_pcvar_float(mp_timelimit) - 2.0) * 60.0;
 	
 	remove_task(TASK_VOTEMAP);
@@ -118,8 +117,9 @@ public OnTaskVoteNextMap()
 	new iMaxMaps;
 	new iStart;
 	new iOk;
+	new iArraySizeMaps = ArraySize(g_Array_MapName);
 
-	iMaxMaps = (g_MapsNum > MAX_SELECTMAPS) ? MAX_SELECTMAPS : g_MapsNum;
+	iMaxMaps = (iArraySizeMaps > MAX_SELECTMAPS) ? MAX_SELECTMAPS : iArraySizeMaps;
 	iMenuKeys = (1<<iMaxMaps + 1);
 	
 	iLen = formatex(sMenu, charsmax(sMenu), "\yElige el próximo mapa: ¡VOTÁ AHORA!^n^n");
@@ -130,12 +130,12 @@ public OnTaskVoteNextMap()
 		if(g_SVM_MapInMenu[g_MapVoteNum] == -1)
 		{
 			iOk = 1;
-			iStart = iRandom = random_num(0, (g_MapsNum - 1));
+			iStart = iRandom = random_num(0, (iArraySizeMaps - 1));
 			
 			while(IsMapInMenu(iRandom))
 			{
-				if(++iRandom >= g_MapsNum)
-					iRandom = 0; // = random_num(0, (g_MapsNum - 1));
+				if(++iRandom >= iArraySizeMaps)
+					iRandom = 0;
 
 				if(iRandom == iStart) // Fix infinite bucle
 				{
@@ -171,7 +171,7 @@ public OnTaskVoteNextMap()
 	client_print_color(0, print_team_default, "%sEs momento de elegir el próximo mapa!", g_GlobalPrefix);
 	
 	ClearSyncHud(0, g_HUD_Alert);
-	OnTask_HudVote();
+	OnTask_MapChooserHudVote();
 }
 
 public menu__CountVoteMap(const id, const iKey)
@@ -351,7 +351,7 @@ public OnTaskVoteNextMap__FIX()
 	client_print_color(0, print_team_default, "%sEs momento de elegir el próximo mapa (SEGUNDA VOTACIÓN)!", g_GlobalPrefix);
 	
 	ClearSyncHud(0, g_HUD_Alert);
-	OnTask_HudVote();
+	OnTask_MapChooserHudVote();
 }
 
 public menu__CountVoteMapFIX(const id, const iKey)
@@ -476,12 +476,12 @@ public OnTaskCheckVotesMapFIX()
 	}
 }
 
-public OnTask_HudVote()
+public OnTask_MapChooserHudVote()
 {
 	if(!g_VoteMapHasStarted)
 		return;
 
-	set_task(0.1, "OnTask_HudVote");
+	set_task(0.1, "OnTask_MapChooserHudVote");
 
 	if(!g_VoteCount)
 	{
@@ -498,10 +498,8 @@ public OnTask_HudVote()
 	new iNoFirst = 0;
 	new iMapId[MAX_SELECTMAPS + 2];
 	new iVoteMaps[MAX_SELECTMAPS + 2];
-	new iExtendMap[MAX_SELECTMAPS + 2];
 
 	new sHud[256];
-	new sMap[32];
 
 	iLoop = (g_SVM_MapSecondRound) ? g_MapVoteNum : (g_MapVoteNum + 1);
 	
@@ -509,7 +507,6 @@ public OnTask_HudVote()
 	{
 		iMapId[i] = (g_SVM_MapSecondRound) ? g_SVM_MapInMenu__FuckingFIX[i] : g_SVM_MapInMenu[i];
 		iVoteMaps[i] = g_VoteCountGlobal[i];
-		iExtendMap[i] = (i == MAX_SELECTMAPS || iMapId[i] == -1) ? 1 : 0;
 	}
 
 	// Ordenamiento por seleccion
@@ -526,10 +523,6 @@ public OnTask_HudVote()
 				iTemp = iMapId[j];
 				iMapId[j] = iMapId[i];
 				iMapId[i] = iTemp;
-
-				iTemp = iExtendMap[j];
-				iExtendMap[j] = iExtendMap[i];
-				iExtendMap[i] = iTemp;
 			}
 		}
 	}
@@ -544,13 +537,7 @@ public OnTask_HudVote()
 
 		iNoFirst = 1;
 
-		if(!iExtendMap[i])
-		{
-			ArrayGetString(g_Array_MapName, iMapId[i], sMap, 31);
-			iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "%s: %d voto%s (%d%%%%)", sMap, iVoteMaps[i], (iVoteMaps[i] == 1) ? "" : "s", (g_VoteCount > 0) ? ((iVoteMaps[i] * 100) / g_VoteCount) : 0);
-		}
-		else
-			iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "Extender mapa %dm: %d voto%s (%d%%%%)", amx_extendmap_step, iVoteMaps[i], (iVoteMaps[i] == 1) ? "" : "s", (g_VoteCount > 0) ? ((iVoteMaps[i] * 100) / g_VoteCount) : 0);
+		iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "%a: %d voto%s (%d%%%%)", ArrayGetStringHandle(g_Array_MapName, iMapId[i]), iVoteMaps[i], (iVoteMaps[i] == 1) ? "" : "s", (g_VoteCount > 0) ? ((iVoteMaps[i] * 100) / g_VoteCount) : 0);
 	}
 
 	set_hudmessage(255, 255, 255, 0.75, 0.35, 0, 0.0, 0.3, 0.0, 0.0, -1);
@@ -622,7 +609,6 @@ MapChooser_LoadMaps(const szFileName[])
 	new sLine[256];
 	new sMap[64];
 	
-	g_MapsNum = 0;
 	g_RecentMapsCount = 0;
 
 	/*copy(sLine, charsmax(sLine), "addons/amxmodx/configs/recentmaps/maps.txt");
@@ -668,7 +654,7 @@ MapChooser_LoadMaps(const szFileName[])
 				fgets(iFile, sLine, 255);
 				parse(sLine, sMap, 63);
 
-				strtolower(sMap);
+				mb_strtolower(sMap);
 				
 				if(sMap[0] != ';' && validMap(sMap) && !equali(sMap, g_CurrentMap) && !equali(sMap, g_LastMap) && (containi(sMap, g_CurrentMap) == -1) && (containi(sMap, g_LastMap) == -1))
 				{
@@ -686,7 +672,6 @@ MapChooser_LoadMaps(const szFileName[])
 					}
 
 					ArrayPushString(g_Array_MapName, sMap);
-					++g_MapsNum;
 				}
 			}
 			
@@ -717,15 +702,17 @@ stock validMap(mapname[]) {
 	return 0;
 }
 
-stock IsMapInMenu(const i) {
+stock IsMapInMenu(const i)
+{
 	new j;
-	for(j = 0; j < (MAX_SELECTMAPS + 1); ++j) {
+	for(j = 0; j < (MAX_SELECTMAPS + 1); ++j)
+	{
 		if(i == g_SVM_MapInMenu[j]) {
 			return 1;
 		}
 	}
 
-	if((g_MapsNum + MAX_RECENT_MAPS) > MAX_RECENT_MAPS) {
+	if((ArraySize(g_Array_MapName) + MAX_RECENT_MAPS) > MAX_RECENT_MAPS) {
 		new sMap[64];
 		formatex(sMap, 63, "%a", ArrayGetStringHandle(g_Array_MapName, i));
 
