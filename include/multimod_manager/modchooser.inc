@@ -154,7 +154,8 @@ public OnTaskVoteNextMod()
 	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
 	client_print_color(0, print_team_default, "%sEs momento de elegir el próximo modo!", g_GlobalPrefix);
 	
-	client_print(0, print_center, "");
+	ClearSyncHud(0, g_HUD_Vote);
+	OnTask_ModChooserHudVote();
 }
 
 public menu__CountVoteMod(const id, const iKey)
@@ -368,7 +369,8 @@ public OnTaskVoteNextMod__FIX()
 	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
 	client_print_color(0, print_team_default, "%sEs momento de elegir el próximo modo (SEGUNDA VOTACIÓN)!", g_GlobalPrefix);
 	
-	client_print(0, print_center, "");
+	ClearSyncHud(0, g_HUD_Vote);
+	OnTask_ModChooserHudVote();
 }
 
 public menu__CountVoteModFIX(const id, const iKey)
@@ -536,6 +538,82 @@ public OnTaskCheckVoteModFIX()
 	}
 }
 
+public OnTask_ModChooserHudVote()
+{
+	if(!g_VoteModHasStarted)
+		return;
+
+	set_task(0.1, "OnTask_ModChooserHudVote");
+
+	if(!g_VoteModCount)
+	{
+		set_hudmessage(255, 255, 255, 0.75, 0.35, 0, 0.0, 0.2, 0.0, 0.0, -1);
+		ShowSyncHudMsg(0, g_HUD_Vote, "Sin votos emitidos");
+		return;
+	}
+
+	new i;
+	new j;
+	new iLen = 0;
+	new iTemp = 0;
+	new iLoop = 0;
+	new iNoFirst = 0;
+	new iModId[MAX_SELECTMODS + 2];
+	new iVoteMods[MAX_SELECTMODS + 2];
+	new iExtendMod[MAX_SELECTMODS + 2];
+
+	new sHud[256];
+
+	iLoop = (g_SVM_ModSecondRound) ? g_ModVoteNum : (g_ModVoteNum + 1);
+	
+	for(i = 0; i < iLoop; ++i)
+	{
+		iModId[i] = (g_SVM_ModSecondRound) ? g_SVM_ModInMenu__FuckingFIX[i] : g_SVM_ModInMenu[i];
+		iVoteMods[i] = g_VoteModCountGlobal[i];
+		iExtendMod[i] = (i == MAX_SELECTMODS || iModId[i] == -1) ? 1 : 0;
+	}
+
+	// Ordenamiento por seleccion
+	for(i = 0; i < g_ModVoteNum; ++i)
+	{
+		for(j = (i + 1); j < (g_ModVoteNum + 1); ++j)
+		{
+			if(iVoteMods[j] > iVoteMods[i])
+			{
+				iTemp = iVoteMods[j];
+				iVoteMods[j] = iVoteMods[i];
+				iVoteMods[i] = iTemp;
+
+				iTemp = iModId[j];
+				iModId[j] = iModId[i];
+				iModId[i] = iTemp;
+
+				iTemp = iExtendMod[j];
+				iExtendMod[j] = iExtendMod[i];
+				iExtendMod[i] = iTemp;
+			}
+		}
+	}
+
+	for(i = 0; i < iLoop; ++i)
+	{
+		if(!iVoteMods[i])
+			continue;
+
+		if(iNoFirst)
+			iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "^n");
+
+		iNoFirst = 1;
+
+		(!iExtendMod[i])
+			? (iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "%a: %d voto%s (%d%%%%)", ArrayGetStringHandle(g_aModNames, iModId[i]), iVoteMods[i], (iVoteMods[i] == 1) ? "" : "s", (g_VoteModCount > 0) ? ((iVoteMods[i] * 100) / g_VoteModCount) : 0))
+			: (iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "Extender mapa %dm: %d voto%s (%d%%%%)", amx_extendmap_step, iVoteMods[i], (iVoteMods[i] == 1) ? "" : "s", (g_VoteModCount > 0) ? ((iVoteMods[i] * 100) / g_VoteModCount) : 0));
+	}
+
+	set_hudmessage(255, 255, 255, 0.75, 0.35, 0, 0.0, 0.3, 0.0, 0.0, -1);
+	ShowSyncHudMsg(0, g_HUD_Vote, sHud);
+}
+
 Float:ExtendActualMod()
 {
 	new Float:fExtendMod = Float:amx_extendmap_step;
@@ -548,7 +626,7 @@ IsModInMenu(const i)
 {
 	for(new j = 0; j < (MAX_SELECTMODS + 1); ++j)
 	{
-		if(i == g_SVM_ModInMenu[j])
+		if(i == g_SVM_ModInMenu[j] || equali(g_CurrentMod, g_SVM_ModName[j]))
 			return 1;
 	}
 
