@@ -77,17 +77,17 @@ MapChooser_ResetAllData()
 	remove_task(TASK_SHOWTIME);
 }
 
-MapChooser_InitNextVoteMap()
+MapChooser_InitNextVoteMap(iStartVote)
 {
 	g_ShowTime = 10;
 
-	new Float:flTimeStartVote = (get_pcvar_float(mp_timelimit) - 2.0) * 60.0;
-	
-	remove_task(TASK_VOTEMAP);
-	set_task(flTimeStartVote, "OnTaskVoteNextMap", TASK_VOTEMAP);
-	
+	new Float:flStartVote = float(clamp(iStartVote, 10, iStartVote));
+
 	remove_task(TASK_SHOWTIME);
-	set_task(flTimeStartVote - 10.0, "OnTaskSpamStartVote", TASK_SHOWTIME);
+	remove_task(TASK_VOTEMAP);
+
+	set_task(flStartVote - 10.0, "OnTask_AlertStartNextVote", TASK_SHOWTIME);
+	set_task(flStartVote, "OnTask_VoteNextMap", TASK_VOTEMAP);
 }
 
 MapChooser_ClientPutInServer(const id)
@@ -107,7 +107,7 @@ MapChooser_ClientDisconnected(const id)
 	}
 }
 
-public OnTaskVoteNextMap()
+public OnTask_VoteNextMap()
 {
 	new sMenu[400];
 	new iMenuKeys;
@@ -271,8 +271,8 @@ public OnTaskCheckVotesMap()
 
 			client_cmd(0, "spk ^"run officer(e40) voltage(e30) accelerating(s70) is required^"");
 
-			set_task(5.0, "OnTaskSpamStartVote", TASK_SHOWTIME);
-			set_task(10.0, "OnTaskVoteNextMap__FIX");
+			set_task(5.0, "OnTask_AlertStartNextVote", TASK_SHOWTIME);
+			set_task(10.0, "OnTask_VoteNextMap__FIX");
 		}
 
 		// Solo 1 ganador
@@ -320,7 +320,7 @@ public OnTaskCheckVotesMap()
 	}
 }
 
-public OnTaskVoteNextMap__FIX()
+public OnTask_VoteNextMap__FIX()
 {
 	new sMenu[400];
 	new iMenuKeys;
