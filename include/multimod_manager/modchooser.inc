@@ -279,14 +279,6 @@ public OnTaskCheckVoteMod()
 				client_print_color(0, print_team_blue, "%s^1 El modo actual se extenderá^3 %d minutos más ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalPrefix, floatround(flExtendMod), iResult, g_VoteModCount, (g_VoteModCount != 1) ? "s" : "", (g_VoteModCount > 0) ? ((iResult * 100) / g_VoteModCount) : 0); // , (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[MAX_SELECTMODS] * 100) / g_VoteModCount) : 0
 				
 				ModChooser_ResetAllData();
-
-				flExtendMod -= 3;
-				flExtendMod *= 60;
-				
-				set_task(flExtendMod, "OnTask_VoteNextMod", TASK_VOTEMOD);
-				set_task(flExtendMod - 10.0, "OnTask_AlertStartNextVote", TASK_SHOWTIME);
-				
-				g_ShowTime = 10;
 				return;
 			}
 
@@ -481,14 +473,6 @@ public OnTaskCheckVoteModFIX()
 				client_print_color(0, print_team_blue, "%s^1 El mapa actual se extenderá^3 %d minutos más ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalPrefix, floatround(flExtendMod), iResult, g_VoteModCount, (g_VoteModCount != 1) ? "s" : "", (g_VoteModCount > 0) ? ((iResult * 100) / g_VoteModCount) : 0);
 
 			ModChooser_ResetAllData();
-
-			flExtendMod -= 3;
-			flExtendMod *= 60;
-			
-			set_task(flExtendMod, "OnTask_VoteNextMod", TASK_VOTEMOD);
-			set_task(flExtendMod - 10.0, "OnTask_AlertStartNextVote", TASK_SHOWTIME);
-			
-			g_ShowTime = 10;
 			return;
 		}
 
