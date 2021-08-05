@@ -1,3 +1,5 @@
+#pragma semicolon 1
+
 new const PLUGIN_NAME[] = "MultiMod Manager";
 new const PLUGIN_VERSION[] = "v2021.08.02";
 
@@ -13,8 +15,9 @@ new const PLUGINS_FILENAME[] = "plugins-multimodmanager.ini";
 new g_bConnected;
 
 new g_GlobalPrefix[21];
-new ChangeMap_e:g_ChangeMapType;
+new g_TimeleftTrigger;
 new Array:g_aModNames;
+new ChangeMap_e:g_ChangeMapType;
 
 new g_CurrentMap[64];
 new g_LastMap[64];
@@ -129,16 +132,14 @@ MultiModInit()
 	replace_string(g_GlobalPrefix, charsmax(g_GlobalPrefix), "!t" , "^3");
 	replace_string(g_GlobalPrefix, charsmax(g_GlobalPrefix), "!g" , "^4");
 
-	g_ChangeMapType = ChangeMap_e:json_object_get_number(jsonConfigsFile, "change_map_type");
+	g_TimeleftTrigger = json_object_get_number(jsonConfigsFile, "timeleft_trigger");
 
 	new JSON:jsonObjectMods = json_object_get_value(jsonConfigsFile, "mods");
 	new iCount = json_array_get_count(jsonObjectMods);
 
 	new Array:aExecCFGs = ArrayCreate(128);
 
-	for(new i = 0,
-		szModName[32],
-		JSON:jsonArrayValue; i < iCount; ++i)
+	for(new i = 0, szModName[32], JSON:jsonArrayValue; i < iCount; ++i)
 	{
 		jsonArrayValue = json_array_get_value(jsonObjectMods, i);
 
@@ -148,11 +149,12 @@ MultiModInit()
 		// Modo actual? Ejecutar CFGs
 		if(equali(g_CurrentMod, szModName))
 		{
+			g_ChangeMapType = ChangeMap_e:json_object_get_number(jsonArrayValue, "change_map_type");
+
 			new JSON:jsonObjectCvars = json_object_get_value(jsonArrayValue, "cvars");
 			new iCvars = json_array_get_count(jsonObjectCvars);
 
-			for(new j = 0,
-				szCvarName[128]; j < iCvars; ++j)
+			for(new j = 0, szCvarName[128]; j < iCvars; ++j)
 			{
 				json_array_get_string(jsonObjectCvars, j, szCvarName, charsmax(szCvarName));
 				ArrayPushString(aExecCFGs, szCvarName);
@@ -181,11 +183,7 @@ MultiModInit()
 		return;
 	}
 
-	if(iCount > 1)
-	{
-		remove_task(TASK_VOTEMOD);
-		set_task(10.0, "OnTaskCheckVoteNextMod", TASK_VOTEMOD);
-	}
+	OnEvent_GameRestart();
 }
 
 MultiMod_GetCurrentMod(const szFilePath[STRLEN_PATH], szOut[], const iLen)
@@ -217,8 +215,8 @@ public OnEvent_GameRestart()
 
 	if(ArraySize(g_aModNames))
 	{
-		remove_task(TASK_VOTEMOD);
-		set_task(10.0, "OnTaskCheckVoteNextMod", TASK_VOTEMOD);
+		remove_task(TASK_ENDMAP);
+		set_task(10.0, "OnTask_CheckVoteNextMod", TASK_ENDMAP, .flags = "b");
 	}
 }
 
@@ -236,30 +234,56 @@ public OnEvent_HLTV()
 		client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será: ^3%s", g_GlobalPrefix, amx_nextmap);
 	}
 
-	if(g_ChangeMapOneMoreRound) {
+	if(g_ChangeMapOneMoreRound)
+	{
 		g_ChangeMapOneMoreRound = 0;
-
-		//executeChangeTimeleft();
 
 		client_cmd(0, "spk ^"%s^"", g_SOUND_ExtendTime);
 		client_print_color(0, print_team_default, "%s^1 El mapa cambiará al finalizar la ronda!", g_GlobalPrefix);
 	}
 }
 
-public OnTaskCheckVoteNextMod()
+public OnTask_CheckVoteNextMod()
 {
+	if(g_SelectedNextMod || g_SelectedNextMap)
+	{
+		remove_task(TASK_ENDMAP);
+		return;
+	}
+
+	if(mp_winlimit)
+	{
+		new a = mp_winlimit - 2;
+		
+		if((a > get_member_game(m_iNumCTWins)) && (a > get_member_game(m_iNumTerroristWins)))
+			return;
+	}
+	else if(mp_maxrounds)
+	{
+		if((mp_maxrounds - 2) > (get_member_game(m_iNumCTWins) + get_member_game(m_iNumTerroristWins)))
+			return;
+	}
+	else
+	{
+		new iTimeleft = get_timeleft();
+		
+		if(iTimeleft < 1 || iTimeleft > g_TimeleftTrigger)
+			return;
+	}
+	
+	if(g_VoteModHasStarted || g_VoteMapHasStarted)
+		return;
+
 	g_ShowTime = 10;
 
-	new Float:flTimeStartVote = (get_pcvar_float(mp_timelimit) - 3.0) * 60.0;
-
-	remove_task(TASK_VOTEMOD);
-	set_task(flTimeStartVote, "OnTaskVoteNextMod", TASK_VOTEMOD);
-	
 	remove_task(TASK_SHOWTIME);
-	set_task(flTimeStartVote - 10.0, "OnTaskSpamStartVote", TASK_SHOWTIME);
+	remove_task(TASK_VOTEMOD);
+
+	OnTask_AlertStartNextVote();
+	set_task(10.1, "OnTask_VoteNextMod", TASK_VOTEMOD);
 }
 
-public OnTaskSpamStartVote()
+public OnTask_AlertStartNextVote()
 {
 	if(!g_ShowTime)
 	{
@@ -279,9 +303,8 @@ public OnTaskSpamStartVote()
 	--g_ShowTime;
 	
 	remove_task(TASK_SHOWTIME);
-	set_task(1.0, "OnTaskSpamStartVote", TASK_SHOWTIME);
+	set_task(1.0, "OnTask_AlertStartNextVote", TASK_SHOWTIME);
 }
-
 
 MultiMod_SetNextMod(const iMod)
 {
