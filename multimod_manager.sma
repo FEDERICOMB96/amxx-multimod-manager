@@ -216,7 +216,7 @@ public OnEvent_GameRestart()
 	if(ArraySize(g_aModNames))
 	{
 		remove_task(TASK_ENDMAP);
-		set_task(10.0, "OnTask_CheckVoteNextMod", TASK_ENDMAP, .flags = "b");
+		set_task(15.0, "OnTask_CheckVoteNextMod", TASK_ENDMAP, .flags = "b");
 	}
 }
 
