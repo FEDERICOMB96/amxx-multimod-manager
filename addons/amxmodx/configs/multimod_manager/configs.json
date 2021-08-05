@@ -1,11 +1,12 @@
 {
 	"global_chat_prefix": "!g[MULTIMOD]",
-	"change_map_type": 1,
+	"timeleft_trigger": 180,
 	"mods":
 	[
 		{
 			"modname":"GunGame",
 			"mapsfile":"gungame_maps.ini",
+			"change_map_type": 1,
 			"cvars":
 			[
 				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 45"
@@ -18,6 +19,7 @@
 		{
 			"modname":"DeathMatch",
 			"mapsfile":"deathmatch_maps.ini",
+			"change_map_type": 1,
 			"cvars":
 			[
 				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 20"
@@ -30,6 +32,7 @@
 		{
 			"modname":"Fruta",
 			"mapsfile":"fruta_maps.ini",
+			"change_map_type": 1,
 			"cvars":
 			[
 				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 30"
@@ -42,6 +45,7 @@
 		{
 			"modname":"Zombie Plague",
 			"mapsfile":"zp_maps.ini",
+			"change_map_type": 1,
 			"cvars":
 			[
 				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 30"
@@ -54,6 +58,7 @@
 		{
 			"modname":"PaintBall",
 			"mapsfile":"paintball_maps.ini",
+			"change_map_type": 1,
 			"cvars":
 			[
 				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 20"
@@ -66,6 +71,7 @@
 		{
 			"modname":"HNS",
 			"mapsfile":"hns_maps.ini",
+			"change_map_type": 1,
 			"cvars":
 			[
 				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 30"
@@ -78,6 +84,7 @@
 		{
 			"modname":"Surf",
 			"mapsfile":"surf_maps.ini",
+			"change_map_type": 1,
 			"cvars":
 			[
 				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 30"
@@ -86,6 +93,6 @@
 			[
 				"plugin15.amxx", "plugin25.amxx", "plugin35.amxx"
 			]
-		},
+		}
 	]
 }
