@@ -83,7 +83,7 @@ ModChooser_ClientDisconnected(const id)
 	}
 }
 
-public OnTaskVoteNextMod()
+public OnTask_VoteNextMod()
 {
 	new sMenu[400];
 	new iMenuKeys;
@@ -264,8 +264,8 @@ public OnTaskCheckVoteMod()
 
 			client_cmd(0, "spk ^"run officer(e40) voltage(e30) accelerating(s70) is required^"");
 
-			set_task(5.0, "OnTaskSpamStartVote", TASK_SHOWTIME);
-			set_task(10.0, "OnTaskVoteNextMod__FIX");
+			set_task(5.0, "OnTask_AlertStartNextVote", TASK_SHOWTIME);
+			set_task(10.0, "OnTask_VoteNextMod__FIX");
 		}
 
 		// Solo 1 ganador
@@ -283,8 +283,8 @@ public OnTaskCheckVoteMod()
 				flExtendMod -= 3;
 				flExtendMod *= 60;
 				
-				set_task(flExtendMod, "OnTaskVoteNextMod", TASK_VOTEMOD);
-				set_task(flExtendMod - 10.0, "OnTaskSpamStartVote", TASK_SHOWTIME);
+				set_task(flExtendMod, "OnTask_VoteNextMod", TASK_VOTEMOD);
+				set_task(flExtendMod - 10.0, "OnTask_AlertStartNextVote", TASK_SHOWTIME);
 				
 				g_ShowTime = 10;
 				return;
@@ -299,7 +299,7 @@ public OnTaskCheckVoteMod()
 
 			g_SelectedNextMod = 1;
 
-			MapChooser_InitNextVoteMap();
+			MapChooser_InitNextVoteMap(60);
 		}
 	}
 	else
@@ -328,11 +328,11 @@ public OnTaskCheckVoteMod()
 
 		g_SelectedNextMod = 1;
 
-		MapChooser_InitNextVoteMap();
+		MapChooser_InitNextVoteMap(60);
 	}
 }
 
-public OnTaskVoteNextMod__FIX()
+public OnTask_VoteNextMod__FIX()
 {
 	new sMenu[400];
 	new iMenuKeys;
@@ -485,8 +485,8 @@ public OnTaskCheckVoteModFIX()
 			flExtendMod -= 3;
 			flExtendMod *= 60;
 			
-			set_task(flExtendMod, "OnTaskVoteNextMod", TASK_VOTEMOD);
-			set_task(flExtendMod - 10.0, "OnTaskSpamStartVote", TASK_SHOWTIME);
+			set_task(flExtendMod, "OnTask_VoteNextMod", TASK_VOTEMOD);
+			set_task(flExtendMod - 10.0, "OnTask_AlertStartNextVote", TASK_SHOWTIME);
 			
 			g_ShowTime = 10;
 			return;
@@ -506,7 +506,7 @@ public OnTaskCheckVoteModFIX()
 
 		g_SelectedNextMod = 1;
 
-		MapChooser_InitNextVoteMap();
+		MapChooser_InitNextVoteMap(60);
 	}
 	else
 	{
@@ -534,7 +534,7 @@ public OnTaskCheckVoteModFIX()
 
 		g_SelectedNextMod = 1;
 
-		MapChooser_InitNextVoteMap();
+		MapChooser_InitNextVoteMap(60);
 	}
 }
 
