@@ -10,8 +10,8 @@
 #define MAX_SELECTMAPS			5
 #define MAX_RECENT_MAPS			5
 
-new g_VoteCount = 0;
-new g_VoteCountGlobal[MAX_SELECTMAPS + 2];
+new g_VoteMapCount = 0;
+new g_VoteMapCountGlobal[MAX_SELECTMAPS + 2];
 new g_SVM_MapInMenu[MAX_SELECTMAPS + 1];
 new g_SVM_MapInMenu__FuckingFIX[MAX_SELECTMAPS + 1];
 new g_SVM_MapName[MAX_SELECTMAPS + 1][64];
@@ -46,7 +46,7 @@ MapChooser_Init()
 MapChooser_ResetAllData()
 {
 	for(new i = 0; i < (MAX_SELECTMAPS + 2); ++i)
-		g_VoteCountGlobal[i] = 0;
+		g_VoteMapCountGlobal[i] = 0;
 
 	for(new i = 0; i < (MAX_SELECTMAPS + 1); ++i)
 	{
@@ -55,7 +55,7 @@ MapChooser_ResetAllData()
 		g_SVM_MapName[i][0] = EOS;
 	}
 
-	g_VoteCount = 0;
+	g_VoteMapCount = 0;
 	g_SVM_MapSecondRound = 0;
 	g_MapVoteNum = 0;
 	g_ChangeMapTime = 10;
@@ -100,8 +100,8 @@ MapChooser_ClientDisconnected(const id)
 	// Si votó y se fue antes de terminar la votacion, su voto es removido!
 	if(g_VoteMapId[id] && g_VoteMapHasStarted)
 	{
-		--g_VoteCountGlobal[g_VoteMapId[id]-1];
-		--g_VoteCount;
+		--g_VoteMapCountGlobal[g_VoteMapId[id]-1];
+		--g_VoteMapCount;
 
 		g_VoteMapId[id] = 0;
 	}
@@ -156,9 +156,9 @@ public OnTaskVoteNextMap()
 	}
 	
 	for(j = 0; j < (MAX_SELECTMAPS + 2); ++j)
-		g_VoteCountGlobal[j] = 0;
+		g_VoteMapCountGlobal[j] = 0;
 	
-	g_VoteCount = 0;
+	g_VoteMapCount = 0;
 	g_VoteMapHasStarted = 1;
 	g_SVM_MapSecondRound = 0;
 
@@ -203,8 +203,8 @@ public menu__CountVoteMap(const id, const iKey)
 			client_print(0, print_console, "%n ha votado por el mapa: %s [ELECCIÓN ALEATORIA]", id, sMap);
 	}
 	
-	++g_VoteCountGlobal[iMapId];
-	++g_VoteCount;
+	++g_VoteMapCountGlobal[iMapId];
+	++g_VoteMapCount;
 
 	g_VoteMapId[id] = iMapId+1;
 }
@@ -223,13 +223,13 @@ public OnTaskCheckVotesMap()
 		{
 			iWinner = i;
 			iFirst = 1;
-			iResult = g_VoteCountGlobal[i];
+			iResult = g_VoteMapCountGlobal[i];
 		}
 
-		if(g_VoteCountGlobal[i] > iResult)
+		if(g_VoteMapCountGlobal[i] > iResult)
 		{
 			iWinner = i;
-			iResult = g_VoteCountGlobal[i];
+			iResult = g_VoteMapCountGlobal[i];
 		}
 	}
 
@@ -239,10 +239,10 @@ public OnTaskCheckVotesMap()
 	{
 		ArrayGetString(g_Array_MapName, g_SVM_MapInMenu[i], sMap, 31);
 		
-		client_print(0, print_console, "Mapa: %s - Votos: %d - Porcentaje: %d%%", sMap, g_VoteCountGlobal[i], (g_VoteCount > 0) ? ((g_VoteCountGlobal[i] * 100) / g_VoteCount) : 0);
+		client_print(0, print_console, "Mapa: %s - Votos: %d - Porcentaje: %d%%", sMap, g_VoteMapCountGlobal[i], (g_VoteMapCount > 0) ? ((g_VoteMapCountGlobal[i] * 100) / g_VoteMapCount) : 0);
 	}
 	
-	client_print(0, print_console, "Extender mapa: %dm - Votos: %d - Porcentaje: %d%%", amx_extendmap_step, g_VoteCountGlobal[MAX_SELECTMAPS], (g_VoteCount > 0) ? ((g_VoteCountGlobal[MAX_SELECTMAPS] * 100) / g_VoteCount) : 0);
+	client_print(0, print_console, "Extender mapa: %dm - Votos: %d - Porcentaje: %d%%", amx_extendmap_step, g_VoteMapCountGlobal[MAX_SELECTMAPS], (g_VoteMapCount > 0) ? ((g_VoteMapCountGlobal[MAX_SELECTMAPS] * 100) / g_VoteMapCount) : 0);
 
 	// Hubo votos emitidos..
 	if(iResult)
@@ -252,7 +252,7 @@ public OnTaskCheckVotesMap()
 		// Chequeo si hubo 2 o más mapas con los mismos votos
 		for(i = 0; i <= g_MapVoteNum; ++i)
 		{
-			if(g_VoteCountGlobal[i] == iResult)
+			if(g_VoteMapCountGlobal[i] == iResult)
 			{
 				if(i != MAX_SELECTMAPS) // MAX_SELECTMAPS == extender mapa
 					g_SVM_MapInMenu__FuckingFIX[j++] = g_SVM_MapInMenu[i];
@@ -281,7 +281,7 @@ public OnTaskCheckVotesMap()
 			ArrayGetString(g_Array_MapName, g_SVM_MapInMenu[iWinner], sMap, 31);
 			set_pcvar_string(pamx_nextmap, sMap);
 
-			client_print_color(0, print_team_blue, "%sVotación finalizada, el mapa ganador es ^3%s ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalPrefix, sMap, iResult, g_VoteCount, (g_VoteCount != 1) ? "s" : "", (g_VoteCount > 0) ? ((iResult * 100) / g_VoteCount) : 0); // , (g_VoteCount > 0) ? ((g_VoteCountGlobal[j] * 100) / g_VoteCount) : 0
+			client_print_color(0, print_team_blue, "%sVotación finalizada, el mapa ganador es ^3%s ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalPrefix, sMap, iResult, g_VoteMapCount, (g_VoteMapCount != 1) ? "s" : "", (g_VoteMapCount > 0) ? ((iResult * 100) / g_VoteMapCount) : 0); // , (g_VoteMapCount > 0) ? ((g_VoteMapCountGlobal[j] * 100) / g_VoteMapCount) : 0
 			
 			MapChooser_ResetAllData();
 
@@ -338,9 +338,9 @@ public OnTaskVoteNextMap__FIX()
 	iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n^n\d(SEGUNDA VOTACIÓN)");
 
 	for(i = 0; i < (MAX_SELECTMAPS + 2); ++i)
-		g_VoteCountGlobal[i] = 0;
+		g_VoteMapCountGlobal[i] = 0;
 
-	g_VoteCount = 0;
+	g_VoteMapCount = 0;
 	g_VoteMapHasStarted = 1;
 	g_SVM_MapSecondRound = 1;
 
@@ -369,8 +369,8 @@ public menu__CountVoteMapFIX(const id, const iKey)
 	if(amx_vote_answers)
 		client_print(0, print_console, "%n ha votado por el mapa: %s", id, sMap);
 
-	++g_VoteCountGlobal[iMapId];
-	++g_VoteCount;
+	++g_VoteMapCountGlobal[iMapId];
+	++g_VoteMapCount;
 
 	g_VoteMapId[id] = iMapId+1;
 }
@@ -389,13 +389,13 @@ public OnTaskCheckVotesMapFIX()
 		{
 			iWinner = i;
 			iFirst = 1;
-			iResult = g_VoteCountGlobal[i];
+			iResult = g_VoteMapCountGlobal[i];
 		}
 
-		if(g_VoteCountGlobal[i] > iResult)
+		if(g_VoteMapCountGlobal[i] > iResult)
 		{
 			iWinner = i;
-			iResult = g_VoteCountGlobal[i];
+			iResult = g_VoteMapCountGlobal[i];
 		}
 	}
 
@@ -404,7 +404,7 @@ public OnTaskCheckVotesMapFIX()
 	for(i = 0; i < g_MapVoteNum; ++i)
 	{
 		ArrayGetString(g_Array_MapName, g_SVM_MapInMenu__FuckingFIX[i], sMap, 31);
-		client_print(0, print_console, "Mapa: %s - Votos: %d - Porcentaje: %d%%", sMap, g_VoteCountGlobal[i], (g_VoteCount > 0) ? ((g_VoteCountGlobal[i] * 100) / g_VoteCount) : 0);
+		client_print(0, print_console, "Mapa: %s - Votos: %d - Porcentaje: %d%%", sMap, g_VoteMapCountGlobal[i], (g_VoteMapCount > 0) ? ((g_VoteMapCountGlobal[i] * 100) / g_VoteMapCount) : 0);
 	}
 
 	// Hubo votos emitidos..
@@ -418,7 +418,7 @@ public OnTaskCheckVotesMapFIX()
 		// Chequeo si hubo 2 o más mapas con los mismos votos
 		for(i = 0; i <= g_MapVoteNum; ++i)
 		{
-			if(g_VoteCountGlobal[i] == iResult)
+			if(g_VoteMapCountGlobal[i] == iResult)
 			{
 				iMapsId[j] = g_SVM_MapInMenu__FuckingFIX[i];
 
@@ -438,7 +438,7 @@ public OnTaskCheckVotesMapFIX()
 			client_print_color(0, print_team_blue, "%sEntre los más votados, el mapa ganador al azar es:^3 %s", g_GlobalPrefix, sMap);
 		}
 		else
-			client_print_color(0, print_team_blue, "%sVotación finalizada, el mapa ganador es ^3%s ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalPrefix, sMap, iResult, g_VoteCount, (g_VoteCount != 1) ? "s" : "", (g_VoteCount > 0) ? ((iResult * 100) / g_VoteCount) : 0);
+			client_print_color(0, print_team_blue, "%sVotación finalizada, el mapa ganador es ^3%s ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalPrefix, sMap, iResult, g_VoteMapCount, (g_VoteMapCount != 1) ? "s" : "", (g_VoteMapCount > 0) ? ((iResult * 100) / g_VoteMapCount) : 0);
 		
 		MapChooser_ResetAllData();
 
@@ -483,7 +483,7 @@ public OnTask_MapChooserHudVote()
 
 	set_task(0.1, "OnTask_MapChooserHudVote");
 
-	if(!g_VoteCount)
+	if(!g_VoteMapCount)
 	{
 		set_hudmessage(255, 255, 255, 0.75, 0.35, 0, 0.0, 0.2, 0.0, 0.0, -1);
 		ShowSyncHudMsg(0, g_HUD_Vote, "Sin votos emitidos");
@@ -506,7 +506,7 @@ public OnTask_MapChooserHudVote()
 	for(i = 0; i < iLoop; ++i)
 	{
 		iMapId[i] = (g_SVM_MapSecondRound) ? g_SVM_MapInMenu__FuckingFIX[i] : g_SVM_MapInMenu[i];
-		iVoteMaps[i] = g_VoteCountGlobal[i];
+		iVoteMaps[i] = g_VoteMapCountGlobal[i];
 	}
 
 	// Ordenamiento por seleccion
@@ -537,7 +537,7 @@ public OnTask_MapChooserHudVote()
 
 		iNoFirst = 1;
 
-		iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "%a: %d voto%s (%d%%%%)", ArrayGetStringHandle(g_Array_MapName, iMapId[i]), iVoteMaps[i], (iVoteMaps[i] == 1) ? "" : "s", (g_VoteCount > 0) ? ((iVoteMaps[i] * 100) / g_VoteCount) : 0);
+		iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "%a: %d voto%s (%d%%%%)", ArrayGetStringHandle(g_Array_MapName, iMapId[i]), iVoteMaps[i], (iVoteMaps[i] == 1) ? "" : "s", (g_VoteMapCount > 0) ? ((iVoteMaps[i] * 100) / g_VoteMapCount) : 0);
 	}
 
 	set_hudmessage(255, 255, 255, 0.75, 0.35, 0, 0.0, 0.3, 0.0, 0.0, -1);
@@ -547,6 +547,7 @@ public OnTask_MapChooserHudVote()
 public OnTaskChangeTimeLeft()
 {
 	g_NoMoreTime = 1;
+	g_RestoreTimelimit = get_pcvar_float(mp_timelimit);
 	set_pcvar_float(mp_timelimit, 0.0);
 
 	switch(g_ChangeMapType)
