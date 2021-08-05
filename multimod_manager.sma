@@ -21,6 +21,7 @@ new g_LastMap[64];
 new g_CurrentMod[64];
 new g_NoMoreTime = 0;
 new g_ShowTime = 0;
+new Float:g_RestoreTimelimit = 0.0;
 new g_HUD_Vote = 0;
 new g_HUD_Alert = 0;
 
@@ -77,6 +78,7 @@ public plugin_cfg()
 public plugin_end()
 {
 	set_localinfo("mm_lastmap", g_CurrentMap);
+	set_pcvar_float(mp_timelimit, g_RestoreTimelimit);
 }
 
 public client_putinserver(id)
@@ -210,13 +212,13 @@ MultiMod_GetCurrentMod(const szFilePath[STRLEN_PATH], szOut[], const iLen)
 
 public OnEvent_GameRestart()
 {
-	if(!g_NoMoreTime && !g_SelectedNextMap)
+	ModChooser_ResetAllData();
+	MapChooser_ResetAllData();
+
+	if(ArraySize(g_aModNames))
 	{
-		if(g_MapsNum)
-		{
-			remove_task(TASK_VOTEMOD);
-			set_task(10.0, "OnTaskCheckVoteNextMod", TASK_VOTEMOD);
-		}
+		remove_task(TASK_VOTEMOD);
+		set_task(10.0, "OnTaskCheckVoteNextMod", TASK_VOTEMOD);
 	}
 }
 
