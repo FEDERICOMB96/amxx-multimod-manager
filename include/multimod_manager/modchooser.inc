@@ -254,9 +254,8 @@ public OnTaskCheckVoteMod()
 		// Ganador, extender el modo
 		if(iWinner == MAX_SELECTMODS)
 		{
-			new Float:flExtendMod = ExtendActualMod();
-			
-			client_print_color(0, print_team_blue, "%s^1 El modo actual se extenderá^3 %d minutos más^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_GlobalPrefix, floatround(flExtendMod), iResult, g_VoteModCount, (g_VoteModCount != 1) ? "s" : "", (g_VoteModCount > 0) ? ((iResult * 100) / g_VoteModCount) : 0); // , (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[MAX_SELECTMODS] * 100) / g_VoteModCount) : 0
+			ExtendActualMod(g_bCvar_amx_extendmap_step);
+			client_print_color(0, print_team_blue, "%s^1 El modo actual se extenderá^3 %d minutos más^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_GlobalPrefix, g_bCvar_amx_extendmap_step, iResult, g_VoteModCount, (g_VoteModCount != 1) ? "s" : "", (g_VoteModCount > 0) ? ((iResult * 100) / g_VoteModCount) : 0); // , (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[MAX_SELECTMODS] * 100) / g_VoteModCount) : 0
 			
 			ModChooser_ResetAllData();
 			return;
@@ -439,16 +438,16 @@ public OnTaskCheckVoteModFIX()
 		// Ganador, extender el modo
 		if(iWinner == -1)
 		{
-			new Float:flExtendMod = ExtendActualMod();
+			ExtendActualMod(g_bCvar_amx_extendmap_step);
 
 			if(j > 1)
 			{
 				client_print_color(0, print_team_default, "%s^1 Ningún modo superó^4 la mayoría de los votos^1 por segunda vez.", g_GlobalPrefix);
-				client_print_color(0, print_team_blue, "%s^1 Entre los más votados, el modo ganador al azar es:^3 Extender el modo %dm.", g_GlobalPrefix, floatround(flExtendMod));
-				client_print_color(0, print_team_default, "%s^1 El modo actual se extenderá^3 %d minutos más", g_GlobalPrefix, floatround(flExtendMod));
+				client_print_color(0, print_team_blue, "%s^1 Entre los más votados, el modo ganador al azar es:^3 Extender el modo %s.", g_GlobalPrefix, g_szCurrentMod);
+				client_print_color(0, print_team_default, "%s^1 El modo actual se extenderá^3 %d minutos más", g_GlobalPrefix, g_bCvar_amx_extendmap_step);
 			}
 			else
-				client_print_color(0, print_team_blue, "%s^1 El modo actual se extenderá^3 %d minutos más^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_GlobalPrefix, floatround(flExtendMod), iResult, g_VoteModCount, (g_VoteModCount != 1) ? "s" : "", (g_VoteModCount > 0) ? ((iResult * 100) / g_VoteModCount) : 0);
+				client_print_color(0, print_team_blue, "%s^1 El modo actual se extenderá^3 %d minutos más^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_GlobalPrefix, g_bCvar_amx_extendmap_step, iResult, g_VoteModCount, (g_VoteModCount != 1) ? "s" : "", (g_VoteModCount > 0) ? ((iResult * 100) / g_VoteModCount) : 0);
 
 			ModChooser_ResetAllData();
 			return;
@@ -584,12 +583,9 @@ public OnTask_ModChooserHudVote()
 	ShowSyncHudMsg(0, g_HUD_Vote, sHud);
 }
 
-Float:ExtendActualMod()
+ExtendActualMod(const iTime)
 {
-	new Float:fExtendMod = Float:g_bCvar_amx_extendmap_step;
-	set_pcvar_float(g_pCvar_mp_timelimit, (get_pcvar_float(g_pCvar_mp_timelimit) + fExtendMod));
-
-	return fExtendMod;
+	set_pcvar_float(g_pCvar_mp_timelimit, (get_pcvar_float(g_pCvar_mp_timelimit) + float(iTime)));
 }
 
 bool:IsModInMenu(const i)
