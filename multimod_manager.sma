@@ -22,7 +22,6 @@ new Array:g_Array_Mods;
 new Array:g_Array_MapName;
 
 new g_CurrentMap[64];
-new g_LastMap[64];
 new g_szCurrentMod[64];
 new g_iCurrentMod = 0;
 new g_NoMoreTime = 0;
@@ -68,9 +67,6 @@ public plugin_init()
 	get_mapname(g_CurrentMap, charsmax(g_CurrentMap));
 	mb_strtolower(g_CurrentMap);
 
-	get_localinfo("mm_lastmap", g_LastMap, charsmax(g_LastMap));
-	mb_strtolower(g_LastMap);
-
 	g_HUD_Vote = CreateHudSyncObj();
 	g_HUD_Alert = CreateHudSyncObj();
 }
@@ -83,8 +79,8 @@ public plugin_cfg()
 
 public plugin_end()
 {
-	set_localinfo("mm_lastmap", g_CurrentMap);
-	set_pcvar_float(g_pCvar_mp_timelimit, g_RestoreTimelimit);
+	if(g_RestoreTimelimit)
+		set_pcvar_float(g_pCvar_mp_timelimit, g_RestoreTimelimit);
 
 	if(g_Array_Mods != Invalid_Array)
 	{
