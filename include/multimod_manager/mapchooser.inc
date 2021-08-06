@@ -12,7 +12,7 @@
 new g_VoteMapCount = 0;
 new g_VoteMapCountGlobal[MAX_SELECTMAPS + 2];
 new g_SVM_MapInMenu[MAX_SELECTMAPS + 1];
-new g_SVM_MapInMenu__FuckingFIX[MAX_SELECTMAPS + 1];
+new g_SVM_MapInMenu_SecondRound[MAX_SELECTMAPS + 1];
 new g_SVM_MapSecondRound = 0;
 new g_MapVoteNum = 0;
 new g_SelectedNextMap = 0;
@@ -35,7 +35,7 @@ MapChooser_ResetAllData()
 	arrayset(g_VoteMapCountGlobal, 0, (MAX_SELECTMAPS + 2));
 
 	arrayset(g_SVM_MapInMenu, -1, (MAX_SELECTMAPS + 1));
-	arrayset(g_SVM_MapInMenu__FuckingFIX, -1, (MAX_SELECTMAPS + 1));
+	arrayset(g_SVM_MapInMenu_SecondRound, -1, (MAX_SELECTMAPS + 1));
 
 	g_VoteMapCount = 0;
 	g_SVM_MapSecondRound = 0;
@@ -198,13 +198,10 @@ public OnTaskCheckVotesMap()
 		new j = 0;
 
 		// Chequeo si hubo 2 o más mapas con los mismos votos
-		for(i = 0; i <= g_MapVoteNum; ++i)
+		for(i = 0; i < g_MapVoteNum; ++i)
 		{
 			if(g_VoteMapCountGlobal[i] == iResult)
-			{
-				if(i != MAX_SELECTMAPS) // MAX_SELECTMAPS == extender mapa
-					g_SVM_MapInMenu__FuckingFIX[j++] = g_SVM_MapInMenu[i];
-			}
+				g_SVM_MapInMenu_SecondRound[j++] = g_SVM_MapInMenu[i];
 		}
 
 		// Hubo 2 o más..
@@ -286,7 +283,7 @@ public OnTask_VoteNextMap__FIX()
 	for(i = 0; i < g_MapVoteNum; ++i)
 	{
 		iMenuKeys |= (1<<i);
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %a^n", i+1, ArrayGetStringHandle(g_Array_MapName, g_SVM_MapInMenu__FuckingFIX[i]));
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %a^n", i+1, ArrayGetStringHandle(g_Array_MapName, g_SVM_MapInMenu_SecondRound[i]));
 	}
 
 	iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n^n\d(SEGUNDA VOTACIÓN)");
@@ -314,7 +311,7 @@ public menu__CountVoteMapFIX(const id, const iKey)
 	new sMap[32];
 	new iMapId = iKey;
 
-	ArrayGetString(g_Array_MapName, g_SVM_MapInMenu__FuckingFIX[iMapId], sMap, 31);
+	ArrayGetString(g_Array_MapName, g_SVM_MapInMenu_SecondRound[iMapId], sMap, 31);
 	
 	client_print_color(id, print_team_blue, "%s^1 Has elegido el mapa^3 %s", g_GlobalPrefix, sMap);
 	
@@ -355,7 +352,7 @@ public OnTaskCheckVotesMapFIX()
 	
 	for(i = 0; i < g_MapVoteNum; ++i)
 	{
-		ArrayGetString(g_Array_MapName, g_SVM_MapInMenu__FuckingFIX[i], sMap, 31);
+		ArrayGetString(g_Array_MapName, g_SVM_MapInMenu_SecondRound[i], sMap, 31);
 		client_print(0, print_console, "Mapa: %s - Votos: %d - Porcentaje: %d%%", sMap, g_VoteMapCountGlobal[i], (g_VoteMapCount > 0) ? ((g_VoteMapCountGlobal[i] * 100) / g_VoteMapCount) : 0);
 	}
 
@@ -363,23 +360,19 @@ public OnTaskCheckVotesMapFIX()
 	if(iResult)
 	{
 		new j = 0;
-		new iMapsId[MAX_SELECTMAPS + 1];
+		new iMapsIds[MAX_SELECTMAPS + 1];
 
-		iWinner = g_SVM_MapInMenu__FuckingFIX[iWinner];
+		iWinner = g_SVM_MapInMenu_SecondRound[iWinner];
 
 		// Chequeo si hubo 2 o más mapas con los mismos votos
 		for(i = 0; i <= g_MapVoteNum; ++i)
 		{
 			if(g_VoteMapCountGlobal[i] == iResult)
-			{
-				iMapsId[j] = g_SVM_MapInMenu__FuckingFIX[i];
-
-				j++;
-			}
+				iMapsIds[j++] = g_SVM_MapInMenu_SecondRound[i];
 		}
 
 		if(j > 1) // Hubo más de 1 ganador (otra vez)
-			iWinner = iMapsId[random_num(0, (j - 1))];
+			iWinner = iMapsIds[random_num(0, (j - 1))];
 
 		ArrayGetString(g_Array_MapName, iWinner, sMap, 31);
 		set_pcvar_string(g_pCvar_amx_nextmap, sMap);
@@ -418,7 +411,7 @@ public OnTaskCheckVotesMapFIX()
 			iWinner = random(g_MapVoteNum);
 		} while(iWinner == MAX_SELECTMAPS);
 
-		ArrayGetString(g_Array_MapName, g_SVM_MapInMenu__FuckingFIX[iWinner], sMap, 31);
+		ArrayGetString(g_Array_MapName, g_SVM_MapInMenu_SecondRound[iWinner], sMap, 31);
 		set_pcvar_string(g_pCvar_amx_nextmap, sMap);
 
 		client_print_color(0, print_team_blue, "%s^1 Ningún voto fue emitido, por lo tanto el mapa ganador al azar es:^3 %s", g_GlobalPrefix, sMap);
@@ -464,7 +457,7 @@ public OnTask_MapChooserHudVote()
 	
 	for(i = 0; i < iLoop; ++i)
 	{
-		iMapId[i] = (g_SVM_MapSecondRound) ? g_SVM_MapInMenu__FuckingFIX[i] : g_SVM_MapInMenu[i];
+		iMapId[i] = (g_SVM_MapSecondRound) ? g_SVM_MapInMenu_SecondRound[i] : g_SVM_MapInMenu[i];
 		iVoteMaps[i] = g_VoteMapCountGlobal[i];
 	}
 
