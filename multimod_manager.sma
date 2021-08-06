@@ -16,12 +16,13 @@ new g_bConnected;
 
 new g_GlobalPrefix[21];
 new g_TimeleftTrigger;
-new Array:g_aModNames;
+new Array:g_Array_Mods;
 new ChangeMap_e:g_ChangeMapType;
 
 new g_CurrentMap[64];
 new g_LastMap[64];
-new g_CurrentMod[64];
+new g_szCurrentMod[64];
+new g_iCurrentMod = 0;
 new g_NoMoreTime = 0;
 new g_ShowTime = 0;
 new Float:g_RestoreTimelimit = 0.0;
@@ -81,7 +82,21 @@ public plugin_cfg()
 public plugin_end()
 {
 	set_localinfo("mm_lastmap", g_CurrentMap);
-	set_pcvar_float(mp_timelimit, g_RestoreTimelimit);
+	set_pcvar_float(g_pCvar_mp_timelimit, g_RestoreTimelimit);
+
+	if(g_Array_Mods != Invalid_Array)
+	{
+		new iSize = ArraySize(g_Array_Mods);
+		for(new i = 0, aData[ArrayMods_e]; i < iSize; ++i)
+		{
+			ArrayGetArray(g_Array_Mods, i, aData);
+
+			ArrayDestroy(aData[Cvars]);
+			ArrayDestroy(aData[Plugins]);
+		}
+
+		ArrayDestroy(g_Array_Mods);
+	}
 }
 
 public client_putinserver(id)
@@ -102,11 +117,11 @@ public client_disconnected(id, bool:drop, message[], maxlen)
 
 MultiModInit()
 {
-	new szConfigDir[STRLEN_PATH], szFileName[STRLEN_PATH], szPluginsFile[STRLEN_PATH];
+	new szConfigDir[PLATFORM_MAX_PATH], szFileName[PLATFORM_MAX_PATH], szPluginsFile[PLATFORM_MAX_PATH];
 	get_configsdir(szConfigDir, charsmax(szConfigDir));
 
 	formatex(szPluginsFile, charsmax(szPluginsFile), "%s/%s", szConfigDir, PLUGINS_FILENAME);
-	MultiMod_GetCurrentMod(szPluginsFile, g_CurrentMod, charsmax(g_CurrentMod));
+	MultiMod_GetCurrentMod(szPluginsFile, g_szCurrentMod, charsmax(g_szCurrentMod));
 
 	formatex(szFileName, charsmax(szFileName), "%s/multimod_manager/configs.json", szConfigDir);
 
@@ -124,7 +139,7 @@ MultiModInit()
 		return;
 	}
 
-	g_aModNames = ArrayCreate(32);
+	g_Array_Mods = ArrayCreate(ArrayMods_e);
 
 	json_object_get_string(jsonConfigsFile, "global_chat_prefix", g_GlobalPrefix, charsmax(g_GlobalPrefix));
 
@@ -137,46 +152,63 @@ MultiModInit()
 	new JSON:jsonObjectMods = json_object_get_value(jsonConfigsFile, "mods");
 	new iCount = json_array_get_count(jsonObjectMods);
 
-	new Array:aExecCFGs = ArrayCreate(128);
-
-	for(new i = 0, szModName[32], JSON:jsonArrayValue; i < iCount; ++i)
+	for(new i = 0, j, aMod[ArrayMods_e], JSON:jsonArrayValue, JSON:jsonObject, iJsonObjetCount; i < iCount; ++i)
 	{
 		jsonArrayValue = json_array_get_value(jsonObjectMods, i);
-
-		json_object_get_string(jsonArrayValue, "modname", szModName, charsmax(szModName));
-		ArrayPushString(g_aModNames, szModName);
-
-		// Modo actual? Ejecutar CFGs
-		if(equali(g_CurrentMod, szModName))
 		{
-			g_ChangeMapType = ChangeMap_e:json_object_get_number(jsonArrayValue, "change_map_type");
+			json_object_get_string(jsonArrayValue, "modname", aMod[ModName], charsmax(aMod));
+			json_object_get_string(jsonArrayValue, "mapsfile", aMod[MapsFile], charsmax(aMod));
+			aMod[ChangeMapType] = json_object_get_number(jsonArrayValue, "change_map_type");
 
-			new JSON:jsonObjectCvars = json_object_get_value(jsonArrayValue, "cvars");
-			new iCvars = json_array_get_count(jsonObjectCvars);
-
-			for(new j = 0, szCvarName[128]; j < iCvars; ++j)
+			aMod[Cvars] = ArrayCreate(128);
+			jsonObject = json_object_get_value(jsonArrayValue, "cvars");
 			{
-				json_array_get_string(jsonObjectCvars, j, szCvarName, charsmax(szCvarName));
-				ArrayPushString(aExecCFGs, szCvarName);
+				iJsonObjetCount = json_array_get_count(jsonObject);
+
+				j = 0;
+				for(new szCvarName[128]; j < iJsonObjetCount; ++j)
+				{
+					json_array_get_string(jsonObject, j, szCvarName, charsmax(szCvarName));
+					ArrayPushString(aMod[Cvars], szCvarName);
+				}
 			}
+			json_free(jsonObject);
 
-			json_free(jsonObjectCvars);
+			aMod[Plugins] = ArrayCreate(64);
+			jsonObject = json_object_get_value(jsonArrayValue, "cvars");
+			{
+				iJsonObjetCount = json_array_get_count(jsonObject);
+
+				j = 0;
+				for(new szPluginName[64]; j < iJsonObjetCount; ++j)
+				{
+					json_array_get_string(jsonObject, j, szPluginName, charsmax(szPluginName));
+					ArrayPushString(aMod[Plugins], szPluginName);
+				}
+			}
+			json_free(jsonObject);
+
+			ArrayPushArray(g_Array_Mods, aMod);
+
+			// Modo actual?
+			if(equali(g_szCurrentMod, aMod[ModName]))
+			{
+				g_iCurrentMod = i;
+				g_ChangeMapType = ChangeMap_e:aMod[ChangeMapType];
+
+				new iCvars = ArraySize(aMod[Cvars]);
+				for(new i = 0; i < iCvars; ++i)
+				{
+					server_cmd("%a", ArrayGetStringHandle(aMod[Cvars], i));
+				}
+			}
 		}
-
 		json_free(jsonArrayValue);
 	}
 
 	json_free(jsonObjectMods);
 	json_free(jsonConfigsFile);
-
-	new iCfgsCount = ArraySize(aExecCFGs);
-	for(new i = 0; i < iCfgsCount; ++i)
-	{
-		server_cmd("%a", ArrayGetStringHandle(aExecCFGs, i));
-	}
-
-	ArrayDestroy(aExecCFGs);
-
+	
 	if(!iCount)
 	{
 		set_fail_state("[MULTIMOD] No se detectaron modos cargados!");
@@ -186,7 +218,7 @@ MultiModInit()
 	OnEvent_GameRestart();
 }
 
-MultiMod_GetCurrentMod(const szFilePath[STRLEN_PATH], szOut[], const iLen)
+MultiMod_GetCurrentMod(const szFilePath[PLATFORM_MAX_PATH], szOut[], const iLen)
 {
 	if(file_exists(szFilePath))
 	{
@@ -213,7 +245,7 @@ public OnEvent_GameRestart()
 	ModChooser_ResetAllData();
 	MapChooser_ResetAllData();
 
-	if(ArraySize(g_aModNames))
+	if(ArraySize(g_Array_Mods))
 	{
 		remove_task(TASK_ENDMAP);
 		set_task(15.0, "OnTask_CheckVoteNextMod", TASK_ENDMAP, .flags = "b");
@@ -226,12 +258,12 @@ public OnEvent_HLTV()
 	{
 		g_NoMoreTime = 2;
 		
-		set_task(2.0, "taskChangeMap", _, amx_nextmap, sizeof(amx_nextmap));
+		set_task(2.0, "taskChangeMap", _, g_bCvar_amx_nextmap, sizeof(g_bCvar_amx_nextmap));
 		
 		message_begin(MSG_ALL, SVC_INTERMISSION);
 		message_end();
 		
-		client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será: ^3%s", g_GlobalPrefix, amx_nextmap);
+		client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será:^3 %s", g_GlobalPrefix, g_bCvar_amx_nextmap);
 	}
 
 	if(g_ChangeMapOneMoreRound)
@@ -251,16 +283,16 @@ public OnTask_CheckVoteNextMod()
 		return;
 	}
 
-	if(mp_winlimit)
+	if(g_bCvar_mp_winlimit)
 	{
-		new a = mp_winlimit - 2;
+		new a = g_bCvar_mp_winlimit - 2;
 		
 		if((a > get_member_game(m_iNumCTWins)) && (a > get_member_game(m_iNumTerroristWins)))
 			return;
 	}
-	else if(mp_maxrounds)
+	else if(g_bCvar_mp_maxrounds)
 	{
-		if((mp_maxrounds - 2) > (get_member_game(m_iNumCTWins) + get_member_game(m_iNumTerroristWins)))
+		if((g_bCvar_mp_maxrounds - 2) > (get_member_game(m_iNumCTWins) + get_member_game(m_iNumTerroristWins)))
 			return;
 	}
 	else
@@ -306,61 +338,29 @@ public OnTask_AlertStartNextVote()
 	set_task(1.0, "OnTask_AlertStartNextVote", TASK_SHOWTIME);
 }
 
-MultiMod_SetNextMod(const iMod)
+MultiMod_SetNextMod(const iNextMod)
 {
-	new szFileName[128], szConfigDir[128];
+	new aDataNextMod[ArrayMods_e];
+	ArrayGetArray(g_Array_Mods, iNextMod, aDataNextMod);
+
+	new szConfigDir[PLATFORM_MAX_PATH], szFileName[PLATFORM_MAX_PATH];
 	get_configsdir(szConfigDir, charsmax(szConfigDir));
 
-	formatex(szFileName, charsmax(szFileName), "%s/multimod_manager/configs.json", szConfigDir);
+	formatex(szFileName, charsmax(szFileName), "%s/%s", szConfigDir, PLUGINS_FILENAME);
 
-	if(!file_exists(szFileName))
-	{
-		set_fail_state("[MULTIMOD] MultiMod_SetNextMod: Archivo '%s' no se encuentra!", szFileName);
-		return;
-	}
-
-	new szPluginsFile[256];
-	formatex(szPluginsFile, charsmax(szPluginsFile), "%s/%s", szConfigDir, PLUGINS_FILENAME);
-	
-	new pPluginsFile = fopen(szPluginsFile, "w+");
+	new pPluginsFile = fopen(szFileName, "w+");
 
 	if(pPluginsFile)
 	{
-		new JSON:jsonConfigsFile = json_parse(szFileName, true);
+		fprintf(pPluginsFile, ";Mod:%s^n^n", aDataNextMod[ModName]);
 
-		if(jsonConfigsFile == Invalid_JSON)
-		{
-			fclose(pPluginsFile);
-			return;
-		}
-
-		new JSON:jsonObjectMods = json_object_get_value(jsonConfigsFile, "mods");
-		new JSON:jsonArrayMods = json_array_get_value(jsonObjectMods, iMod);
-
-		new szModName[32];
-		json_object_get_string(jsonArrayMods, "modname", szModName, charsmax(szModName));
-
-		fprintf(pPluginsFile, ";Mod:^"%s^"^n^n", szModName);
-
-		new JSON:jsonObjectPlugins = json_object_get_value(jsonArrayMods, "plugins");
-		new iPlugins = json_array_get_count(jsonObjectPlugins);
-
-		for(new i = 0, szPluginName[32]; i < iPlugins; ++i)
-		{
-			json_array_get_string(jsonObjectPlugins, i, szPluginName, charsmax(szPluginName));
-			fprintf(pPluginsFile, "%s^n", szPluginName);
-		}
-
-		new szMapFile[128];
-		json_object_get_string(jsonArrayMods, "mapsfile", szMapFile, charsmax(szMapFile));
-		format(szMapFile, charsmax(szMapFile), "%s/multimod_manager/%s", szConfigDir, szMapFile);
-		MapChooser_LoadMaps(szMapFile);
-
-		json_free(jsonObjectPlugins);
-		json_free(jsonArrayMods);
-		json_free(jsonObjectMods);
-		json_free(jsonConfigsFile);
+		new iPlugins = ArraySize(aDataNextMod[Plugins]);
+		for(new i = 0; i < iPlugins; ++i)
+			fprintf(pPluginsFile, "%a^n", ArrayGetStringHandle(aDataNextMod[Plugins], i));
 
 		fclose(pPluginsFile);
 	}
+	
+	formatex(szFileName, charsmax(szFileName), "%s/multimod_manager/mapsfiles/%s", szConfigDir, aDataNextMod[MapsFile]);
+	MapChooser_LoadMaps(szFileName);
 }
