@@ -14,7 +14,6 @@ new g_VoteMapCount = 0;
 new g_VoteMapCountGlobal[MAX_SELECTMAPS + 2];
 new g_SVM_MapInMenu[MAX_SELECTMAPS + 1];
 new g_SVM_MapInMenu__FuckingFIX[MAX_SELECTMAPS + 1];
-new g_SVM_MapName[MAX_SELECTMAPS + 1][64];
 new g_SVM_MapSecondRound = 0;
 new g_MapVoteNum = 0;
 new g_SelectedNextMap = 0;
@@ -30,12 +29,7 @@ new Array:g_Array_MapName;
 
 MapChooser_Init()
 {
-	for(new i = 0; i < (MAX_SELECTMAPS + 1); ++i)
-	{
-		g_SVM_MapInMenu[i] = -1;
-		g_SVM_MapName[i][0] = EOS;
-		g_SVM_MapInMenu__FuckingFIX[i] = -1;
-	}
+	MapChooser_ResetAllData();
 
 	register_menu("VoteMap_Menu", KEYSMENU, "menu__CountVoteMap");
 	register_menu("VoteMapFIX_Menu", KEYSMENU, "menu__CountVoteMapFIX");
@@ -45,15 +39,10 @@ MapChooser_Init()
 
 MapChooser_ResetAllData()
 {
-	for(new i = 0; i < (MAX_SELECTMAPS + 2); ++i)
-		g_VoteMapCountGlobal[i] = 0;
+	arrayset(g_VoteMapCountGlobal, 0, (MAX_SELECTMAPS + 2));
 
-	for(new i = 0; i < (MAX_SELECTMAPS + 1); ++i)
-	{
-		g_SVM_MapInMenu[i] = -1;
-		g_SVM_MapInMenu__FuckingFIX[i] = -1;
-		g_SVM_MapName[i][0] = EOS;
-	}
+	arrayset(g_SVM_MapInMenu, -1, (MAX_SELECTMAPS + 1));
+	arrayset(g_SVM_MapInMenu__FuckingFIX, -1, (MAX_SELECTMAPS + 1));
 
 	g_VoteMapCount = 0;
 	g_SVM_MapSecondRound = 0;
@@ -110,65 +99,43 @@ MapChooser_ClientDisconnected(const id)
 public OnTask_VoteNextMap()
 {
 	new sMenu[400];
-	new iMenuKeys;
-	new iRandom;
-	new j;
-	new iLen;
-	new iMaxMaps;
-	new iStart;
-	new iOk;
+	new iMenuKeys = 0;
 	new iArraySizeMaps = ArraySize(g_Array_MapName);
+	new iMaxMaps = (iArraySizeMaps > MAX_SELECTMAPS) ? MAX_SELECTMAPS : iArraySizeMaps;
 
-	iMaxMaps = (iArraySizeMaps > MAX_SELECTMAPS) ? MAX_SELECTMAPS : iArraySizeMaps;
-	iMenuKeys = (1<<iMaxMaps + 1);
-	
-	iLen = formatex(sMenu, charsmax(sMenu), "\yElige el próximo mapa: ¡VOTÁ AHORA!^n^n");
-	j = 0;
-	
-	for(g_MapVoteNum = 0; g_MapVoteNum < iMaxMaps; ++g_MapVoteNum)
+	new iLen = formatex(sMenu, charsmax(sMenu), "\yElige el próximo mapa: ¡VOTÁ AHORA!^n^n");
+
+	g_MapVoteNum = 0;
+	for(new iRandom, szMapName[64]; g_MapVoteNum < iMaxMaps; ++g_MapVoteNum)
 	{
-		if(g_SVM_MapInMenu[g_MapVoteNum] == -1)
+		if(g_SVM_MapInMenu[g_MapVoteNum] == -1) // Si no existe nominaciones, elegir al azar una opcion
 		{
-			iOk = 1;
-			iStart = iRandom = random_num(0, (iArraySizeMaps - 1));
-			
-			while(IsMapInMenu(iRandom))
-			{
-				if(++iRandom >= iArraySizeMaps)
-					iRandom = 0;
-
-				if(iRandom == iStart) // Fix infinite bucle
-				{
-					iOk = 0;
-					break;
-				}
-			}
-
-			if(!iOk)
-				continue;
+			do {
+				iRandom = random(iArraySizeMaps);
+				ArrayGetString(g_Array_MapName, iRandom, szMapName, charsmax(szMapName));
+			} while(IsMapInMenu(iRandom)); // La opcion está en el menú o es el mapa actual
 
 			g_SVM_MapInMenu[g_MapVoteNum] = iRandom;
 		}
 
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %a^n", ++j, ArrayGetStringHandle(g_Array_MapName, g_SVM_MapInMenu[g_MapVoteNum]));
-		
 		iMenuKeys |= (1<<g_MapVoteNum);
+
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %s^n", (g_MapVoteNum + 1), szMapName);
 	}
-	
-	for(j = 0; j < (MAX_SELECTMAPS + 2); ++j)
-		g_VoteMapCountGlobal[j] = 0;
-	
+
+	arrayset(g_VoteMapCountGlobal, 0, (MAX_SELECTMAPS + 2));
 	g_VoteMapCount = 0;
 	g_VoteMapHasStarted = 1;
 	g_SVM_MapSecondRound = 0;
 
 	iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r%d.\y Seleccionar al azar", ((iMaxMaps + 2) > 9) ? 0 : (iMaxMaps + 2));
+	iMenuKeys |= (1<<iMaxMaps + 1);
 	
 	show_menu(0, iMenuKeys, sMenu, 15, "VoteMap_Menu");
 	set_task(15.1, "OnTaskCheckVotesMap");
 	
 	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
-	client_print_color(0, print_team_default, "%sEs momento de elegir el próximo mapa!", g_GlobalPrefix);
+	client_print_color(0, print_team_default, "%s^1 Es momento de elegir el próximo mapa!", g_GlobalPrefix);
 	
 	ClearSyncHud(0, g_HUD_Alert);
 	OnTask_MapChooserHudVote();
@@ -186,9 +153,9 @@ public menu__CountVoteMap(const id, const iKey)
 	{
 		ArrayGetString(g_Array_MapName, g_SVM_MapInMenu[iKey], sMap, 31);
 		
-		client_print_color(id, print_team_blue, "%s^1Has elegido el mapa^3 %s", g_GlobalPrefix, sMap);
+		client_print_color(id, print_team_blue, "%s^1 Has elegido el mapa^3 %s", g_GlobalPrefix, sMap);
 		
-		if(amx_vote_answers)
+		if(g_bCvar_amx_vote_answers)
 			client_print(0, print_console, "%n ha votado por el mapa: %s", id, sMap);
 	}
 	else if(iKey > MAX_SELECTMAPS)
@@ -197,9 +164,9 @@ public menu__CountVoteMap(const id, const iKey)
 
 		ArrayGetString(g_Array_MapName, g_SVM_MapInMenu[iMapId], sMap, 31);
 
-		client_print_color(id, print_team_blue, "%sHas elegido el mapa^3 %s^4 [ELECCIÓN ALEATORIA]", g_GlobalPrefix, sMap);
+		client_print_color(id, print_team_blue, "%s^1 Has elegido el mapa^3 %s^4 [ELECCIÓN ALEATORIA]", g_GlobalPrefix, sMap);
 		
-		if(amx_vote_answers)
+		if(g_bCvar_amx_vote_answers)
 			client_print(0, print_console, "%n ha votado por el mapa: %s [ELECCIÓN ALEATORIA]", id, sMap);
 	}
 	
@@ -217,7 +184,7 @@ public OnTaskCheckVotesMap()
 	new i;
 	new sMap[32];
 	
-	for(i = 0; i <= g_MapVoteNum; ++i)
+	for(i = 0; i < g_MapVoteNum; ++i)
 	{
 		if(!iFirst)
 		{
@@ -238,11 +205,8 @@ public OnTaskCheckVotesMap()
 	for(i = 0; i < g_MapVoteNum; ++i)
 	{
 		ArrayGetString(g_Array_MapName, g_SVM_MapInMenu[i], sMap, 31);
-		
 		client_print(0, print_console, "Mapa: %s - Votos: %d - Porcentaje: %d%%", sMap, g_VoteMapCountGlobal[i], (g_VoteMapCount > 0) ? ((g_VoteMapCountGlobal[i] * 100) / g_VoteMapCount) : 0);
 	}
-	
-	client_print(0, print_console, "Extender mapa: %dm - Votos: %d - Porcentaje: %d%%", amx_extendmap_step, g_VoteMapCountGlobal[MAX_SELECTMAPS], (g_VoteMapCount > 0) ? ((g_VoteMapCountGlobal[MAX_SELECTMAPS] * 100) / g_VoteMapCount) : 0);
 
 	// Hubo votos emitidos..
 	if(iResult)
@@ -267,47 +231,53 @@ public OnTaskCheckVotesMap()
 			g_ShowTime = 5;
 			g_MapVoteNum = j;
 
-			client_print_color(0, print_team_blue, "%sHubo^4 %d mapas^1 con^4 %d^1 voto%s cada uno, siguiente votación en^3 5 segundos^1!", g_GlobalPrefix, j, iResult, (iResult != 1) ? "s" : "");
+			client_print_color(0, print_team_blue, "%s^1 Hubo^4 %d mapas^1 con^4 %d^1 voto%s cada uno, siguiente votación en^3 10 segundos^1!", g_GlobalPrefix, j, iResult, (iResult != 1) ? "s" : "");
 
 			client_cmd(0, "spk ^"run officer(e40) voltage(e30) accelerating(s70) is required^"");
 
 			set_task(5.0, "OnTask_AlertStartNextVote", TASK_SHOWTIME);
 			set_task(10.0, "OnTask_VoteNextMap__FIX");
+
+			return;
 		}
 
 		// Solo 1 ganador
-		else
+		ArrayGetString(g_Array_MapName, g_SVM_MapInMenu[iWinner], sMap, 31);
+		set_pcvar_string(g_pCvar_amx_nextmap, sMap);
+
+		client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el mapa ganador es^3 %s^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_GlobalPrefix, sMap, iResult, g_VoteMapCount, (g_VoteMapCount != 1) ? "s" : "", (g_VoteMapCount > 0) ? ((iResult * 100) / g_VoteMapCount) : 0); // , (g_VoteMapCount > 0) ? ((g_VoteMapCountGlobal[j] * 100) / g_VoteMapCount) : 0
+		
+		MapChooser_ResetAllData();
+
+		g_SelectedNextMap = 1;
+
+		ClearSyncHud(0, g_HUD_Vote);
+
+		if(g_IsRtv)
 		{
-			ArrayGetString(g_Array_MapName, g_SVM_MapInMenu[iWinner], sMap, 31);
-			set_pcvar_string(pamx_nextmap, sMap);
-
-			client_print_color(0, print_team_blue, "%sVotación finalizada, el mapa ganador es ^3%s ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalPrefix, sMap, iResult, g_VoteMapCount, (g_VoteMapCount != 1) ? "s" : "", (g_VoteMapCount > 0) ? ((iResult * 100) / g_VoteMapCount) : 0); // , (g_VoteMapCount > 0) ? ((g_VoteMapCountGlobal[j] * 100) / g_VoteMapCount) : 0
+			g_VoteRtvResult = 1;
 			
-			MapChooser_ResetAllData();
-
-			g_SelectedNextMap = 1;
-
-			ClearSyncHud(0, g_HUD_Vote);
-
-			if(g_IsRtv)
-			{
-				g_VoteRtvResult = 1;
-				
-				remove_task(TASK_TIMELEFT);
-				set_task(1.0, "OnTaskChangeTimeLeft", TASK_TIMELEFT);
-				
-				return;
-			}
-
-			g_ChangeMapTime = 10;
-
-			ExecChangeTimeleft();
+			remove_task(TASK_TIMELEFT);
+			set_task(1.0, "OnTaskChangeTimeLeft", TASK_TIMELEFT);
+			
+			return;
 		}
+
+		g_ChangeMapTime = 10;
+
+		ExecChangeTimeleft();
 	}
 	else
 	{
-		client_print_color(0, print_team_blue, "%sVotación finalizada, el mapa ganador fue seleccionado al azar con^4 0^1 votos!", g_GlobalPrefix, amx_nextmap);
-		
+		do {
+			iWinner = random(g_MapVoteNum);
+		} while(iWinner == MAX_SELECTMAPS);
+
+		ArrayGetString(g_Array_MapName, g_SVM_MapInMenu[iWinner], sMap, 31);
+		set_pcvar_string(g_pCvar_amx_nextmap, sMap);
+
+		client_print_color(0, print_team_blue, "%s^1 Ningún voto fue emitido, por lo tanto el mapa ganador al azar es:^3 %s", g_GlobalPrefix, sMap);
+
 		MapChooser_ResetAllData();
 
 		g_SelectedNextMap = 1;
@@ -348,7 +318,7 @@ public OnTask_VoteNextMap__FIX()
 	set_task(15.1, "OnTaskCheckVotesMapFIX");
 	
 	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
-	client_print_color(0, print_team_default, "%sEs momento de elegir el próximo mapa (SEGUNDA VOTACIÓN)!", g_GlobalPrefix);
+	client_print_color(0, print_team_default, "%s^1 Es momento de elegir el próximo mapa (SEGUNDA VOTACIÓN)!", g_GlobalPrefix);
 	
 	ClearSyncHud(0, g_HUD_Alert);
 	OnTask_MapChooserHudVote();
@@ -364,9 +334,9 @@ public menu__CountVoteMapFIX(const id, const iKey)
 
 	ArrayGetString(g_Array_MapName, g_SVM_MapInMenu__FuckingFIX[iMapId], sMap, 31);
 	
-	client_print_color(id, print_team_blue, "%s^1Has elegido el mapa^3 %s", g_GlobalPrefix, sMap);
+	client_print_color(id, print_team_blue, "%s^1 Has elegido el mapa^3 %s", g_GlobalPrefix, sMap);
 	
-	if(amx_vote_answers)
+	if(g_bCvar_amx_vote_answers)
 		client_print(0, print_console, "%n ha votado por el mapa: %s", id, sMap);
 
 	++g_VoteMapCountGlobal[iMapId];
@@ -430,15 +400,15 @@ public OnTaskCheckVotesMapFIX()
 			iWinner = iMapsId[random_num(0, (j - 1))];
 
 		ArrayGetString(g_Array_MapName, iWinner, sMap, 31);
-		set_pcvar_string(pamx_nextmap, sMap);
+		set_pcvar_string(g_pCvar_amx_nextmap, sMap);
 		
 		if(j > 1)
 		{
-			client_print_color(0, print_team_default, "%sNingún mapa superó^4 la mayoría de los votos^1 por segunda vez.", g_GlobalPrefix);
-			client_print_color(0, print_team_blue, "%sEntre los más votados, el mapa ganador al azar es:^3 %s", g_GlobalPrefix, sMap);
+			client_print_color(0, print_team_default, "%s^1 Ningún mapa superó^4 la mayoría de los votos^1 por segunda vez.", g_GlobalPrefix);
+			client_print_color(0, print_team_blue, "%s^1 Entre los más votados, el mapa ganador al azar es:^3 %s", g_GlobalPrefix, sMap);
 		}
 		else
-			client_print_color(0, print_team_blue, "%sVotación finalizada, el mapa ganador es ^3%s ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalPrefix, sMap, iResult, g_VoteMapCount, (g_VoteMapCount != 1) ? "s" : "", (g_VoteMapCount > 0) ? ((iResult * 100) / g_VoteMapCount) : 0);
+			client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el mapa ganador es^3 %s^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_GlobalPrefix, sMap, iResult, g_VoteMapCount, (g_VoteMapCount != 1) ? "s" : "", (g_VoteMapCount > 0) ? ((iResult * 100) / g_VoteMapCount) : 0);
 		
 		MapChooser_ResetAllData();
 
@@ -462,8 +432,15 @@ public OnTaskCheckVotesMapFIX()
 	}
 	else
 	{
-		client_print_color(0, print_team_blue, "%sNingún voto fue emitido, por lo tanto el mapa ganador al azar es:^3 %s", g_GlobalPrefix, amx_nextmap);
-		
+		do {
+			iWinner = random(g_MapVoteNum);
+		} while(iWinner == MAX_SELECTMAPS);
+
+		ArrayGetString(g_Array_MapName, g_SVM_MapInMenu__FuckingFIX[iWinner], sMap, 31);
+		set_pcvar_string(g_pCvar_amx_nextmap, sMap);
+
+		client_print_color(0, print_team_blue, "%s^1 Ningún voto fue emitido, por lo tanto el mapa ganador al azar es:^3 %s", g_GlobalPrefix, sMap);
+
 		MapChooser_ResetAllData();
 
 		g_SelectedNextMap = 1;
@@ -547,15 +524,15 @@ public OnTask_MapChooserHudVote()
 public OnTaskChangeTimeLeft()
 {
 	g_NoMoreTime = 1;
-	g_RestoreTimelimit = get_pcvar_float(mp_timelimit);
-	set_pcvar_float(mp_timelimit, 0.0);
+	g_RestoreTimelimit = get_pcvar_float(g_pCvar_mp_timelimit);
+	set_pcvar_float(g_pCvar_mp_timelimit, 0.0);
 
 	switch(g_ChangeMapType)
 	{
 		case CHANGEMAP_END_OF_ROUND:
 		{
 			client_cmd(0, "spk ^"%s^"", g_SOUND_ExtendTime);
-			client_print_color(0, print_team_default, "%s^1El mapa cambiará al finalizar la ronda!", g_GlobalPrefix);
+			client_print_color(0, print_team_default, "%s^1 El mapa cambiará al finalizar la ronda!", g_GlobalPrefix);
 		}
 		case CHANGEMAP_ONE_MORE_ROUND:
 		{
@@ -573,9 +550,9 @@ public OnTaskAlertChangeMap()
 		message_begin(MSG_ALL, SVC_INTERMISSION);
 		message_end();
 		
-		set_task(2.0, "taskChangeMap", _, amx_nextmap, sizeof(amx_nextmap));
+		set_task(2.0, "taskChangeMap", _, g_bCvar_amx_nextmap, sizeof(g_bCvar_amx_nextmap));
 		
-		client_print_color(0, print_team_blue, "%s^1El siguiente mapa será: ^3%s", g_GlobalPrefix, amx_nextmap);
+		client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será:^3 %s", g_GlobalPrefix, g_bCvar_amx_nextmap);
 		return;
 	}
 	
@@ -703,26 +680,13 @@ stock validMap(mapname[]) {
 	return 0;
 }
 
-stock IsMapInMenu(const i)
+bool:IsMapInMenu(const i)
 {
-	new j;
-	for(j = 0; j < (MAX_SELECTMAPS + 1); ++j)
+	for(new j = 0; j < (MAX_SELECTMAPS + 1); ++j)
 	{
-		if(i == g_SVM_MapInMenu[j]) {
-			return 1;
-		}
+		if(g_SVM_MapInMenu[j] == i)
+			return true;
 	}
 
-	if((ArraySize(g_Array_MapName) + MAX_RECENT_MAPS) > MAX_RECENT_MAPS) {
-		new sMap[64];
-		formatex(sMap, 63, "%a", ArrayGetStringHandle(g_Array_MapName, i));
-
-		for(j = 0; j < MAX_RECENT_MAPS; ++j) {
-			if(equali(sMap, g_RecentMaps[j])) {
-				return 1;
-			}
-		}
-	}
-	
-	return 0;
+	return false;
 }
