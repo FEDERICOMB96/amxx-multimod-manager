@@ -175,7 +175,7 @@ MultiModInit()
 			json_free(jsonObject);
 
 			aMod[Plugins] = ArrayCreate(64);
-			jsonObject = json_object_get_value(jsonArrayValue, "cvars");
+			jsonObject = json_object_get_value(jsonArrayValue, "plugins");
 			{
 				iJsonObjetCount = json_array_get_count(jsonObject);
 
