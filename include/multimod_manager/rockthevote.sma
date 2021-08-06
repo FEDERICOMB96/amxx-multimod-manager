@@ -3,8 +3,7 @@
 #endif
 #define _mm_rtv_included_
 
-#include <amxmodx>
-#include <multimod_manager/defines>
+#include "./include/multimod_manager/defines.sma"
 
 #define RTV_TIME				620 	// En segundos, 5 minutos
 #define RTV_PERCENT				75		// Porcentaje de jugadores que tienen que hacer rtv para que funcione
@@ -30,3 +29,6 @@ RockTheVote_ClientPutInServer(const id)
 {
 	RockTheVote_ResetUserData(id);
 }
+/* AMXX-Studio Notes - DO NOT MODIFY BELOW HERE
+*{\\ rtf1\\ ansi\\ deff0{\\ fonttbl{\\ f0\\ fnil Tahoma;}}\n\\ viewkind4\\ uc1\\ pard\\ lang3082\\ f0\\ fs16 \n\\ par }
+*/

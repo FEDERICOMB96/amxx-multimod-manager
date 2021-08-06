@@ -3,9 +3,8 @@
 #endif
 #define _mm_mapchooser_included_
 
-#include <amxmodx>
-#include <multimod_manager/defines>
-#include <multimod_manager/cvars>
+#include "./include/multimod_manager/defines.sma"
+#include "./include/multimod_manager/cvars.sma"
 
 #define MAX_SELECTMAPS			5
 
@@ -618,3 +617,6 @@ bool:IsMapInMenu(const i)
 
 	return false;
 }
+/* AMXX-Studio Notes - DO NOT MODIFY BELOW HERE
+*{\\ rtf1\\ ansi\\ deff0{\\ fonttbl{\\ f0\\ fnil Tahoma;}}\n\\ viewkind4\\ uc1\\ pard\\ lang3082\\ f0\\ fs16 \n\\ par }
+*/

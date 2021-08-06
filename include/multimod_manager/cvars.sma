@@ -3,8 +3,7 @@
 #endif
 #define _mm_cvars_included_
 
-#include <amxmodx>
-#include <multimod_manager/defines>
+#include "./include/multimod_manager/defines.sma"
 
 /*
 
@@ -48,3 +47,6 @@ CvarsInit()
 	bind_pcvar_num(create_cvar("amx_extendmap_step", "15"), g_bCvar_amx_extendmap_step);
 	bind_pcvar_num(create_cvar("amx_vote_answers", "1"), g_bCvar_amx_vote_answers);	
 }
+/* AMXX-Studio Notes - DO NOT MODIFY BELOW HERE
+*{\\ rtf1\\ ansi\\ deff0{\\ fonttbl{\\ f0\\ fnil Tahoma;}}\n\\ viewkind4\\ uc1\\ pard\\ lang3082\\ f0\\ fs16 \n\\ par }
+*/

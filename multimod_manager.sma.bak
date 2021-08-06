@@ -10,7 +10,7 @@ new const PLUGINS_FILENAME[] = "plugins-multimodmanager.ini";
 #include <reapi>
 #include <engine>
 #include <json>
-#include "./include/multimod_manager/defines.sma"
+#include "./include/multimod_manager/defines.inc"
 
 new g_bConnected;
 
@@ -31,10 +31,10 @@ new g_HUD_Vote = 0;
 new g_HUD_Alert = 0;
 
 
-#include "./include/multimod_manager/cvars.sma"
-#include "./include/multimod_manager/rockthevote.sma"
-#include "./include/multimod_manager/modchooser.sma"
-#include "./include/multimod_manager/mapchooser.sma"
+#include "./include/multimod_manager/cvars.inc"
+#include "./include/multimod_manager/rockthevote.inc"
+#include "./include/multimod_manager/modchooser.inc"
+#include "./include/multimod_manager/mapchooser.inc"
 
 
 public plugin_precache()
