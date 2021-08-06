@@ -16,8 +16,10 @@ new g_bConnected;
 
 new g_GlobalPrefix[21];
 new g_TimeleftTrigger;
-new Array:g_Array_Mods;
 new ChangeMap_e:g_ChangeMapType;
+
+new Array:g_Array_Mods;
+new Array:g_Array_MapName;
 
 new g_CurrentMap[64];
 new g_LastMap[64];
@@ -91,12 +93,18 @@ public plugin_end()
 		{
 			ArrayGetArray(g_Array_Mods, i, aData);
 
-			ArrayDestroy(aData[Cvars]);
-			ArrayDestroy(aData[Plugins]);
+			if(aData[Cvars] != Invalid_Array)
+				ArrayDestroy(aData[Cvars]);
+
+			if(aData[Plugins] != Invalid_Array)
+				ArrayDestroy(aData[Plugins]);
 		}
 
 		ArrayDestroy(g_Array_Mods);
 	}
+
+	if(g_Array_MapName != Invalid_Array)
+		ArrayDestroy(g_Array_MapName);
 }
 
 public client_putinserver(id)
@@ -140,6 +148,7 @@ MultiModInit()
 	}
 
 	g_Array_Mods = ArrayCreate(ArrayMods_e);
+	g_Array_MapName = ArrayCreate(64);
 
 	json_object_get_string(jsonConfigsFile, "global_chat_prefix", g_GlobalPrefix, charsmax(g_GlobalPrefix));
 
@@ -303,7 +312,7 @@ public OnTask_CheckVoteNextMod()
 			return;
 	}
 	
-	if(g_VoteModHasStarted || g_VoteMapHasStarted)
+	if(g_VoteModHasStarted || g_SVM_ModSecondRound || g_VoteMapHasStarted || g_SVM_MapSecondRound)
 		return;
 
 	g_ShowTime = 10;
