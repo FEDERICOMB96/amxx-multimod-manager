@@ -13,7 +13,6 @@ new g_VoteModCount = 0;
 new g_VoteModCountGlobal[MAX_SELECTMODS + 2];
 new g_SVM_ModInMenu[MAX_SELECTMODS + 1];
 new g_SVM_ModInMenu__FuckingFIX[MAX_SELECTMODS + 1];
-new g_SVM_ModName[MAX_SELECTMODS + 1][64];
 new g_SVM_ModSecondRound = 0;
 new g_ModVoteNum = 0;
 new g_SelectedNextMod = 0;
@@ -23,12 +22,7 @@ new g_VoteModId[MAX_USERS];
 
 ModChooser_Init()
 {
-	for(new i = 0; i < (MAX_SELECTMODS + 1); ++i)
-	{
-		g_SVM_ModInMenu[i] = -1;
-		g_SVM_ModName[i][0] = EOS;
-		g_SVM_ModInMenu__FuckingFIX[i] = -1;
-	}
+	ModChooser_ResetAllData();
 
 	register_menu("VoteMod_Menu", KEYSMENU, "menu__CountVoteMod");
 	register_menu("VoteModFIX_Menu", KEYSMENU, "menu__CountVoteModFIX");
@@ -36,15 +30,10 @@ ModChooser_Init()
 
 ModChooser_ResetAllData()
 {
-	for(new i = 0; i < (MAX_SELECTMODS + 2); ++i)
-		g_VoteModCountGlobal[i] = 0;
+	arrayset(g_VoteModCountGlobal, 0, (MAX_SELECTMODS + 2));
 
-	for(new i = 0; i < (MAX_SELECTMODS + 1); ++i)
-	{
-		g_SVM_ModInMenu[i] = -1;
-		g_SVM_ModInMenu__FuckingFIX[i] = -1;
-		g_SVM_ModName[i][0] = EOS;
-	}
+	arrayset(g_SVM_ModInMenu, -1, (MAX_SELECTMODS + 1));
+	arrayset(g_SVM_ModInMenu__FuckingFIX, -1, (MAX_SELECTMODS + 1));
 
 	g_VoteModCount = 0;
 	g_SVM_ModSecondRound = 0;
@@ -86,73 +75,51 @@ ModChooser_ClientDisconnected(const id)
 public OnTask_VoteNextMod()
 {
 	new sMenu[400];
-	new iMenuKeys;
-	new iRandom;
-	new j;
-	new iLen;
-	new iMaxMods;
-	new iStart;
-	new iOk;
-	new iArraySizeMods = ArraySize(g_aModNames);
+	new iMenuKeys = 0;
+	new iArraySizeMods = ArraySize(g_Array_Mods);
+	new iMaxMods = (iArraySizeMods > MAX_SELECTMODS) ? MAX_SELECTMODS : (iArraySizeMods - 1);
 
-	iMaxMods = (iArraySizeMods > MAX_SELECTMODS) ? MAX_SELECTMODS : iArraySizeMods;
-	iMenuKeys = (1<<iMaxMods + 1);
-	
-	iLen = formatex(sMenu, charsmax(sMenu), "\yElige el próximo modo: ¡VOTÁ AHORA!^n^n");
-	j = 0;
-	
-	for(g_ModVoteNum = 0; g_ModVoteNum < iMaxMods; ++g_ModVoteNum)
+	new iLen = formatex(sMenu, charsmax(sMenu), "\yElige el próximo modo: ¡VOTÁ AHORA!^n^n");
+
+	g_ModVoteNum = 0;
+	for(new iRandom, aData[ArrayMods_e]; g_ModVoteNum < iMaxMods; ++g_ModVoteNum)
 	{
-		if(g_SVM_ModInMenu[g_ModVoteNum] == -1)
+		if(g_SVM_ModInMenu[g_ModVoteNum] == -1) // Si no existe nominaciones, elegir al azar una opcion
 		{
-			iOk = 1;
-			iStart = iRandom = random_num(0, (iArraySizeMods - 1));
-			
-			while(IsModInMenu(iRandom))
-			{
-				if(++iRandom >= iArraySizeMods)
-					iRandom = 0;
-
-				if(iRandom == iStart) // Fix infinite bucle 
-				{
-					iOk = 0;
-					break;
-				}
-			}
-
-			if(!iOk)
-				continue;
+			do {
+				iRandom = random(iArraySizeMods);
+			} while(IsModInMenu(iRandom) || g_iCurrentMod == iRandom); // La opcion está en el menú o es el modo actual
 
 			g_SVM_ModInMenu[g_ModVoteNum] = iRandom;
 		}
 
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %a^n", ++j, ArrayGetStringHandle(g_aModNames, g_SVM_ModInMenu[g_ModVoteNum]));
-		
 		iMenuKeys |= (1<<g_ModVoteNum);
+
+		ArrayGetArray(g_Array_Mods, g_SVM_ModInMenu[g_ModVoteNum], aData);
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %s^n", (g_ModVoteNum + 1), aData[ModName]);
 	}
-	
-	for(j = 0; j < (MAX_SELECTMODS + 2); ++j)
-		g_VoteModCountGlobal[j] = 0;
-	
+
+	arrayset(g_VoteModCountGlobal, 0, (MAX_SELECTMODS + 2));
 	g_VoteModCount = 0;
 	g_VoteModHasStarted = 1;
 	g_SVM_ModSecondRound = 0;
 
-	if((get_pcvar_float(mp_timelimit) < Float:amx_extendmap_max) && !g_IsRtv)
+	if(IsAvailableExtendMap())
 	{
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r%d.\w Extender el modo %dm^n", iMaxMods + 1, amx_extendmap_step);
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r%d.\w Extender\y %s\w %dm^n", iMaxMods + 1, g_szCurrentMod, g_bCvar_amx_extendmap_step);
 		iMenuKeys |= (1<<iMaxMods);
 
 		g_SVM_ModInMenu[g_ModVoteNum] = g_ModVoteNum;
 	}
 
 	iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r%d.\y Seleccionar al azar", ((iMaxMods + 2) > 9) ? 0 : (iMaxMods + 2));
+	iMenuKeys |= (1<<iMaxMods + 1);
 	
 	show_menu(0, iMenuKeys, sMenu, 15, "VoteMod_Menu");
 	set_task(15.1, "OnTaskCheckVoteMod");
 	
 	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
-	client_print_color(0, print_team_default, "%sEs momento de elegir el próximo modo!", g_GlobalPrefix);
+	client_print_color(0, print_team_default, "%s^1 Es momento de elegir el próximo modo!", g_GlobalPrefix);
 	
 	ClearSyncHud(0, g_HUD_Vote);
 	OnTask_ModChooserHudVote();
@@ -163,35 +130,47 @@ public menu__CountVoteMod(const id, const iKey)
 	if(!GetPlayerBit(g_bConnected, id))
 		return;
 
-	new szMod[32];
 	new iModId = iKey;
 	
 	if(iKey == MAX_SELECTMODS)
 	{
-		client_print_color(id, print_team_blue, "%s^1 Has elegido extender el modo^3 %d minutos más", g_GlobalPrefix, amx_extendmap_step);
+		client_print_color(id, print_team_blue, "%s^1 Has elegido extender el modo^4 %s^3 %d minutos más", g_GlobalPrefix, g_szCurrentMod, g_bCvar_amx_extendmap_step);
 		
-		if(amx_vote_answers)
-			client_print(0, print_console, "%n ha votado por: extender el modo %d minutos más", id, amx_extendmap_step);
+		if(g_bCvar_amx_vote_answers)
+			client_print(0, print_console, "%n ha votado por: extender el modo %s %d minutos más", id, g_szCurrentMod, g_bCvar_amx_extendmap_step);
 	}
 	else if(iKey < MAX_SELECTMODS)
 	{
-		ArrayGetString(g_aModNames, g_SVM_ModInMenu[iModId], szMod, 31);
+		new aData[ArrayMods_e];
+		ArrayGetArray(g_Array_Mods, g_SVM_ModInMenu[iModId], aData);
 		
-		client_print_color(id, print_team_blue, "%s^1 Has elegido el modo^3 %s", g_GlobalPrefix, szMod);
+		client_print_color(id, print_team_blue, "%s^1 Has elegido el modo^3 %s", g_GlobalPrefix, aData[ModName]);
 		
-		if(amx_vote_answers)
-			client_print(0, print_console, "%n ha votado por el modo: %s", id, szMod);
+		if(g_bCvar_amx_vote_answers)
+			client_print(0, print_console, "%n ha votado por el modo: %s", id, aData[ModName]);
 	}
 	else
 	{
-		iModId = random(g_ModVoteNum-1);
+		iModId = random_num(0, IsAvailableExtendMap() ? g_ModVoteNum : (g_ModVoteNum - 1));
 
-		ArrayGetString(g_aModNames, g_SVM_ModInMenu[iModId], szMod, 31);
-
-		client_print_color(id, print_team_blue, "%sHas elegido el modo^3 %s^4 [ELECCIÓN ALEATORIA]", g_GlobalPrefix, szMod);
+		// Extender modo..
+		if(iModId == g_ModVoteNum)
+		{
+			client_print_color(id, print_team_blue, "%s^1 Has elegido extender el modo^4 %s^3 %d minutos más", g_GlobalPrefix, g_szCurrentMod, g_bCvar_amx_extendmap_step);
 		
-		if(amx_vote_answers)
-			client_print(0, print_console, "%n ha votado por el modo: %s [ELECCIÓN ALEATORIA]", id, szMod);
+			if(g_bCvar_amx_vote_answers)
+				client_print(0, print_console, "%n ha votado por: extender el modo %s %d minutos más [ELECCIÓN ALEATORIA]", id, g_szCurrentMod, g_bCvar_amx_extendmap_step);
+		}
+		else
+		{
+			new aData[ArrayMods_e];
+			ArrayGetArray(g_Array_Mods, g_SVM_ModInMenu[iModId], aData);
+
+			client_print_color(id, print_team_blue, "%sHas elegido el modo^3 %s^4 [ELECCIÓN ALEATORIA]", g_GlobalPrefix, aData[ModName]);
+			
+			if(g_bCvar_amx_vote_answers)
+				client_print(0, print_console, "%n ha votado por el modo: %s [ELECCIÓN ALEATORIA]", id, aData[ModName]);
+		}
 	}
 	
 	++g_VoteModCountGlobal[iModId];
@@ -206,7 +185,7 @@ public OnTaskCheckVoteMod()
 	new iFirst = 0;
 	new iResult = 0;
 	new i;
-	new sMod[32];
+	new aData[ArrayMods_e];
 	
 	for(i = 0; i <= g_ModVoteNum; ++i)
 	{
@@ -228,18 +207,18 @@ public OnTaskCheckVoteMod()
 	
 	for(i = 0; i < g_ModVoteNum; ++i)
 	{
-		ArrayGetString(g_aModNames, g_SVM_ModInMenu[i], sMod, 31);
-		client_print(0, print_console, "Modo: %s - Votos: %d - Porcentaje: %d%%", sMod, g_VoteModCountGlobal[i], (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[i] * 100) / g_VoteModCount) : 0);
+		ArrayGetArray(g_Array_Mods, g_SVM_ModInMenu[i], aData);
+		client_print(0, print_console, "Modo: %s - Votos: %d - Porcentaje: %d%%", aData[ModName], g_VoteModCountGlobal[i], (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[i] * 100) / g_VoteModCount) : 0);
 	}
 	
-	client_print(0, print_console, "Extender modo: %dm - Votos: %d - Porcentaje: %d%%", amx_extendmap_step, g_VoteModCountGlobal[MAX_SELECTMODS], (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[MAX_SELECTMODS] * 100) / g_VoteModCount) : 0);
+	client_print(0, print_console, "Extender %s: %dm - Votos: %d - Porcentaje: %d%%", g_szCurrentMod, g_bCvar_amx_extendmap_step, g_VoteModCountGlobal[MAX_SELECTMODS], (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[MAX_SELECTMODS] * 100) / g_VoteModCount) : 0);
 	
 	// Hubo votos emitidos..
 	if(iResult)
 	{
 		new j = 0;
 
-		// Chequeo si hubo 2 o más mapas con los mismos votos
+		// Chequeo si hubo 2 o más modos con los mismos votos
 		for(i = 0; i <= g_ModVoteNum; ++i)
 		{
 			if(g_VoteModCountGlobal[i] == iResult)
@@ -260,39 +239,39 @@ public OnTaskCheckVoteMod()
 			g_ShowTime = 5;
 			g_ModVoteNum = j;
 
-			client_print_color(0, print_team_blue, "%s^1 Hubo^4 %d mapas^1 con^4 %d^1 voto%s cada uno, siguiente votación en^3 5 segundos^1!", g_GlobalPrefix, j, iResult, (iResult != 1) ? "s" : "");
+			client_print_color(0, print_team_blue, "%s^1 Hubo^4 %d modos^1 con^4 %d^1 voto%s cada uno, siguiente votación en^3 10 segundos^1!", g_GlobalPrefix, j, iResult, (iResult != 1) ? "s" : "");
 
 			client_cmd(0, "spk ^"run officer(e40) voltage(e30) accelerating(s70) is required^"");
 
 			set_task(5.0, "OnTask_AlertStartNextVote", TASK_SHOWTIME);
 			set_task(10.0, "OnTask_VoteNextMod__FIX");
+
+			return;
 		}
 
 		// Solo 1 ganador
-		else
+
+		// Ganador, extender el modo
+		if(iWinner == MAX_SELECTMODS)
 		{
-			// Ganador, extender el modo
-			if(iWinner == MAX_SELECTMODS)
-			{
-				new Float:flExtendMod = ExtendActualMod();
-				
-				client_print_color(0, print_team_blue, "%s^1 El modo actual se extenderá^3 %d minutos más ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalPrefix, floatround(flExtendMod), iResult, g_VoteModCount, (g_VoteModCount != 1) ? "s" : "", (g_VoteModCount > 0) ? ((iResult * 100) / g_VoteModCount) : 0); // , (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[MAX_SELECTMODS] * 100) / g_VoteModCount) : 0
-				
-				ModChooser_ResetAllData();
-				return;
-			}
-
-			MultiMod_SetNextMod(g_SVM_ModInMenu[iWinner]);
-
-			ArrayGetString(g_aModNames, g_SVM_ModInMenu[iWinner], sMod, 31);
-			client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el modo ganador es ^3%s ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalPrefix, sMod, iResult, g_VoteModCount, (g_VoteModCount != 1) ? "s" : "", (g_VoteModCount > 0) ? ((iResult * 100) / g_VoteModCount) : 0); // , (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[j] * 100) / g_VoteModCount) : 0
+			new Float:flExtendMod = ExtendActualMod();
+			
+			client_print_color(0, print_team_blue, "%s^1 El modo actual se extenderá^3 %d minutos más^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_GlobalPrefix, floatround(flExtendMod), iResult, g_VoteModCount, (g_VoteModCount != 1) ? "s" : "", (g_VoteModCount > 0) ? ((iResult * 100) / g_VoteModCount) : 0); // , (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[MAX_SELECTMODS] * 100) / g_VoteModCount) : 0
 			
 			ModChooser_ResetAllData();
-
-			g_SelectedNextMod = 1;
-
-			MapChooser_InitNextVoteMap(60);
+			return;
 		}
+
+		MultiMod_SetNextMod(g_SVM_ModInMenu[iWinner]);
+
+		ArrayGetArray(g_Array_Mods, g_SVM_ModInMenu[iWinner], aData);
+		client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el modo ganador es ^3%s ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalPrefix, aData[ModName], iResult, g_VoteModCount, (g_VoteModCount != 1) ? "s" : "", (g_VoteModCount > 0) ? ((iResult * 100) / g_VoteModCount) : 0); // , (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[j] * 100) / g_VoteModCount) : 0
+		
+		ModChooser_ResetAllData();
+
+		g_SelectedNextMod = 1;
+
+		MapChooser_InitNextVoteMap(60);
 	}
 	else
 	{
@@ -306,16 +285,19 @@ public OnTaskCheckVoteMod()
 			
 			ModChooser_ResetAllData();
 			
-			client_print_color(0, print_team_red, "%s^3La votación solicitada por los usuarios no tuvo exito!", g_GlobalPrefix);
+			client_print_color(0, print_team_red, "%s^3 (RTV) La votación solicitada por los usuarios no tuvo exito!", g_GlobalPrefix);
 			return;
 		}
 
-		iWinner = random(g_ModVoteNum+1);
+		do {
+			iWinner = random(g_ModVoteNum);
+		} while(iWinner == MAX_SELECTMODS);
+
 		MultiMod_SetNextMod(g_SVM_ModInMenu[iWinner]);
 
-		ArrayGetString(g_aModNames, g_SVM_ModInMenu[iWinner], sMod, 31);
-		client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el modo ganador es ^3%s ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalPrefix, sMod, iResult, g_VoteModCount, (g_VoteModCount != 1) ? "s" : "", (g_VoteModCount > 0) ? ((iResult * 100) / g_VoteModCount) : 0); // , (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[j] * 100) / g_VoteModCount) : 0
-		
+		ArrayGetArray(g_Array_Mods, g_SVM_ModInMenu[iWinner], aData);
+		client_print_color(0, print_team_blue, "%s^1 Ningún voto fue emitido, por lo tanto el modo ganador al azar es:^3 %s", g_GlobalPrefix, aData[ModName]);
+
 		ModChooser_ResetAllData();
 
 		g_SelectedNextMod = 1;
@@ -328,29 +310,26 @@ public OnTask_VoteNextMod__FIX()
 {
 	new sMenu[400];
 	new iMenuKeys;
-	new iLen;
-	new i;
 
-	iLen = formatex(sMenu, charsmax(sMenu), "\yElige el próximo modo: ¡VOTÁ AHORA!^n^n");
+	new iLen = formatex(sMenu, charsmax(sMenu), "\yElige el próximo modo: ¡VOTÁ AHORA!^n^n");
 
-	for(i = 0; i < g_ModVoteNum; ++i)
+	for(new i = 0, aData[ArrayMods_e]; i < g_ModVoteNum; ++i)
 	{
 		iMenuKeys |= (1<<i);
 
 		if(g_SVM_ModInMenu__FuckingFIX[i] == -1)
 		{
-			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w Extender el modo %dm^n", i+1, amx_extendmap_step);
+			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w Extender\y %s\w %dm^n", i+1, g_szCurrentMod, g_bCvar_amx_extendmap_step);
 			continue;
 		}
 
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %a^n", i+1, ArrayGetStringHandle(g_aModNames, g_SVM_ModInMenu__FuckingFIX[i]));
+		ArrayGetArray(g_Array_Mods, g_SVM_ModInMenu__FuckingFIX[i], aData);
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %s^n", i+1, aData[ModName]);
 	}
 
 	iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n^n\d(SEGUNDA VOTACIÓN)");
 
-	for(i = 0; i < (MAX_SELECTMODS + 2); ++i)
-		g_VoteModCountGlobal[i] = 0;
-
+	arrayset(g_VoteModCountGlobal, 0, (MAX_SELECTMODS + 2));
 	g_VoteModCount = 0;
 	g_VoteModHasStarted = 1;
 	g_SVM_ModSecondRound = 1;
@@ -359,7 +338,7 @@ public OnTask_VoteNextMod__FIX()
 	set_task(15.1, "OnTaskCheckVoteModFIX");
 	
 	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
-	client_print_color(0, print_team_default, "%sEs momento de elegir el próximo modo (SEGUNDA VOTACIÓN)!", g_GlobalPrefix);
+	client_print_color(0, print_team_default, "%s^1 Es momento de elegir el próximo modo (SEGUNDA VOTACIÓN)!", g_GlobalPrefix);
 	
 	ClearSyncHud(0, g_HUD_Vote);
 	OnTask_ModChooserHudVote();
@@ -370,24 +349,24 @@ public menu__CountVoteModFIX(const id, const iKey)
 	if(!GetPlayerBit(g_bConnected, id))
 		return;
 
-	new sMod[32];
 	new iModId = iKey;
 	
 	if(g_SVM_ModInMenu__FuckingFIX[iModId] == -1)
 	{
-		client_print_color(id, print_team_blue, "%s^1 Has elegido extender el modo^3 %d minutos más", g_GlobalPrefix, amx_extendmap_step);
+		client_print_color(id, print_team_blue, "%s^1 Has elegido extender el modo^4 %s^3 %d minutos más", g_GlobalPrefix, g_szCurrentMod, g_bCvar_amx_extendmap_step);
 		
-		if(amx_vote_answers)
-			client_print(0, print_console, "%n ha votado por: extender el modo %d minutos más", id, amx_extendmap_step);
+		if(g_bCvar_amx_vote_answers)
+			client_print(0, print_console, "%n ha votado por: extender el modo %s %d minutos más", id, g_szCurrentMod, g_bCvar_amx_extendmap_step);
 	}
 	else
 	{
-		ArrayGetString(g_aModNames, g_SVM_ModInMenu__FuckingFIX[iModId], sMod, 31);
+		new aData[ArrayMods_e];
+		ArrayGetArray(g_Array_Mods, g_SVM_ModInMenu__FuckingFIX[iModId], aData);
+
+		client_print_color(id, print_team_blue, "%s^1 Has elegido el modo^3 %s", g_GlobalPrefix, aData[ModName]);
 		
-		client_print_color(id, print_team_blue, "%s^1 Has elegido el modo^3 %s", g_GlobalPrefix, sMod);
-		
-		if(amx_vote_answers)
-			client_print(0, print_console, "%n ha votado por el modo: %s", id, sMod);
+		if(g_bCvar_amx_vote_answers)
+			client_print(0, print_console, "%n ha votado por el modo: %s", id, aData[ModName]);
 	}
 	
 	++g_VoteModCountGlobal[iModId];
@@ -402,8 +381,8 @@ public OnTaskCheckVoteModFIX()
 	new iFirst = 0;
 	new iResult = 0;
 	new i;
-	new sMod[32];
-	
+	new aData[ArrayMods_e];
+
 	for(i = 0; i < g_ModVoteNum; ++i)
 	{
 		if(!iFirst)
@@ -426,13 +405,12 @@ public OnTaskCheckVoteModFIX()
 	{
 		if(g_SVM_ModInMenu__FuckingFIX[i] == -1)
 		{
-			client_print(0, print_console, "Extender mapa: %d' - Votos: %d - Porcentaje: %d%%", amx_extendmap_step, g_VoteModCountGlobal[i], (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[i] * 100) / g_VoteModCount) : 0);
+			client_print(0, print_console, "Extender modo: %d' - Votos: %d - Porcentaje: %d%%", g_bCvar_amx_extendmap_step, g_VoteModCountGlobal[i], (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[i] * 100) / g_VoteModCount) : 0);
 			continue;
 		}
 
-		ArrayGetString(g_aModNames, g_SVM_ModInMenu__FuckingFIX[i], sMod, 31);
-		
-		client_print(0, print_console, "Modo: %s - Votos: %d - Porcentaje: %d%%^n", sMod, g_VoteModCountGlobal[i], (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[i] * 100) / g_VoteModCount) : 0);
+		ArrayGetArray(g_Array_Mods, g_SVM_ModInMenu__FuckingFIX[i], aData);
+		client_print(0, print_console, "Modo: %s - Votos: %d - Porcentaje: %d%%^n", aData[ModName], g_VoteModCountGlobal[i], (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[i] * 100) / g_VoteModCount) : 0);
 	}
 
 	// Hubo votos emitidos..
@@ -443,7 +421,7 @@ public OnTaskCheckVoteModFIX()
 
 		iWinner = g_SVM_ModInMenu__FuckingFIX[iWinner];
 
-		// Chequeo si hubo 2 o más mapas con los mismos votos
+		// Chequeo si hubo 2 o más modos con los mismos votos
 		for(i = 0; i <= g_ModVoteNum; ++i)
 		{
 			if(g_VoteModCountGlobal[i] == iResult)
@@ -458,33 +436,33 @@ public OnTaskCheckVoteModFIX()
 		if(j > 1)
 			iWinner = iMapsId[random_num(0, (j - 1))];
 
-		// Ganador, extender el mapa
+		// Ganador, extender el modo
 		if(iWinner == -1)
 		{
 			new Float:flExtendMod = ExtendActualMod();
 
 			if(j > 1)
 			{
-				client_print_color(0, print_team_default, "%s^1 Ningún mapa superó^4 la mayoría de los votos^1 por segunda vez.", g_GlobalPrefix);
-				client_print_color(0, print_team_blue, "%s^1 Entre los más votados, el mapa ganador al azar es:^3 Extender el mapa %dm.", g_GlobalPrefix, floatround(flExtendMod));
-				client_print_color(0, print_team_default, "%s^1 El mapa actual se extenderá^3 %d minutos más", g_GlobalPrefix, floatround(flExtendMod));
+				client_print_color(0, print_team_default, "%s^1 Ningún modo superó^4 la mayoría de los votos^1 por segunda vez.", g_GlobalPrefix);
+				client_print_color(0, print_team_blue, "%s^1 Entre los más votados, el modo ganador al azar es:^3 Extender el modo %dm.", g_GlobalPrefix, floatround(flExtendMod));
+				client_print_color(0, print_team_default, "%s^1 El modo actual se extenderá^3 %d minutos más", g_GlobalPrefix, floatround(flExtendMod));
 			}
 			else
-				client_print_color(0, print_team_blue, "%s^1 El mapa actual se extenderá^3 %d minutos más ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalPrefix, floatround(flExtendMod), iResult, g_VoteModCount, (g_VoteModCount != 1) ? "s" : "", (g_VoteModCount > 0) ? ((iResult * 100) / g_VoteModCount) : 0);
+				client_print_color(0, print_team_blue, "%s^1 El modo actual se extenderá^3 %d minutos más^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_GlobalPrefix, floatround(flExtendMod), iResult, g_VoteModCount, (g_VoteModCount != 1) ? "s" : "", (g_VoteModCount > 0) ? ((iResult * 100) / g_VoteModCount) : 0);
 
 			ModChooser_ResetAllData();
 			return;
 		}
 
-		ArrayGetString(g_aModNames, iWinner, sMod, 31);
+		ArrayGetArray(g_Array_Mods, iWinner, aData);
 		
 		if(j > 1)
 		{
-			client_print_color(0, print_team_default, "%sNingún mapa superó^4 la mayoría de los votos^1 por segunda vez.", g_GlobalPrefix);
-			client_print_color(0, print_team_blue, "%sEntre los más votados, el mapa ganador al azar es:^3 %s", g_GlobalPrefix, sMod);
+			client_print_color(0, print_team_default, "%s^1 Ningún modo superó^4 la mayoría de los votos^1 por segunda vez.", g_GlobalPrefix);
+			client_print_color(0, print_team_blue, "%s^1 Entre los más votados, el modo ganador al azar es:^3 %s", g_GlobalPrefix, aData[ModName]);
 		}
 		else
-			client_print_color(0, print_team_blue, "%sVotación finalizada, el mapa ganador es ^3%s ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalPrefix, sMod, iResult, g_VoteModCount, (g_VoteModCount != 1) ? "s" : "", (g_VoteModCount > 0) ? ((iResult * 100) / g_VoteModCount) : 0);
+			client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el modo ganador es^3 %s^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_GlobalPrefix, aData[ModName], iResult, g_VoteModCount, (g_VoteModCount != 1) ? "s" : "", (g_VoteModCount > 0) ? ((iResult * 100) / g_VoteModCount) : 0);
 		
 		ModChooser_ResetAllData();
 
@@ -508,11 +486,14 @@ public OnTaskCheckVoteModFIX()
 			return;
 		}
 
-		iWinner = random(g_ModVoteNum+1);
+		do {
+			iWinner = random(g_ModVoteNum);
+		} while(g_SVM_ModInMenu__FuckingFIX[iWinner] == -1);
+
 		MultiMod_SetNextMod(g_SVM_ModInMenu__FuckingFIX[iWinner]);
 
-		ArrayGetString(g_aModNames, g_SVM_ModInMenu__FuckingFIX[iWinner], sMod, 31);
-		client_print_color(0, print_team_blue, "%s^1 Ningún voto fue emitido, por lo tanto el mapa ganador al azar es:^3 %s", g_GlobalPrefix, sMod);
+		ArrayGetArray(g_Array_Mods, g_SVM_ModInMenu__FuckingFIX[iWinner], aData);
+		client_print_color(0, print_team_blue, "%s^1 Ningún voto fue emitido, por lo tanto el modo ganador al azar es:^3 %s", g_GlobalPrefix, aData[ModName]);
 
 		ModChooser_ResetAllData();
 
@@ -545,6 +526,7 @@ public OnTask_ModChooserHudVote()
 	new iModId[MAX_SELECTMODS + 2];
 	new iVoteMods[MAX_SELECTMODS + 2];
 	new iExtendMod[MAX_SELECTMODS + 2];
+	new aData[ArrayMods_e];
 
 	new sHud[256];
 
@@ -589,9 +571,13 @@ public OnTask_ModChooserHudVote()
 
 		iNoFirst = 1;
 
-		(!iExtendMod[i])
-			? (iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "%a: %d voto%s (%d%%%%)", ArrayGetStringHandle(g_aModNames, iModId[i]), iVoteMods[i], (iVoteMods[i] == 1) ? "" : "s", (g_VoteModCount > 0) ? ((iVoteMods[i] * 100) / g_VoteModCount) : 0))
-			: (iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "Extender mapa %dm: %d voto%s (%d%%%%)", amx_extendmap_step, iVoteMods[i], (iVoteMods[i] == 1) ? "" : "s", (g_VoteModCount > 0) ? ((iVoteMods[i] * 100) / g_VoteModCount) : 0));
+		if(iExtendMod[i])
+			iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "Extender modo %dm: %d voto%s (%d%%%%)", g_bCvar_amx_extendmap_step, iVoteMods[i], (iVoteMods[i] == 1) ? "" : "s", (g_VoteModCount > 0) ? ((iVoteMods[i] * 100) / g_VoteModCount) : 0);
+		else
+		{
+			ArrayGetArray(g_Array_Mods, iModId[i], aData);
+			iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "%s: %d voto%s (%d%%%%)", aData[ModName], iVoteMods[i], (iVoteMods[i] == 1) ? "" : "s", (g_VoteModCount > 0) ? ((iVoteMods[i] * 100) / g_VoteModCount) : 0);
+		}
 	}
 
 	set_hudmessage(255, 255, 255, 0.75, 0.35, 0, 0.0, 0.3, 0.0, 0.0, -1);
@@ -600,19 +586,24 @@ public OnTask_ModChooserHudVote()
 
 Float:ExtendActualMod()
 {
-	new Float:fExtendMod = Float:amx_extendmap_step;
-	set_pcvar_float(mp_timelimit, (get_pcvar_float(mp_timelimit) + fExtendMod));
+	new Float:fExtendMod = Float:g_bCvar_amx_extendmap_step;
+	set_pcvar_float(g_pCvar_mp_timelimit, (get_pcvar_float(g_pCvar_mp_timelimit) + fExtendMod));
 
 	return fExtendMod;
 }
 
-IsModInMenu(const i)
+bool:IsModInMenu(const i)
 {
 	for(new j = 0; j < (MAX_SELECTMODS + 1); ++j)
 	{
-		if(i == g_SVM_ModInMenu[j] || equali(g_CurrentMod, g_SVM_ModName[j]))
-			return 1;
+		if(g_SVM_ModInMenu[j] == i)
+			return true;
 	}
 
-	return 0;
+	return false;
+}
+
+bool:IsAvailableExtendMap()
+{
+	return bool:((get_pcvar_float(g_pCvar_mp_timelimit) < float(g_bCvar_amx_extendmap_max)) && !g_IsRtv);
 }
