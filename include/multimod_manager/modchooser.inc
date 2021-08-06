@@ -38,20 +38,11 @@ ModChooser_ResetAllData()
 	g_VoteModCount = 0;
 	g_SVM_ModSecondRound = 0;
 	g_ModVoteNum = 0;
-	g_NoMoreTime = 0;
-	g_ShowTime = 10;
 	g_VoteModHasStarted = 0;
 
-	for(new i = 0; i < MAX_USERS; ++i)
-	{
-		RockTheVote_ResetUserData(i);
-		g_VoteModId[i] = 0;
-	}
+	arrayset(g_VoteModId, 0, MAX_USERS);
 
-	remove_task(TASK_VOTEMAP);
 	remove_task(TASK_VOTEMOD);
-	remove_task(TASK_TIMELEFT);
-	remove_task(TASK_RTV);
 	remove_task(TASK_SHOWTIME);
 }
 
@@ -254,7 +245,7 @@ public OnTaskCheckVoteMod()
 		// Ganador, extender el modo
 		if(iWinner == MAX_SELECTMODS)
 		{
-			ExtendActualMod(g_bCvar_amx_extendmap_step);
+			ExtendTimeleft(g_bCvar_amx_extendmap_step);
 			client_print_color(0, print_team_blue, "%s^1 El modo actual se extenderá^3 %d minutos más^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_GlobalPrefix, g_bCvar_amx_extendmap_step, iResult, g_VoteModCount, (g_VoteModCount != 1) ? "s" : "", (g_VoteModCount > 0) ? ((iResult * 100) / g_VoteModCount) : 0); // , (g_VoteModCount > 0) ? ((g_VoteModCountGlobal[MAX_SELECTMODS] * 100) / g_VoteModCount) : 0
 			
 			ModChooser_ResetAllData();
@@ -438,7 +429,7 @@ public OnTaskCheckVoteModFIX()
 		// Ganador, extender el modo
 		if(iWinner == -1)
 		{
-			ExtendActualMod(g_bCvar_amx_extendmap_step);
+			ExtendTimeleft(g_bCvar_amx_extendmap_step);
 
 			if(j > 1)
 			{
@@ -583,7 +574,12 @@ public OnTask_ModChooserHudVote()
 	ShowSyncHudMsg(0, g_HUD_Vote, sHud);
 }
 
-ExtendActualMod(const iTime)
+bool:IsAvailableExtendMap()
+{
+	return bool:((get_pcvar_float(g_pCvar_mp_timelimit) < float(g_bCvar_amx_extendmap_max)) && !g_IsRtv);
+}
+
+ExtendTimeleft(const iTime)
 {
 	set_pcvar_float(g_pCvar_mp_timelimit, (get_pcvar_float(g_pCvar_mp_timelimit) + float(iTime)));
 }
@@ -597,9 +593,4 @@ bool:IsModInMenu(const i)
 	}
 
 	return false;
-}
-
-bool:IsAvailableExtendMap()
-{
-	return bool:((get_pcvar_float(g_pCvar_mp_timelimit) < float(g_bCvar_amx_extendmap_max)) && !g_IsRtv);
 }

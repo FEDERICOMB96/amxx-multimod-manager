@@ -8,7 +8,6 @@
 #include <multimod_manager/cvars>
 
 #define MAX_SELECTMAPS			5
-#define MAX_RECENT_MAPS			5
 
 new g_VoteMapCount = 0;
 new g_VoteMapCountGlobal[MAX_SELECTMAPS + 2];
@@ -20,12 +19,8 @@ new g_SelectedNextMap = 0;
 new g_VoteMapHasStarted = 0;
 new g_ChangeMapTime = 10;
 new g_ChangeMapOneMoreRound = 0;
-new g_RecentMaps[MAX_RECENT_MAPS][32];
-new g_RecentMapsCount = 0;
 
 new g_VoteMapId[MAX_USERS];
-
-new Array:g_Array_MapName;
 
 MapChooser_Init()
 {
@@ -33,8 +28,6 @@ MapChooser_Init()
 
 	register_menu("VoteMap_Menu", KEYSMENU, "menu__CountVoteMap");
 	register_menu("VoteMapFIX_Menu", KEYSMENU, "menu__CountVoteMapFIX");
-	
-	g_Array_MapName = ArrayCreate(32);
 }
 
 MapChooser_ResetAllData()
@@ -47,22 +40,14 @@ MapChooser_ResetAllData()
 	g_VoteMapCount = 0;
 	g_SVM_MapSecondRound = 0;
 	g_MapVoteNum = 0;
-	g_ChangeMapTime = 10;
-	g_NoMoreTime = 0;
-	g_ShowTime = 10;
-	g_ChangeMapOneMoreRound = 0;
 	g_VoteMapHasStarted = 0;
-
-	for(new i = 0; i < MAX_USERS; ++i)
-	{
-		RockTheVote_ResetUserData(i);
-		g_VoteMapId[i] = 0;
-	}
+	g_ChangeMapTime = 10;
+	g_ChangeMapOneMoreRound = 0;
+	
+	arrayset(g_VoteMapId, 0, MAX_USERS);
 
 	remove_task(TASK_VOTEMAP);
-	remove_task(TASK_VOTEMOD);
 	remove_task(TASK_TIMELEFT);
-	remove_task(TASK_RTV);
 	remove_task(TASK_SHOWTIME);
 }
 
@@ -70,7 +55,7 @@ MapChooser_InitNextVoteMap(iStartVote)
 {
 	g_ShowTime = 10;
 
-	new Float:flStartVote = float(clamp(iStartVote, 10, iStartVote));
+	new Float:flStartVote = float(max(10, iStartVote));
 
 	remove_task(TASK_SHOWTIME);
 	remove_task(TASK_VOTEMAP);
@@ -106,21 +91,20 @@ public OnTask_VoteNextMap()
 	new iLen = formatex(sMenu, charsmax(sMenu), "\yElige el próximo mapa: ¡VOTÁ AHORA!^n^n");
 
 	g_MapVoteNum = 0;
-	for(new iRandom, szMapName[64]; g_MapVoteNum < iMaxMaps; ++g_MapVoteNum)
+	for(new iRandom; g_MapVoteNum < iMaxMaps; ++g_MapVoteNum)
 	{
 		if(g_SVM_MapInMenu[g_MapVoteNum] == -1) // Si no existe nominaciones, elegir al azar una opcion
 		{
 			do {
 				iRandom = random(iArraySizeMaps);
-				ArrayGetString(g_Array_MapName, iRandom, szMapName, charsmax(szMapName));
-			} while(IsMapInMenu(iRandom)); // La opcion está en el menú o es el mapa actual
+			} while(IsMapInMenu(iRandom)); // La opcion está en el menú
 
 			g_SVM_MapInMenu[g_MapVoteNum] = iRandom;
 		}
 
 		iMenuKeys |= (1<<g_MapVoteNum);
 
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %s^n", (g_MapVoteNum + 1), szMapName);
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %a^n", (g_MapVoteNum + 1), ArrayGetStringHandle(g_Array_MapName, g_SVM_MapInMenu[g_MapVoteNum]));
 	}
 
 	arrayset(g_VoteMapCountGlobal, 0, (MAX_SELECTMAPS + 2));
@@ -307,9 +291,7 @@ public OnTask_VoteNextMap__FIX()
 
 	iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n^n\d(SEGUNDA VOTACIÓN)");
 
-	for(i = 0; i < (MAX_SELECTMAPS + 2); ++i)
-		g_VoteMapCountGlobal[i] = 0;
-
+	arrayset(g_VoteMapCountGlobal, 0, (MAX_SELECTMAPS + 2));
 	g_VoteMapCount = 0;
 	g_VoteMapHasStarted = 1;
 	g_SVM_MapSecondRound = 1;
@@ -582,74 +564,28 @@ ExecChangeTimeleft()
 }
 
 MapChooser_LoadMaps(const szFileName[])
-{	
-	new iFile;
-	new sLine[256];
-	new sMap[64];
-	
-	g_RecentMapsCount = 0;
-
-	/*copy(sLine, charsmax(sLine), "addons/amxmodx/configs/recentmaps/maps.txt");
-
-	if(file_exists(sLine)) {
-		iFile = fopen(sLine, "r");
-
-		if(iFile) {
-			while(!feof(iFile)) {
-				fgets(iFile, sLine, charsmax(sLine));
-
-				trim(sLine);
-
-				if(!strlen(sLine)) {
-					continue;
-				}
-
-				copy(g_RecentMaps[g_RecentMapsCount], charsmax(g_RecentMaps[]), sLine);
-
-				if(++g_RecentMapsCount >= MAX_RECENT_MAPS) {
-					break;
-				}
-			}
-
-			fclose(iFile);
-		}
-	}*/
-	
+{
 	if(file_exists(szFileName))
 	{
-		iFile = fopen(szFileName, "r");
+		new iFile = fopen(szFileName, "r");
 
 		if(iFile)
 		{
-			new j;
-			new iOk;
+			new szLine[PLATFORM_MAX_PATH];
+			new szMap[64];
 
 			while(!feof(iFile))
 			{
-				sLine[0] = EOS;
-				sMap[0] = EOS;
-				
-				fgets(iFile, sLine, 255);
-				parse(sLine, sMap, 63);
+				fgets(iFile, szLine, charsmax(szLine));
+				parse(szLine, szMap, charsmax(szMap));
 
-				mb_strtolower(sMap);
+				mb_strtolower(szMap);
 				
-				if(sMap[0] != ';' && validMap(sMap) && !equali(sMap, g_CurrentMap) && !equali(sMap, g_LastMap) && (containi(sMap, g_CurrentMap) == -1) && (containi(sMap, g_LastMap) == -1))
+				if(szMap[0] != ';' 
+					&& IsValidMap(szMap) 
+					&& !equali(szMap, g_CurrentMap))
 				{
-					iOk = 1;
-
-					for(j = 0; j < MAX_RECENT_MAPS; ++j) {
-						if(equali(sMap, g_RecentMaps[j])) {
-							iOk = 0;
-							break;
-						}
-					}
-
-					if(!iOk) {
-						continue;
-					}
-
-					ArrayPushString(g_Array_MapName, sMap);
+					ArrayPushString(g_Array_MapName, szMap);
 				}
 			}
 			
@@ -658,26 +594,25 @@ MapChooser_LoadMaps(const szFileName[])
 	}
 }
 
-stock validMap(mapname[]) {
-	if(is_map_valid(mapname)) {
-		return 1;
-	}
+bool:IsValidMap(szMapName[])
+{
+	if(is_map_valid(szMapName))
+		return true;
 	
-	new iLen = strlen(mapname) - 4;
+	new iLen = strlen(szMapName) - 4;
 	
-	if(iLen < 0) {
-		return 0;
-	}
+	if(iLen < 0)
+		return false;
 	
-	if(equali(mapname[iLen], ".bsp")) {
-		mapname[iLen] = EOS;
+	if(equali(szMapName[iLen], ".bsp"))
+	{
+		szMapName[iLen] = EOS;
 		
-		if(is_map_valid(mapname)) {
-			return 1;
-		}
+		if(is_map_valid(szMapName))
+			return true;
 	}
 	
-	return 0;
+	return false;
 }
 
 bool:IsMapInMenu(const i)
