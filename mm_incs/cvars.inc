@@ -4,7 +4,7 @@
 #define _mm_cvars_included_
 
 #include <amxmodx>
-#include <multimod_manager/defines>
+#include "mm_incs/defines"
 
 /*
 

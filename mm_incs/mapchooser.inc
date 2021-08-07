@@ -4,8 +4,8 @@
 #define _mm_mapchooser_included_
 
 #include <amxmodx>
-#include <multimod_manager/defines>
-#include <multimod_manager/cvars>
+#include "mm_incs/defines"
+#include "mm_incs/cvars"
 
 #define MAX_SELECTMAPS			5
 

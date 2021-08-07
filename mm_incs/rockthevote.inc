@@ -4,7 +4,7 @@
 #define _mm_rtv_included_
 
 #include <amxmodx>
-#include <multimod_manager/defines>
+#include "mm_incs/defines"
 
 #define RTV_TIME				620 	// En segundos, 5 minutos
 #define RTV_PERCENT				75		// Porcentaje de jugadores que tienen que hacer rtv para que funcione
