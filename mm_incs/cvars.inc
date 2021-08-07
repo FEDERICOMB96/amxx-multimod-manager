@@ -37,7 +37,7 @@ cvar_t g_bCvar_amx_vote_answers;
 
 /* Pointer Cvars */
 
-CvarsInit()
+Cvars_Init()
 {
 	g_pCvar_mp_timelimit = get_cvar_pointer("mp_timelimit");
 	bind_pcvar_num(get_cvar_pointer("mp_winlimit"), g_bCvar_mp_winlimit);

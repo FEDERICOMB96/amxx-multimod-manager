@@ -39,11 +39,6 @@ public plugin_init()
 {
 	register_plugin(PLUGIN_NAME, PLUGIN_VERSION, "FEDERICOMB");
 
-	CvarsInit();
-	MultiModInit();
-	ModChooser_Init();
-	MapChooser_Init();
-
 	register_event_ex("TextMsg", "OnEvent_GameRestart", RegisterEvent_Global, "2&#Game_C", "2&#Game_w");
 	register_event_ex("TextMsg", "OnEvent_GameRestart", RegisterEvent_Global, "2&#Game_will_restart_in");
 	register_event_ex("HLTV", "OnEvent_HLTV", RegisterEvent_Global, "1=0", "2=0");
@@ -55,9 +50,14 @@ public plugin_init()
 	g_HUD_Alert = CreateHudSyncObj();
 }
 
-public plugin_cfg()
+public OnConfigsExecuted()
 {
 	server_cmd("amx_pausecfg add ^"%s^"", PLUGIN_NAME);
+
+	Cvars_Init();
+	MultiMod_Init();
+	ModChooser_Init();
+	MapChooser_Init();
 }
 
 public plugin_end()
@@ -102,7 +102,7 @@ public client_disconnected(id, bool:drop, message[], maxlen)
 	MapChooser_ClientDisconnected(id);
 }
 
-MultiModInit()
+MultiMod_Init()
 {
 	new szConfigDir[PLATFORM_MAX_PATH], szFileName[PLATFORM_MAX_PATH], szPluginsFile[PLATFORM_MAX_PATH];
 	get_configsdir(szConfigDir, charsmax(szConfigDir));
