@@ -440,6 +440,8 @@ public OnTaskCheckVoteModFIX()
 			return;
 		}
 
+		MultiMod_SetNextMod(iWinner);
+
 		ArrayGetArray(g_Array_Mods, iWinner, aData);
 		
 		if(j > 1)
