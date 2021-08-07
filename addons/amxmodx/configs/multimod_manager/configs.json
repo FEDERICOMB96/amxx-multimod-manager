@@ -1,6 +1,5 @@
 {
 	"global_chat_prefix": "!g[MULTIMOD]",
-	"timeleft_trigger": 180,
 	"mods":
 	[
 		{
@@ -9,7 +8,7 @@
 			"change_map_type": 1,
 			"cvars":
 			[
-				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 45"
+				"sv_gravity 900", "sv_alltalk 1"
 			],
 			"plugins":
 			[
@@ -22,7 +21,7 @@
 			"change_map_type": 1,
 			"cvars":
 			[
-				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 20"
+				"sv_gravity 900", "sv_alltalk 1"
 			],
 			"plugins":
 			[
@@ -35,7 +34,7 @@
 			"change_map_type": 1,
 			"cvars":
 			[
-				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 30"
+				"sv_gravity 900", "sv_alltalk 1"
 			],
 			"plugins":
 			[
@@ -48,7 +47,7 @@
 			"change_map_type": 1,
 			"cvars":
 			[
-				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 30"
+				"sv_gravity 900", "sv_alltalk 1"
 			],
 			"plugins":
 			[
@@ -61,7 +60,7 @@
 			"change_map_type": 1,
 			"cvars":
 			[
-				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 20"
+				"sv_gravity 900", "sv_alltalk 1"
 			],
 			"plugins":
 			[
@@ -74,7 +73,7 @@
 			"change_map_type": 1,
 			"cvars":
 			[
-				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 30"
+				"sv_gravity 900", "sv_alltalk 1"
 			],
 			"plugins":
 			[
@@ -87,7 +86,7 @@
 			"change_map_type": 1,
 			"cvars":
 			[
-				"sv_gravity 900", "sv_alltalk 1", "mp_timelimit 30"
+				"sv_gravity 900", "sv_alltalk 1"
 			],
 			"plugins":
 			[

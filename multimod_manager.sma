@@ -15,7 +15,6 @@ new const PLUGINS_FILENAME[] = "plugins-multimodmanager.ini";
 new g_bConnected;
 
 new g_GlobalPrefix[21];
-new g_TimeleftTrigger;
 new ChangeMap_e:g_ChangeMapType;
 
 new Array:g_Array_Mods;
@@ -59,7 +58,6 @@ public plugin_init()
 public plugin_cfg()
 {
 	server_cmd("amx_pausecfg add ^"%s^"", PLUGIN_NAME);
-	server_cmd("sv_restart 1");
 }
 
 public plugin_end()
@@ -136,8 +134,6 @@ MultiModInit()
 	replace_string(g_GlobalPrefix, charsmax(g_GlobalPrefix), "!y" , "^1");
 	replace_string(g_GlobalPrefix, charsmax(g_GlobalPrefix), "!t" , "^3");
 	replace_string(g_GlobalPrefix, charsmax(g_GlobalPrefix), "!g" , "^4");
-
-	g_TimeleftTrigger = json_object_get_number(jsonConfigsFile, "timeleft_trigger");
 
 	new JSON:jsonObjectMods = json_object_get_value(jsonConfigsFile, "mods");
 	new iCount = json_array_get_count(jsonObjectMods);
@@ -275,21 +271,21 @@ public OnTask_CheckVoteNextMod()
 
 	if(g_bCvar_mp_winlimit)
 	{
-		new a = g_bCvar_mp_winlimit - 2;
+		new a = g_bCvar_mp_winlimit - 3;
 		
 		if((a > get_member_game(m_iNumCTWins)) && (a > get_member_game(m_iNumTerroristWins)))
 			return;
 	}
 	else if(g_bCvar_mp_maxrounds)
 	{
-		if((g_bCvar_mp_maxrounds - 2) > (get_member_game(m_iNumCTWins) + get_member_game(m_iNumTerroristWins)))
+		if((g_bCvar_mp_maxrounds - 3) > (get_member_game(m_iNumCTWins) + get_member_game(m_iNumTerroristWins)))
 			return;
 	}
 	else
 	{
 		new iTimeleft = get_timeleft();
 		
-		if(iTimeleft < 1 || iTimeleft > g_TimeleftTrigger)
+		if(iTimeleft < 1 || iTimeleft > 180)
 			return;
 	}
 	
