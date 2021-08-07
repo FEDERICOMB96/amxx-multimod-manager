@@ -36,21 +36,6 @@ new g_HUD_Alert = 0;
 #include "mm_incs/modchooser"
 #include "mm_incs/mapchooser"
 
-
-public plugin_precache()
-{
-	precache_sound(g_SOUND_ExtendTime);
-	
-	for(new i = 0; i < sizeof(g_SOUND_GmanChoose); ++i)
-		precache_sound(g_SOUND_GmanChoose[i]);
-	
-	for(new i = 0, szBuffer[64]; i < sizeof(g_SOUND_CountDown); ++i)
-	{
-		formatex(szBuffer, charsmax(szBuffer), "fvox/%s.wav", g_SOUND_CountDown[i]);
-		precache_sound(szBuffer);
-	}
-}
-
 public plugin_init()
 {
 	register_plugin(PLUGIN_NAME, PLUGIN_VERSION, "FEDERICOMB");
