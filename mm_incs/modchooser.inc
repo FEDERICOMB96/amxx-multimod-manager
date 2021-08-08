@@ -51,7 +51,7 @@ public OnTask_VoteNextMod()
 {
 	new sMenu[400];
 	new iMenuKeys = 0;
-	new iArraySizeMods = ArraySize(g_Array_Mods);
+	new iArraySizeMods = ArraySize(g_GlobalConfigs[GlobalConfig_Mods]);
 	new iMaxMods = (iArraySizeMods > MAX_SELECTMODS) ? MAX_SELECTMODS : (iArraySizeMods - 1);
 
 	new iLen = formatex(sMenu, charsmax(sMenu), "\yElige el próximo modo: ¡VOTÁ AHORA!^n^n");
@@ -70,7 +70,7 @@ public OnTask_VoteNextMod()
 
 		iMenuKeys |= (1<<g_iModVoteNum);
 
-		ArrayGetArray(g_Array_Mods, g_iSVM_ModInMenu[g_iModVoteNum], aData);
+		ArrayGetArray(g_GlobalConfigs[GlobalConfig_Mods], g_iSVM_ModInMenu[g_iModVoteNum], aData);
 		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %s^n", (g_iModVoteNum + 1), aData[ModName]);
 	}
 
@@ -117,7 +117,7 @@ public menu__CountVoteMod(const id, const iKey)
 	else if(iKey < MAX_SELECTMODS)
 	{
 		new aData[ArrayMods_e];
-		ArrayGetArray(g_Array_Mods, g_iSVM_ModInMenu[iModId], aData);
+		ArrayGetArray(g_GlobalConfigs[GlobalConfig_Mods], g_iSVM_ModInMenu[iModId], aData);
 		
 		client_print_color(id, print_team_blue, "%s^1 Has elegido el modo^3 %s", g_GlobalConfigs[GlobalConfig_ChatPrefix], aData[ModName]);
 		
@@ -139,7 +139,7 @@ public menu__CountVoteMod(const id, const iKey)
 		else
 		{
 			new aData[ArrayMods_e];
-			ArrayGetArray(g_Array_Mods, g_iSVM_ModInMenu[iModId], aData);
+			ArrayGetArray(g_GlobalConfigs[GlobalConfig_Mods], g_iSVM_ModInMenu[iModId], aData);
 
 			client_print_color(id, print_team_blue, "%sHas elegido el modo^3 %s^4 [ELECCIÓN ALEATORIA]", g_GlobalConfigs[GlobalConfig_ChatPrefix], aData[ModName]);
 			
@@ -182,7 +182,7 @@ public OnTaskCheckVoteMod()
 	
 	for(i = 0; i < g_iModVoteNum; ++i)
 	{
-		ArrayGetArray(g_Array_Mods, g_iSVM_ModInMenu[i], aData);
+		ArrayGetArray(g_GlobalConfigs[GlobalConfig_Mods], g_iSVM_ModInMenu[i], aData);
 		client_print(0, print_console, "Modo: %s - Votos: %d - Porcentaje: %d%%", aData[ModName], g_iVoteModCountGlobal[i], (g_iVoteModCount > 0) ? ((g_iVoteModCountGlobal[i] * 100) / g_iVoteModCount) : 0);
 	}
 	
@@ -237,7 +237,7 @@ public OnTaskCheckVoteMod()
 
 		MultiMod_SetNextMod(g_iSVM_ModInMenu[iWinner]);
 
-		ArrayGetArray(g_Array_Mods, g_iSVM_ModInMenu[iWinner], aData);
+		ArrayGetArray(g_GlobalConfigs[GlobalConfig_Mods], g_iSVM_ModInMenu[iWinner], aData);
 		client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el modo ganador es ^3%s ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalConfigs[GlobalConfig_ChatPrefix], aData[ModName], iResult, g_iVoteModCount, (g_iVoteModCount != 1) ? "s" : "", (g_iVoteModCount > 0) ? ((iResult * 100) / g_iVoteModCount) : 0); // , (g_iVoteModCount > 0) ? ((g_iVoteModCountGlobal[j] * 100) / g_iVoteModCount) : 0
 		
 		ModChooser_ResetAllData();
@@ -263,7 +263,7 @@ public OnTaskCheckVoteMod()
 
 		MultiMod_SetNextMod(g_iSVM_ModInMenu[iWinner]);
 
-		ArrayGetArray(g_Array_Mods, g_iSVM_ModInMenu[iWinner], aData);
+		ArrayGetArray(g_GlobalConfigs[GlobalConfig_Mods], g_iSVM_ModInMenu[iWinner], aData);
 		client_print_color(0, print_team_blue, "%s^1 Ningún voto fue emitido, por lo tanto el modo ganador al azar es:^3 %s", g_GlobalConfigs[GlobalConfig_ChatPrefix], aData[ModName]);
 
 		ModChooser_ResetAllData();
@@ -291,7 +291,7 @@ public OnTask_VoteNextMod__FIX()
 			continue;
 		}
 
-		ArrayGetArray(g_Array_Mods, g_iSVM_ModInMenu_SecondRound[i], aData);
+		ArrayGetArray(g_GlobalConfigs[GlobalConfig_Mods], g_iSVM_ModInMenu_SecondRound[i], aData);
 		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %s^n", i+1, aData[ModName]);
 	}
 
@@ -329,7 +329,7 @@ public menu__CountVoteModFIX(const id, const iKey)
 	else
 	{
 		new aData[ArrayMods_e];
-		ArrayGetArray(g_Array_Mods, g_iSVM_ModInMenu_SecondRound[iModId], aData);
+		ArrayGetArray(g_GlobalConfigs[GlobalConfig_Mods], g_iSVM_ModInMenu_SecondRound[iModId], aData);
 
 		client_print_color(id, print_team_blue, "%s^1 Has elegido el modo^3 %s", g_GlobalConfigs[GlobalConfig_ChatPrefix], aData[ModName]);
 		
@@ -377,7 +377,7 @@ public OnTaskCheckVoteModFIX()
 			continue;
 		}
 
-		ArrayGetArray(g_Array_Mods, g_iSVM_ModInMenu_SecondRound[i], aData);
+		ArrayGetArray(g_GlobalConfigs[GlobalConfig_Mods], g_iSVM_ModInMenu_SecondRound[i], aData);
 		client_print(0, print_console, "Modo: %s - Votos: %d - Porcentaje: %d%%^n", aData[ModName], g_iVoteModCountGlobal[i], (g_iVoteModCount > 0) ? ((g_iVoteModCountGlobal[i] * 100) / g_iVoteModCount) : 0);
 	}
 
@@ -420,7 +420,7 @@ public OnTaskCheckVoteModFIX()
 
 		MultiMod_SetNextMod(iWinner);
 
-		ArrayGetArray(g_Array_Mods, iWinner, aData);
+		ArrayGetArray(g_GlobalConfigs[GlobalConfig_Mods], iWinner, aData);
 		
 		if(j > 1)
 		{
@@ -453,7 +453,7 @@ public OnTaskCheckVoteModFIX()
 
 		MultiMod_SetNextMod(g_iSVM_ModInMenu_SecondRound[iWinner]);
 
-		ArrayGetArray(g_Array_Mods, g_iSVM_ModInMenu_SecondRound[iWinner], aData);
+		ArrayGetArray(g_GlobalConfigs[GlobalConfig_Mods], g_iSVM_ModInMenu_SecondRound[iWinner], aData);
 		client_print_color(0, print_team_blue, "%s^1 Ningún voto fue emitido, por lo tanto el modo ganador al azar es:^3 %s", g_GlobalConfigs[GlobalConfig_ChatPrefix], aData[ModName]);
 
 		ModChooser_ResetAllData();
@@ -536,7 +536,7 @@ public OnTask_ModChooserHudVote()
 			iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "Extender modo %dm: %d voto%s (%d%%%%)", g_bCvar_amx_extendmap_step, iVoteMods[i], (iVoteMods[i] == 1) ? "" : "s", (g_iVoteModCount > 0) ? ((iVoteMods[i] * 100) / g_iVoteModCount) : 0);
 		else
 		{
-			ArrayGetArray(g_Array_Mods, iModId[i], aData);
+			ArrayGetArray(g_GlobalConfigs[GlobalConfig_Mods], iModId[i], aData);
 			iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "%s: %d voto%s (%d%%%%)", aData[ModName], iVoteMods[i], (iVoteMods[i] == 1) ? "" : "s", (g_iVoteModCount > 0) ? ((iVoteMods[i] * 100) / g_iVoteModCount) : 0);
 		}
 	}

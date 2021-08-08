@@ -53,7 +53,7 @@ public ClientCommand_RockTheVote(const id)
 	new iCurrentTime = get_systime();
 	if(g_GlobalConfigs[GlobalConfig_RTV_Cooldown] && (0 < ((g_iSystimeRtv + g_GlobalConfigs[GlobalConfig_RTV_Cooldown]) - iCurrentTime) < g_GlobalConfigs[GlobalConfig_RTV_Cooldown]))
 	{
-		client_print_color(id, print_team_default, "%s^1 Tenés que esperar^4 %d segundos^1 para utilizar^3 Rock The Vote!", g_GlobalConfigs[GlobalConfig_ChatPrefix], (g_iSystimeRtv - iCurrentTime));
+		client_print_color(id, print_team_default, "%s^1 Tenés que esperar^4 %d segundos^1 para utilizar^3 Rock The Vote!", g_GlobalConfigs[GlobalConfig_ChatPrefix], ((g_iSystimeRtv + g_GlobalConfigs[GlobalConfig_RTV_Cooldown]) - iCurrentTime));
 		return PLUGIN_HANDLED;
 	}
 

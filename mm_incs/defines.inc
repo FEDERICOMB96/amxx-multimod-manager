@@ -57,4 +57,7 @@ enum GlobalConfigs_e
 	GlobalConfig_RTV_Cooldown,
 	GlobalConfig_RTV_MinPlayers,
 	GlobalConfig_RTV_Percentage,
+
+	// Mods
+	Array:GlobalConfig_Mods,
 };

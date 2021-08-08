@@ -21,7 +21,6 @@ new Float:g_RestoreTimelimit = 0.0;
 new g_Hud_Vote = 0;
 new g_Hud_Alert = 0;
 
-new Array:g_Array_Mods;
 new Array:g_Array_MapName;
 
 new g_GlobalConfigs[GlobalConfigs_e];

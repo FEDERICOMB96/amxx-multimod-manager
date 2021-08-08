@@ -49,12 +49,12 @@ public plugin_end()
 	if(g_RestoreTimelimit)
 		set_pcvar_float(g_pCvar_mp_timelimit, g_RestoreTimelimit);
 
-	if(g_Array_Mods != Invalid_Array)
+	if(g_GlobalConfigs[GlobalConfig_Mods] != Invalid_Array)
 	{
-		new iSize = ArraySize(g_Array_Mods);
+		new iSize = ArraySize(g_GlobalConfigs[GlobalConfig_Mods]);
 		for(new i = 0, aData[ArrayMods_e]; i < iSize; ++i)
 		{
-			ArrayGetArray(g_Array_Mods, i, aData);
+			ArrayGetArray(g_GlobalConfigs[GlobalConfig_Mods], i, aData);
 
 			if(aData[Cvars] != Invalid_Array)
 				ArrayDestroy(aData[Cvars]);
@@ -63,7 +63,7 @@ public plugin_end()
 				ArrayDestroy(aData[Plugins]);
 		}
 
-		ArrayDestroy(g_Array_Mods);
+		ArrayDestroy(g_GlobalConfigs[GlobalConfig_Mods]);
 	}
 
 	if(g_Array_MapName != Invalid_Array)
@@ -112,7 +112,7 @@ MultiMod_Init()
 		return;
 	}
 
-	g_Array_Mods = ArrayCreate(ArrayMods_e);
+	g_GlobalConfigs[GlobalConfig_Mods] = ArrayCreate(ArrayMods_e);
 	g_Array_MapName = ArrayCreate(64);
 
 	json_object_get_string(jsonConfigsFile, "global_chat_prefix", g_GlobalConfigs[GlobalConfig_ChatPrefix], charsmax(g_GlobalConfigs[GlobalConfig_ChatPrefix]));
@@ -165,7 +165,7 @@ MultiMod_Init()
 			}
 			json_free(jsonObject);
 
-			ArrayPushArray(g_Array_Mods, aMod);
+			ArrayPushArray(g_GlobalConfigs[GlobalConfig_Mods], aMod);
 
 			// Modo actual?
 			if(equali(g_szCurrentMod, aMod[ModName]))
@@ -199,7 +199,7 @@ public OnEvent_GameRestart()
 	ModChooser_ResetAllData();
 	MapChooser_ResetAllData();
 
-	if(ArraySize(g_Array_Mods))
+	if(ArraySize(g_GlobalConfigs[GlobalConfig_Mods]))
 	{
 		remove_task(TASK_ENDMAP);
 		set_task(15.0, "OnTask_CheckVoteNextMod", TASK_ENDMAP, .flags = "b");
@@ -305,7 +305,7 @@ public OnTask_AlertStartNextVote()
 MultiMod_SetNextMod(const iNextMod)
 {
 	new aDataNextMod[ArrayMods_e];
-	ArrayGetArray(g_Array_Mods, iNextMod, aDataNextMod);
+	ArrayGetArray(g_GlobalConfigs[GlobalConfig_Mods], iNextMod, aDataNextMod);
 
 	new szConfigDir[PLATFORM_MAX_PATH], szFileName[PLATFORM_MAX_PATH];
 	get_configsdir(szConfigDir, charsmax(szConfigDir));

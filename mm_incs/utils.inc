@@ -26,11 +26,11 @@ stock UTIL_GetCurrentMod(const szFilePath[PLATFORM_MAX_PATH], szOut[], const iLe
 
 stock ChangeMap_e:UTIL_GetChangeMapType(const iMod)
 {
-	if(g_Array_Mods == Invalid_Array || ArraySize(g_Array_Mods) < 1)
+	if(g_GlobalConfigs[GlobalConfig_Mods] == Invalid_Array || ArraySize(g_GlobalConfigs[GlobalConfig_Mods]) < 1)
 		return CHANGEMAP_END_OF_ROUND;
 
 	new aData[ArrayMods_e];
-	ArrayGetArray(g_Array_Mods, iMod, aData);
+	ArrayGetArray(g_GlobalConfigs[GlobalConfig_Mods], iMod, aData);
 
 	return aData[ChangeMapType];
 }
