@@ -35,7 +35,7 @@ stock ChangeMap_e:UTIL_GetChangeMapType(const iMod)
 	return aData[ChangeMapType];
 }
 
-stock UTIL_RegisterClientCommandAll(const command[], function[], flags = -1, const info[] = "", FlagManager = -1, bool:info_ml = false, iNumArgs = 0)
+stock UTIL_RegisterClientCommandAll(const command[], function[], flags = -1, const info[] = "", FlagManager = -1, bool:info_ml = false)
 {
 	new sFormatCommand[PLATFORM_MAX_PATH];
 
