@@ -51,7 +51,7 @@ public ClientCommand_RockTheVote(const id)
 	}
 
 	new iCurrentTime = get_systime();
-	if(0 < (g_iSystimeRtv - iCurrentTime) < g_GlobalConfigs[GlobalConfig_RTV_Cooldown])
+	if(g_GlobalConfigs[GlobalConfig_RTV_Cooldown] && (0 < ((g_iSystimeRtv + g_GlobalConfigs[GlobalConfig_RTV_Cooldown]) - iCurrentTime) < g_GlobalConfigs[GlobalConfig_RTV_Cooldown]))
 	{
 		client_print_color(id, print_team_default, "%s^1 Tenés que esperar^4 %d segundos^1 para utilizar^3 Rock The Vote!", g_GlobalConfigs[GlobalConfig_ChatPrefix], (g_iSystimeRtv - iCurrentTime));
 		return PLUGIN_HANDLED;
@@ -68,8 +68,17 @@ public ClientCommand_RockTheVote(const id)
 		client_print_color(id, print_team_default, "%s^1 Ya existe una votación en curso!", g_GlobalConfigs[GlobalConfig_ChatPrefix]);
 		return PLUGIN_HANDLED;
 	}
+
+	new iPlayersNum = get_playersnum();
+
+	if(g_GlobalConfigs[GlobalConfig_RTV_MinPlayers] && (iPlayersNum < g_GlobalConfigs[GlobalConfig_RTV_MinPlayers]))
+	{
+		client_print_color(id, print_team_default, "%s^1 Se necesita al menos^4 %d jugador%s^1 en la partida para utilizar^3 Rock The Vote!", 
+			g_GlobalConfigs[GlobalConfig_ChatPrefix], g_GlobalConfigs[GlobalConfig_RTV_MinPlayers], (g_GlobalConfigs[GlobalConfig_RTV_MinPlayers] != 1) ? "es" : "");
+		return PLUGIN_HANDLED;
+	}
 	
-	new iPercent = (get_playersnum() * g_GlobalConfigs[GlobalConfig_RTV_Percentage]) / 100;
+	new iPercent = (iPlayersNum * g_GlobalConfigs[GlobalConfig_RTV_Percentage]) / 100;
 	
 	if(g_HasVoteRTV[id])
 	{

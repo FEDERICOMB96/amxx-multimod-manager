@@ -122,7 +122,8 @@ MultiMod_Init()
 	replace_string(g_GlobalConfigs[GlobalConfig_ChatPrefix], charsmax(g_GlobalConfigs[GlobalConfig_ChatPrefix]), "!g" , "^4");
 
 	g_GlobalConfigs[GlobalConfig_RTV_Enabled] = json_object_get_bool(jsonConfigsFile, "rtv_enable");
-	g_GlobalConfigs[GlobalConfig_RTV_Cooldown] = json_object_get_number(jsonConfigsFile, "rtv_cooldown");
+	g_GlobalConfigs[GlobalConfig_RTV_Cooldown] = max(0, json_object_get_number(jsonConfigsFile, "rtv_cooldown"));
+	g_GlobalConfigs[GlobalConfig_RTV_MinPlayers] = clamp(json_object_get_number(jsonConfigsFile, "rtv_minplayers"), 0, MAX_CLIENTS);
 	g_GlobalConfigs[GlobalConfig_RTV_Percentage] = clamp(json_object_get_number(jsonConfigsFile, "rtv_percentage"), 0, 100);
 
 	new JSON:jsonObjectMods = json_object_get_value(jsonConfigsFile, "mods");

@@ -55,5 +55,6 @@ enum GlobalConfigs_e
 	// Rock The Vote
 	bool:GlobalConfig_RTV_Enabled,
 	GlobalConfig_RTV_Cooldown,
+	GlobalConfig_RTV_MinPlayers,
 	GlobalConfig_RTV_Percentage,
 };
