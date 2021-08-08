@@ -63,3 +63,11 @@ stock UTIL_RegisterClientCommandAll(const command[], function[], flags = -1, con
 	formatex(sFormatCommand, charsmax(sFormatCommand), "say_team .%s", command);
 	register_clcmd(sFormatCommand, function, flags, info, FlagManager, info_ml);
 }
+
+public UTIL_GetPercent(const iVotes, const iTotal)
+{
+	if(iTotal == 0)
+		return 0;
+
+	return (iVotes * 100) / iTotal;
+}

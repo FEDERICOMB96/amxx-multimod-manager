@@ -16,6 +16,7 @@ new const PLUGINS_FILENAME[] = "plugins-multimodmanager.ini";
 #include "mm_incs/modchooser"
 #include "mm_incs/mapchooser"
 #include "mm_incs/rockthevote"
+#include "mm_incs/nominations"
 #include "mm_incs/utils"
 
 public plugin_init()
@@ -125,6 +126,8 @@ MultiMod_Init()
 	g_GlobalConfigs[GlobalConfig_RTV_Cooldown] = max(0, json_object_get_number(jsonConfigsFile, "rtv_cooldown"));
 	g_GlobalConfigs[GlobalConfig_RTV_MinPlayers] = clamp(json_object_get_number(jsonConfigsFile, "rtv_minplayers"), 0, MAX_CLIENTS);
 	g_GlobalConfigs[GlobalConfig_RTV_Percentage] = clamp(json_object_get_number(jsonConfigsFile, "rtv_percentage"), 0, 100);
+	g_GlobalConfigs[GlobalConfig_ModsInMenu] = clamp(json_object_get_number(jsonConfigsFile, "mods_in_menu"), 1, (MAX_SELECTMODS - 1)); // La ultima opción se reserva para extender unicamente.
+	g_GlobalConfigs[GlobalConfig_MapsInMenu] = clamp(json_object_get_number(jsonConfigsFile, "maps_in_menu"), 1, MAX_SELECTMAPS);
 
 	new JSON:jsonObjectMods = json_object_get_value(jsonConfigsFile, "mods");
 	new iCount = json_array_get_count(jsonObjectMods);

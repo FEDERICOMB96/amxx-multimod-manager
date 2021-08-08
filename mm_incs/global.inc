@@ -12,14 +12,14 @@ new g_bConnected;
 new g_szCurrentMap[64];
 new g_szCurrentMod[64];
 
-new g_iCurrentMod = 0;
-new g_iNoMoreTime = 0;
-new g_iCountdownTime = 0;
+new g_iCurrentMod;
+new g_iNoMoreTime;
+new g_iCountdownTime;
 
-new Float:g_RestoreTimelimit = 0.0;
+new Float:g_RestoreTimelimit;
 
-new g_Hud_Vote = 0;
-new g_Hud_Alert = 0;
+new g_Hud_Vote;
+new g_Hud_Alert;
 
 new Array:g_Array_MapName;
 
@@ -48,9 +48,9 @@ new g_bCvar_amx_vote_answers;
 
 new g_iModVoteNum;
 new g_iVoteModCount;
-new g_iVoteModCountGlobal[MAX_SELECTMODS + 2];
-new g_iSVM_ModInMenu[MAX_SELECTMODS + 1];
-new g_iSVM_ModInMenu_SecondRound[MAX_SELECTMODS + 1];
+new g_iVoteModCountGlobal[MAX_SELECTMODS];
+new g_iSVM_ModInMenu[MAX_SELECTMODS];
+new g_iSVM_ModInMenu_SecondRound[MAX_SELECTMODS];
 
 new bool:g_bSVM_ModSecondRound;
 new bool:g_bSelectedNextMod;
@@ -66,9 +66,9 @@ new g_VoteModId[MAX_USERS];
 new g_iMapVoteNum;
 new g_iChangeMapTime;
 new g_iVoteMapCount;
-new g_iVoteMapCountGlobal[MAX_SELECTMAPS + 2];
-new g_iSVM_MapInMenu[MAX_SELECTMAPS + 1];
-new g_iSVM_MapInMenu_SecondRound[MAX_SELECTMAPS + 1];
+new g_iVoteMapCountGlobal[MAX_SELECTMAPS];
+new g_iSVM_MapInMenu[MAX_SELECTMAPS];
+new g_iSVM_MapInMenu_SecondRound[MAX_SELECTMAPS];
 
 new bool:g_bSVM_MapSecondRound;
 new bool:g_bSelectedNextMap;
@@ -81,6 +81,7 @@ new g_VoteMapId[MAX_USERS];
 /* ===========================================================================
 *                 [ ROCK THE VOTE ]
 * ============================================================================ */
+
 new g_iVoteCountRtv;
 
 new bool:g_bIsRockTheVote;
@@ -90,3 +91,8 @@ new bool:g_bIsVotingRtv;
 new g_iSystimeRtv;
 
 new g_HasVoteRTV[MAX_USERS];
+
+
+/* ===========================================================================
+*                 [ NOMINATIONS ]
+* ============================================================================ */

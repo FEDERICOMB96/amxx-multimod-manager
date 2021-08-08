@@ -12,8 +12,10 @@
 #define ClearPlayerBit(%0,%1) 			( IsPlayer(%1) && ( %0 &= ~( 1 << ( %1 & 31 ) ) ) )
 #define SwitchPlayerBit(%0,%1) 			( IsPlayer(%1) && ( %0 ^= ( 1 << ( %1 & 31 ) ) ) )
 
-#define MAX_SELECTMODS					5
-#define MAX_SELECTMAPS					5
+#define MAX_SELECTMODS					9
+#define MAX_SELECTMAPS					9
+
+#define OPTION_EXTEND_MOD				-1
 
 enum 
 {
@@ -57,6 +59,10 @@ enum GlobalConfigs_e
 	GlobalConfig_RTV_Cooldown,
 	GlobalConfig_RTV_MinPlayers,
 	GlobalConfig_RTV_Percentage,
+
+	// Mods/Maps in menu
+	GlobalConfig_ModsInMenu,
+	GlobalConfig_MapsInMenu,
 
 	// Mods
 	Array:GlobalConfig_Mods,

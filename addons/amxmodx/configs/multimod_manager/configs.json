@@ -4,6 +4,8 @@
 	"rtv_cooldown": 120,
 	"rtv_minplayers": 3,
 	"rtv_percentage": 75,
+	"mods_in_menu": 9,
+	"maps_in_menu": 9,
 	"mods":
 	[
 		{
