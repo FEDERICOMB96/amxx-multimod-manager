@@ -6,27 +6,126 @@
 #include <amxmodx>
 #include "mm_incs/defines"
 
-#define RTV_TIME				620 	// En segundos, 5 minutos
-#define RTV_PERCENT				75		// Porcentaje de jugadores que tienen que hacer rtv para que funcione
+new g_iVoteCountRtv;
 
-new g_IsRtv = 0; // Si es un RockTheVote, no permitir extender el mapa.
-new g_VoteRtvResult = 0; // Si es 1, el RockTheVote termino bien.
-new g_VoteCountRtv = 0; // "rtv" que han realizado los jugadores
-new g_IsVotingRtv = 0; // Se esta votando el rtv?
-new g_SystimeRtv = 0;
+new bool:g_bIsRockTheVote;
+new bool:g_bVoteRtvResult;
+new bool:g_bIsVotingRtv;
+
+new g_iSystimeRtv;
 
 new g_HasVoteRTV[MAX_USERS];
-new g_SVM_Nominate[MAX_USERS];
-new g_SVM_MyNominate[MAX_USERS];
 
-RockTheVote_ResetUserData(const id)
+RockTheVote_Init()
 {
-	g_HasVoteRTV[id] = 0;
-	g_SVM_Nominate[id] = 0;
-	g_SVM_MyNominate[id] = 0;
+	RockTheVote_ResetAllData();
+
+	UTIL_RegisterClientCommandAll("rtv", "ClientCommand_RockTheVote");
+	UTIL_RegisterClientCommandAll("rockthevote", "ClientCommand_RockTheVote");
+
+	g_iSystimeRtv = get_systime();
+}
+
+RockTheVote_ResetAllData()
+{
+	g_iVoteCountRtv = 0;
+
+	g_bIsRockTheVote = false;
+	g_bVoteRtvResult = false;
+	g_bIsVotingRtv = false;
+
+	arrayset(g_HasVoteRTV, 0, MAX_USERS);
+
+	remove_task(TASK_RTV);
 }
 
 RockTheVote_ClientPutInServer(const id)
 {
-	RockTheVote_ResetUserData(id);
+	g_HasVoteRTV[id] = 0;
+}
+
+RockTheVote_ClientDisconnected(const id)
+{
+	if(g_HasVoteRTV[id])
+		g_iVoteCountRtv = max(0, (g_iVoteCountRtv - 1));
+
+	g_HasVoteRTV[id] = 0;
+}
+
+public ClientCommand_RockTheVote(const id)
+{
+	if(!GetPlayerBit(g_bConnected, id))
+		return PLUGIN_HANDLED;
+
+	if(!g_GlobalConfigs[GlobalConfig_RTV_Enabled])
+	{
+		client_print_color(id, print_team_default, "%s^1 La opción^3 Rock The Vote^1 se encuentra deshabilitada!", g_GlobalConfigs[GlobalConfig_ChatPrefix]);
+		return PLUGIN_HANDLED;
+	}
+
+	new iCurrentTime = get_systime();
+	if(0 < (g_iSystimeRtv - iCurrentTime) < g_GlobalConfigs[GlobalConfig_RTV_Cooldown])
+	{
+		client_print_color(id, print_team_default, "%s^1 Tenés que esperar^4 %d segundos^1 para utilizar^3 Rock The Vote!", g_GlobalConfigs[GlobalConfig_ChatPrefix], (g_iSystimeRtv - iCurrentTime));
+		return PLUGIN_HANDLED;
+	}
+
+	if(g_bVoteRtvResult)
+	{
+		client_print_color(id, print_team_default, "%s^1 Ya se realizó una votación para el cambio de modo!", g_GlobalConfigs[GlobalConfig_ChatPrefix]);
+		return PLUGIN_HANDLED;
+	}
+	
+	if(g_bIsVotingRtv || g_bVoteModHasStarted || g_bSVM_ModSecondRound || g_bVoteMapHasStarted || g_bSVM_MapSecondRound)
+	{
+		client_print_color(id, print_team_default, "%s^1 Ya existe una votación en curso!", g_GlobalConfigs[GlobalConfig_ChatPrefix]);
+		return PLUGIN_HANDLED;
+	}
+	
+	new iPercent = (get_playersnum() * g_GlobalConfigs[GlobalConfig_RTV_Percentage]) / 100;
+	
+	if(g_HasVoteRTV[id])
+	{
+		new iResult = (iPercent - g_iVoteCountRtv);
+		
+		client_print_color(id, print_team_default, "%s^1 Ya diste tu voto para iniciar una votación para el cambio de modo!", g_GlobalConfigs[GlobalConfig_ChatPrefix]);
+		
+		client_print_color(0, print_team_default, "%s^1 Se necesita%s^4 %d voto%s más^1 para iniciar una votación para el cambio de modo!", g_GlobalConfigs[GlobalConfig_ChatPrefix], (iResult != 1) ? "n" : "", iResult, (iResult != 1) ? "s" : "");
+		return PLUGIN_HANDLED;
+	}
+
+	g_HasVoteRTV[id] = 1;
+
+	++g_iVoteCountRtv;
+	
+	client_print_color(0, print_team_blue, "%s^3 %n^1 votó para iniciar una votación para cambiar el mapa! Votos emitidos^4 %d^1 /^4 %d", g_GlobalConfigs[GlobalConfig_ChatPrefix], id, g_iVoteCountRtv, iPercent);
+	
+	if(g_iVoteCountRtv >= iPercent)
+	{
+		g_bIsVotingRtv = true;
+		
+		client_cmd(0, "spk ^"get red(e80) ninety(s45) to check(e20) use bay(s18) mass(e42) cap(s50)^"");
+		
+		client_print_color(0, print_team_default, "%s^1 RockTheVote finalizado, en^4 10 segundos ^1comenzará una nueva votación para el cambio de mapa!", g_GlobalConfigs[GlobalConfig_ChatPrefix]);
+
+		g_iCountdownTime = 5;
+		set_task(5.0, "OnTask_AlertStartNextVote", TASK_SHOWTIME);
+		
+		remove_task(TASK_RTV);
+		set_task(10.0, "OnTask_StartRockTheVote", TASK_RTV);
+	}
+
+	return PLUGIN_HANDLED;
+}
+
+public OnTask_StartRockTheVote()
+{
+	g_bIsRockTheVote = true;
+	g_bVoteRtvResult = false;
+	
+	remove_task(TASK_VOTEMAP);
+	remove_task(TASK_VOTEMOD);
+	remove_task(TASK_SHOWTIME);
+	
+	OnTask_VoteNextMod();
 }

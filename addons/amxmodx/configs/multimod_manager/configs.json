@@ -1,5 +1,8 @@
 {
 	"global_chat_prefix": "!g[MULTIMOD]",
+	"rtv_enable": true,
+	"rtv_cooldown": 120,
+	"rtv_percentage": 75,
 	"mods":
 	[
 		{

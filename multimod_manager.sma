@@ -19,7 +19,6 @@ new g_bConnected;
 
 new g_szCurrentMap[64];
 new g_szCurrentMod[64];
-new g_szGlobalPrefix[21];
 
 new g_iCurrentMod = 0;
 new g_iNoMoreTime = 0;
@@ -32,6 +31,8 @@ new g_Hud_Alert = 0;
 
 new Array:g_Array_Mods;
 new Array:g_Array_MapName;
+
+new g_GlobalConfigs[GlobalConfigs_e];
 
 #include "mm_incs/cvars"
 #include "mm_incs/rockthevote"
@@ -62,6 +63,7 @@ public OnConfigsExecuted()
 	MultiMod_Init();
 	ModChooser_Init();
 	MapChooser_Init();
+	RockTheVote_Init();
 }
 
 public plugin_end()
@@ -96,6 +98,7 @@ public client_putinserver(id)
 
 	ModChooser_ClientPutInServer(id);
 	MapChooser_ClientPutInServer(id);
+	RockTheVote_ClientPutInServer(id);
 }
 
 public client_disconnected(id, bool:drop, message[], maxlen)
@@ -104,6 +107,7 @@ public client_disconnected(id, bool:drop, message[], maxlen)
 
 	ModChooser_ClientDisconnected(id);
 	MapChooser_ClientDisconnected(id);
+	RockTheVote_ClientDisconnected(id);
 }
 
 MultiMod_Init()
@@ -133,11 +137,15 @@ MultiMod_Init()
 	g_Array_Mods = ArrayCreate(ArrayMods_e);
 	g_Array_MapName = ArrayCreate(64);
 
-	json_object_get_string(jsonConfigsFile, "global_chat_prefix", g_szGlobalPrefix, charsmax(g_szGlobalPrefix));
+	json_object_get_string(jsonConfigsFile, "global_chat_prefix", g_GlobalConfigs[GlobalConfig_ChatPrefix], charsmax(g_GlobalConfigs[GlobalConfig_ChatPrefix]));
 
-	replace_string(g_szGlobalPrefix, charsmax(g_szGlobalPrefix), "!y" , "^1");
-	replace_string(g_szGlobalPrefix, charsmax(g_szGlobalPrefix), "!t" , "^3");
-	replace_string(g_szGlobalPrefix, charsmax(g_szGlobalPrefix), "!g" , "^4");
+	replace_string(g_GlobalConfigs[GlobalConfig_ChatPrefix], charsmax(g_GlobalConfigs[GlobalConfig_ChatPrefix]), "!y" , "^1");
+	replace_string(g_GlobalConfigs[GlobalConfig_ChatPrefix], charsmax(g_GlobalConfigs[GlobalConfig_ChatPrefix]), "!t" , "^3");
+	replace_string(g_GlobalConfigs[GlobalConfig_ChatPrefix], charsmax(g_GlobalConfigs[GlobalConfig_ChatPrefix]), "!g" , "^4");
+
+	g_GlobalConfigs[GlobalConfig_RTV_Enabled] = json_object_get_bool(jsonConfigsFile, "rtv_enable");
+	g_GlobalConfigs[GlobalConfig_RTV_Cooldown] = json_object_get_number(jsonConfigsFile, "rtv_cooldown");
+	g_GlobalConfigs[GlobalConfig_RTV_Percentage] = clamp(json_object_get_number(jsonConfigsFile, "rtv_percentage"), 0, 100);
 
 	new JSON:jsonObjectMods = json_object_get_value(jsonConfigsFile, "mods");
 	new iCount = json_array_get_count(jsonObjectMods);
@@ -221,7 +229,7 @@ public OnEvent_GameRestart()
 
 public OnEvent_HLTV()
 {
-	if((g_iNoMoreTime == 1 && !g_bChangeMapOneMoreRound) || (g_VoteRtvResult && g_iNoMoreTime == 1))
+	if((g_iNoMoreTime == 1 && !g_bChangeMapOneMoreRound) || (g_bVoteRtvResult && g_iNoMoreTime == 1))
 	{
 		g_iNoMoreTime = 2;
 		
@@ -230,7 +238,7 @@ public OnEvent_HLTV()
 		message_begin(MSG_ALL, SVC_INTERMISSION);
 		message_end();
 		
-		client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será:^3 %s", g_szGlobalPrefix, g_bCvar_amx_nextmap);
+		client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será:^3 %s", g_GlobalConfigs[GlobalConfig_ChatPrefix], g_bCvar_amx_nextmap);
 	}
 
 	if(g_bChangeMapOneMoreRound)
@@ -238,7 +246,7 @@ public OnEvent_HLTV()
 		g_bChangeMapOneMoreRound = false;
 
 		client_cmd(0, "spk ^"%s^"", g_SOUND_ExtendTime);
-		client_print_color(0, print_team_default, "%s^1 El mapa cambiará al finalizar la ronda!", g_szGlobalPrefix);
+		client_print_color(0, print_team_default, "%s^1 El mapa cambiará al finalizar la ronda!", g_GlobalConfigs[GlobalConfig_ChatPrefix]);
 	}
 }
 
@@ -270,7 +278,7 @@ public OnTask_CheckVoteNextMod()
 			return;
 	}
 	
-	if(g_bVoteModHasStarted || g_bSVM_ModSecondRound || g_bVoteMapHasStarted || g_bSVM_MapSecondRound)
+	if(g_bVoteModHasStarted || g_bSVM_ModSecondRound || g_bVoteMapHasStarted || g_bSVM_MapSecondRound || g_bIsVotingRtv)
 		return;
 
 	g_iCountdownTime = 10;

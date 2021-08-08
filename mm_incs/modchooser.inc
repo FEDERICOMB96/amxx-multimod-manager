@@ -112,7 +112,7 @@ public OnTask_VoteNextMod()
 	set_task(15.1, "OnTaskCheckVoteMod");
 	
 	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
-	client_print_color(0, print_team_default, "%s^1 Es momento de elegir el próximo modo!", g_szGlobalPrefix);
+	client_print_color(0, print_team_default, "%s^1 Es momento de elegir el próximo modo!", g_GlobalConfigs[GlobalConfig_ChatPrefix]);
 	
 	ClearSyncHud(0, g_Hud_Vote);
 	OnTask_ModChooserHudVote();
@@ -127,7 +127,7 @@ public menu__CountVoteMod(const id, const iKey)
 	
 	if(iKey == MAX_SELECTMODS)
 	{
-		client_print_color(id, print_team_blue, "%s^1 Has elegido extender el modo^4 %s^3 %d minutos más", g_szGlobalPrefix, g_szCurrentMod, g_bCvar_amx_extendmap_step);
+		client_print_color(id, print_team_blue, "%s^1 Has elegido extender el modo^4 %s^3 %d minutos más", g_GlobalConfigs[GlobalConfig_ChatPrefix], g_szCurrentMod, g_bCvar_amx_extendmap_step);
 		
 		if(g_bCvar_amx_vote_answers)
 			client_print(0, print_console, "%n ha votado por: extender el modo %s %d minutos más", id, g_szCurrentMod, g_bCvar_amx_extendmap_step);
@@ -137,7 +137,7 @@ public menu__CountVoteMod(const id, const iKey)
 		new aData[ArrayMods_e];
 		ArrayGetArray(g_Array_Mods, g_iSVM_ModInMenu[iModId], aData);
 		
-		client_print_color(id, print_team_blue, "%s^1 Has elegido el modo^3 %s", g_szGlobalPrefix, aData[ModName]);
+		client_print_color(id, print_team_blue, "%s^1 Has elegido el modo^3 %s", g_GlobalConfigs[GlobalConfig_ChatPrefix], aData[ModName]);
 		
 		if(g_bCvar_amx_vote_answers)
 			client_print(0, print_console, "%n ha votado por el modo: %s", id, aData[ModName]);
@@ -149,7 +149,7 @@ public menu__CountVoteMod(const id, const iKey)
 		// Extender modo..
 		if(iModId == g_iModVoteNum)
 		{
-			client_print_color(id, print_team_blue, "%s^1 Has elegido extender el modo^4 %s^3 %d minutos más", g_szGlobalPrefix, g_szCurrentMod, g_bCvar_amx_extendmap_step);
+			client_print_color(id, print_team_blue, "%s^1 Has elegido extender el modo^4 %s^3 %d minutos más", g_GlobalConfigs[GlobalConfig_ChatPrefix], g_szCurrentMod, g_bCvar_amx_extendmap_step);
 		
 			if(g_bCvar_amx_vote_answers)
 				client_print(0, print_console, "%n ha votado por: extender el modo %s %d minutos más [ELECCIÓN ALEATORIA]", id, g_szCurrentMod, g_bCvar_amx_extendmap_step);
@@ -159,7 +159,7 @@ public menu__CountVoteMod(const id, const iKey)
 			new aData[ArrayMods_e];
 			ArrayGetArray(g_Array_Mods, g_iSVM_ModInMenu[iModId], aData);
 
-			client_print_color(id, print_team_blue, "%sHas elegido el modo^3 %s^4 [ELECCIÓN ALEATORIA]", g_szGlobalPrefix, aData[ModName]);
+			client_print_color(id, print_team_blue, "%sHas elegido el modo^3 %s^4 [ELECCIÓN ALEATORIA]", g_GlobalConfigs[GlobalConfig_ChatPrefix], aData[ModName]);
 			
 			if(g_bCvar_amx_vote_answers)
 				client_print(0, print_console, "%n ha votado por el modo: %s [ELECCIÓN ALEATORIA]", id, aData[ModName]);
@@ -232,7 +232,7 @@ public OnTaskCheckVoteMod()
 			g_iCountdownTime = 5;
 			g_iModVoteNum = j;
 
-			client_print_color(0, print_team_blue, "%s^1 Hubo^4 %d modos^1 con^4 %d^1 voto%s cada uno, siguiente votación en^3 10 segundos^1!", g_szGlobalPrefix, j, iResult, (iResult != 1) ? "s" : "");
+			client_print_color(0, print_team_blue, "%s^1 Hubo^4 %d modos^1 con^4 %d^1 voto%s cada uno, siguiente votación en^3 10 segundos^1!", g_GlobalConfigs[GlobalConfig_ChatPrefix], j, iResult, (iResult != 1) ? "s" : "");
 
 			client_cmd(0, "spk ^"run officer(e40) voltage(e30) accelerating(s70) is required^"");
 
@@ -248,7 +248,7 @@ public OnTaskCheckVoteMod()
 		if(iWinner == MAX_SELECTMODS)
 		{
 			ExtendTimeleft(g_bCvar_amx_extendmap_step);
-			client_print_color(0, print_team_blue, "%s^1 El modo actual se extenderá^3 %d minutos más^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_szGlobalPrefix, g_bCvar_amx_extendmap_step, iResult, g_iVoteModCount, (g_iVoteModCount != 1) ? "s" : "", (g_iVoteModCount > 0) ? ((iResult * 100) / g_iVoteModCount) : 0); // , (g_iVoteModCount > 0) ? ((g_iVoteModCountGlobal[MAX_SELECTMODS] * 100) / g_iVoteModCount) : 0
+			client_print_color(0, print_team_blue, "%s^1 El modo actual se extenderá^3 %d minutos más^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_GlobalConfigs[GlobalConfig_ChatPrefix], g_bCvar_amx_extendmap_step, iResult, g_iVoteModCount, (g_iVoteModCount != 1) ? "s" : "", (g_iVoteModCount > 0) ? ((iResult * 100) / g_iVoteModCount) : 0); // , (g_iVoteModCount > 0) ? ((g_iVoteModCountGlobal[MAX_SELECTMODS] * 100) / g_iVoteModCount) : 0
 			
 			ModChooser_ResetAllData();
 			return;
@@ -257,7 +257,7 @@ public OnTaskCheckVoteMod()
 		MultiMod_SetNextMod(g_iSVM_ModInMenu[iWinner]);
 
 		ArrayGetArray(g_Array_Mods, g_iSVM_ModInMenu[iWinner], aData);
-		client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el modo ganador es ^3%s ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_szGlobalPrefix, aData[ModName], iResult, g_iVoteModCount, (g_iVoteModCount != 1) ? "s" : "", (g_iVoteModCount > 0) ? ((iResult * 100) / g_iVoteModCount) : 0); // , (g_iVoteModCount > 0) ? ((g_iVoteModCountGlobal[j] * 100) / g_iVoteModCount) : 0
+		client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el modo ganador es ^3%s ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalConfigs[GlobalConfig_ChatPrefix], aData[ModName], iResult, g_iVoteModCount, (g_iVoteModCount != 1) ? "s" : "", (g_iVoteModCount > 0) ? ((iResult * 100) / g_iVoteModCount) : 0); // , (g_iVoteModCount > 0) ? ((g_iVoteModCountGlobal[j] * 100) / g_iVoteModCount) : 0
 		
 		ModChooser_ResetAllData();
 
@@ -267,16 +267,12 @@ public OnTaskCheckVoteMod()
 	}
 	else
 	{
-		if(g_IsRtv)
+		if(g_bIsRockTheVote)
 		{
-			g_IsRtv = 0;
-			g_VoteRtvResult = 0;
-			g_VoteCountRtv = 0;
-			g_IsVotingRtv = 0;
-			
+			RockTheVote_ResetAllData();
 			ModChooser_ResetAllData();
 			
-			client_print_color(0, print_team_red, "%s^3 (RTV) La votación solicitada por los usuarios no tuvo exito!", g_szGlobalPrefix);
+			client_print_color(0, print_team_red, "%s^3 (RTV) La votación solicitada por los usuarios no tuvo exito!", g_GlobalConfigs[GlobalConfig_ChatPrefix]);
 			return;
 		}
 
@@ -287,7 +283,7 @@ public OnTaskCheckVoteMod()
 		MultiMod_SetNextMod(g_iSVM_ModInMenu[iWinner]);
 
 		ArrayGetArray(g_Array_Mods, g_iSVM_ModInMenu[iWinner], aData);
-		client_print_color(0, print_team_blue, "%s^1 Ningún voto fue emitido, por lo tanto el modo ganador al azar es:^3 %s", g_szGlobalPrefix, aData[ModName]);
+		client_print_color(0, print_team_blue, "%s^1 Ningún voto fue emitido, por lo tanto el modo ganador al azar es:^3 %s", g_GlobalConfigs[GlobalConfig_ChatPrefix], aData[ModName]);
 
 		ModChooser_ResetAllData();
 
@@ -329,7 +325,7 @@ public OnTask_VoteNextMod__FIX()
 	set_task(15.1, "OnTaskCheckVoteModFIX");
 	
 	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
-	client_print_color(0, print_team_default, "%s^1 Es momento de elegir el próximo modo (SEGUNDA VOTACIÓN)!", g_szGlobalPrefix);
+	client_print_color(0, print_team_default, "%s^1 Es momento de elegir el próximo modo (SEGUNDA VOTACIÓN)!", g_GlobalConfigs[GlobalConfig_ChatPrefix]);
 	
 	ClearSyncHud(0, g_Hud_Vote);
 	OnTask_ModChooserHudVote();
@@ -344,7 +340,7 @@ public menu__CountVoteModFIX(const id, const iKey)
 	
 	if(g_iSVM_ModInMenu_SecondRound[iModId] == -1)
 	{
-		client_print_color(id, print_team_blue, "%s^1 Has elegido extender el modo^4 %s^3 %d minutos más", g_szGlobalPrefix, g_szCurrentMod, g_bCvar_amx_extendmap_step);
+		client_print_color(id, print_team_blue, "%s^1 Has elegido extender el modo^4 %s^3 %d minutos más", g_GlobalConfigs[GlobalConfig_ChatPrefix], g_szCurrentMod, g_bCvar_amx_extendmap_step);
 		
 		if(g_bCvar_amx_vote_answers)
 			client_print(0, print_console, "%n ha votado por: extender el modo %s %d minutos más", id, g_szCurrentMod, g_bCvar_amx_extendmap_step);
@@ -354,7 +350,7 @@ public menu__CountVoteModFIX(const id, const iKey)
 		new aData[ArrayMods_e];
 		ArrayGetArray(g_Array_Mods, g_iSVM_ModInMenu_SecondRound[iModId], aData);
 
-		client_print_color(id, print_team_blue, "%s^1 Has elegido el modo^3 %s", g_szGlobalPrefix, aData[ModName]);
+		client_print_color(id, print_team_blue, "%s^1 Has elegido el modo^3 %s", g_GlobalConfigs[GlobalConfig_ChatPrefix], aData[ModName]);
 		
 		if(g_bCvar_amx_vote_answers)
 			client_print(0, print_console, "%n ha votado por el modo: %s", id, aData[ModName]);
@@ -430,12 +426,12 @@ public OnTaskCheckVoteModFIX()
 
 			if(j > 1)
 			{
-				client_print_color(0, print_team_default, "%s^1 Ningún modo superó^4 la mayoría de los votos^1 por segunda vez.", g_szGlobalPrefix);
-				client_print_color(0, print_team_blue, "%s^1 Entre los más votados, el modo ganador al azar es:^3 Extender el modo %s.", g_szGlobalPrefix, g_szCurrentMod);
-				client_print_color(0, print_team_default, "%s^1 El modo actual se extenderá^3 %d minutos más", g_szGlobalPrefix, g_bCvar_amx_extendmap_step);
+				client_print_color(0, print_team_default, "%s^1 Ningún modo superó^4 la mayoría de los votos^1 por segunda vez.", g_GlobalConfigs[GlobalConfig_ChatPrefix]);
+				client_print_color(0, print_team_blue, "%s^1 Entre los más votados, el modo ganador al azar es:^3 Extender el modo %s.", g_GlobalConfigs[GlobalConfig_ChatPrefix], g_szCurrentMod);
+				client_print_color(0, print_team_default, "%s^1 El modo actual se extenderá^3 %d minutos más", g_GlobalConfigs[GlobalConfig_ChatPrefix], g_bCvar_amx_extendmap_step);
 			}
 			else
-				client_print_color(0, print_team_blue, "%s^1 El modo actual se extenderá^3 %d minutos más^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_szGlobalPrefix, g_bCvar_amx_extendmap_step, iResult, g_iVoteModCount, (g_iVoteModCount != 1) ? "s" : "", (g_iVoteModCount > 0) ? ((iResult * 100) / g_iVoteModCount) : 0);
+				client_print_color(0, print_team_blue, "%s^1 El modo actual se extenderá^3 %d minutos más^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_GlobalConfigs[GlobalConfig_ChatPrefix], g_bCvar_amx_extendmap_step, iResult, g_iVoteModCount, (g_iVoteModCount != 1) ? "s" : "", (g_iVoteModCount > 0) ? ((iResult * 100) / g_iVoteModCount) : 0);
 
 			ModChooser_ResetAllData();
 			return;
@@ -447,11 +443,11 @@ public OnTaskCheckVoteModFIX()
 		
 		if(j > 1)
 		{
-			client_print_color(0, print_team_default, "%s^1 Ningún modo superó^4 la mayoría de los votos^1 por segunda vez.", g_szGlobalPrefix);
-			client_print_color(0, print_team_blue, "%s^1 Entre los más votados, el modo ganador al azar es:^3 %s", g_szGlobalPrefix, aData[ModName]);
+			client_print_color(0, print_team_default, "%s^1 Ningún modo superó^4 la mayoría de los votos^1 por segunda vez.", g_GlobalConfigs[GlobalConfig_ChatPrefix]);
+			client_print_color(0, print_team_blue, "%s^1 Entre los más votados, el modo ganador al azar es:^3 %s", g_GlobalConfigs[GlobalConfig_ChatPrefix], aData[ModName]);
 		}
 		else
-			client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el modo ganador es^3 %s^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_szGlobalPrefix, aData[ModName], iResult, g_iVoteModCount, (g_iVoteModCount != 1) ? "s" : "", (g_iVoteModCount > 0) ? ((iResult * 100) / g_iVoteModCount) : 0);
+			client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el modo ganador es^3 %s^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_GlobalConfigs[GlobalConfig_ChatPrefix], aData[ModName], iResult, g_iVoteModCount, (g_iVoteModCount != 1) ? "s" : "", (g_iVoteModCount > 0) ? ((iResult * 100) / g_iVoteModCount) : 0);
 		
 		ModChooser_ResetAllData();
 
@@ -461,16 +457,12 @@ public OnTaskCheckVoteModFIX()
 	}
 	else
 	{
-		if(g_IsRtv)
+		if(g_bIsRockTheVote)
 		{
-			g_IsRtv = 0;
-			g_VoteRtvResult = 0;
-			g_VoteCountRtv = 0;
-			g_IsVotingRtv = 0;
-			
+			RockTheVote_ResetAllData();
 			ModChooser_ResetAllData();
 			
-			client_print_color(0, print_team_red, "%s^3 La votación solicitada por los usuarios no tuvo exito!", g_szGlobalPrefix);
+			client_print_color(0, print_team_red, "%s^3 La votación solicitada por los usuarios no tuvo exito!", g_GlobalConfigs[GlobalConfig_ChatPrefix]);
 			return;
 		}
 
@@ -481,7 +473,7 @@ public OnTaskCheckVoteModFIX()
 		MultiMod_SetNextMod(g_iSVM_ModInMenu_SecondRound[iWinner]);
 
 		ArrayGetArray(g_Array_Mods, g_iSVM_ModInMenu_SecondRound[iWinner], aData);
-		client_print_color(0, print_team_blue, "%s^1 Ningún voto fue emitido, por lo tanto el modo ganador al azar es:^3 %s", g_szGlobalPrefix, aData[ModName]);
+		client_print_color(0, print_team_blue, "%s^1 Ningún voto fue emitido, por lo tanto el modo ganador al azar es:^3 %s", g_GlobalConfigs[GlobalConfig_ChatPrefix], aData[ModName]);
 
 		ModChooser_ResetAllData();
 
@@ -574,7 +566,7 @@ public OnTask_ModChooserHudVote()
 
 bool:IsAvailableExtendMap()
 {
-	return bool:((get_pcvar_float(g_pCvar_mp_timelimit) < float(g_bCvar_amx_extendmap_max)) && !g_IsRtv);
+	return bool:((get_pcvar_float(g_pCvar_mp_timelimit) < float(g_bCvar_amx_extendmap_max)) && !g_bIsRockTheVote);
 }
 
 ExtendTimeleft(const iTime)

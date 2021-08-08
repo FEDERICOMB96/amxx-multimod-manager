@@ -45,3 +45,14 @@ enum _:ArrayMods_e
 	Array:Cvars,
 	Array:Plugins
 };
+
+enum GlobalConfigs_e
+{
+	// Chat prefix
+	GlobalConfig_ChatPrefix[21],
+
+	// Rock The Vote
+	bool:GlobalConfig_RTV_Enabled,
+	GlobalConfig_RTV_Cooldown,
+	GlobalConfig_RTV_Percentage,
+};
