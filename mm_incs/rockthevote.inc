@@ -15,6 +15,8 @@ RockTheVote_Init()
 
 RockTheVote_ResetAllData()
 {
+	g_bVoteInProgress = false;
+	
 	g_iVoteCountRtv = 0;
 
 	g_bIsRockTheVote = false;
@@ -63,7 +65,7 @@ public ClientCommand_RockTheVote(const id)
 		return PLUGIN_HANDLED;
 	}
 	
-	if(g_bIsVotingRtv || g_bVoteModHasStarted || g_bSVM_ModSecondRound || g_bVoteMapHasStarted || g_bSVM_MapSecondRound)
+	if(g_bIsVotingRtv || g_bVoteModHasStarted || g_bSVM_ModSecondRound || g_bVoteMapHasStarted || g_bSVM_MapSecondRound || g_bVoteInProgress)
 	{
 		client_print_color(id, print_team_default, "%s^1 Ya existe una votación en curso!", g_GlobalConfigs[ChatPrefix]);
 		return PLUGIN_HANDLED;

@@ -260,8 +260,10 @@ public OnTask_CheckVoteNextMod()
 			return;
 	}
 	
-	if(g_bVoteModHasStarted || g_bSVM_ModSecondRound || g_bVoteMapHasStarted || g_bSVM_MapSecondRound || g_bIsVotingRtv)
+	if(g_bVoteModHasStarted || g_bSVM_ModSecondRound || g_bVoteMapHasStarted || g_bSVM_MapSecondRound || g_bIsVotingRtv || g_bVoteInProgress)
 		return;
+
+	g_bVoteInProgress = true;
 
 	SetAlertStartNextVote(0.0, 10);
 

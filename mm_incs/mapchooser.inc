@@ -13,6 +13,8 @@ MapChooser_Init()
 
 MapChooser_ResetAllData()
 {
+	g_bVoteInProgress = false;
+
 	g_iMapVoteNum = 0;
 	g_iChangeMapTime = 0;
 	g_iVoteMapCount = 0;
@@ -174,6 +176,8 @@ public OnTaskCheckVotesMap()
 		// Hubo 2 o más..
 		if(j > 1)
 		{
+			g_bVoteInProgress = true;
+			
 			g_bVoteMapHasStarted = false;
 			g_bSVM_MapSecondRound = true;
 			g_iMapVoteNum = j;

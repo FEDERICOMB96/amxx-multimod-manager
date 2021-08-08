@@ -18,6 +18,8 @@ new g_iCountdownTime;
 
 new Float:g_RestoreTimelimit;
 
+new bool:g_bVoteInProgress;
+
 new g_Hud_Vote;
 new g_Hud_Alert;
 

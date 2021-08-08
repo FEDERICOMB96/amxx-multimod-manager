@@ -13,6 +13,8 @@ ModChooser_Init()
 
 ModChooser_ResetAllData()
 {
+	g_bVoteInProgress = false;
+
 	g_iModVoteNum = 0;
 	g_iVoteModCount = 0;
 
@@ -201,6 +203,8 @@ public OnTaskCheckVoteMod()
 		// Hubo 2 o más..
 		if(j > 1)
 		{
+			g_bVoteInProgress = true;
+			
 			g_bVoteModHasStarted = false;
 			g_bSVM_ModSecondRound = true;
 			g_iModVoteNum = j;
