@@ -5,8 +5,6 @@
 
 #include <reapi>
 
-#define cvar_t 							new
-
 #define MAX_USERS						MAX_CLIENTS+1
 
 #define IsPlayer(%0) 					( 1 <= %0 <= MAX_CLIENTS )

@@ -16,9 +16,9 @@
  ╚═════╝ ╚═╝  ╚═╝╚═╝     ╚═╝╚══════╝     ╚═════╝  ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝
                                                                                  
 */
-cvar_t g_pCvar_mp_timelimit;
-cvar_t g_bCvar_mp_winlimit;
-cvar_t g_bCvar_mp_maxrounds;
+new g_pCvar_mp_timelimit;
+new g_bCvar_mp_winlimit;
+new g_bCvar_mp_maxrounds;
 
 /*
 
@@ -30,10 +30,10 @@ cvar_t g_bCvar_mp_maxrounds;
 ╚═╝     ╚══════╝ ╚═════╝  ╚═════╝ ╚═╝╚═╝  ╚═══╝     ╚═════╝  ╚═══╝  ╚═╝  ╚═╝╚═╝  ╚═╝╚══════╝
                                                                                             
 */
-cvar_t g_bCvar_amx_nextmap[64], g_pCvar_amx_nextmap;
-cvar_t g_bCvar_amx_extendmap_max;
-cvar_t g_bCvar_amx_extendmap_step;
-cvar_t g_bCvar_amx_vote_answers;
+new g_bCvar_amx_nextmap[64], g_pCvar_amx_nextmap;
+new g_bCvar_amx_extendmap_max;
+new g_bCvar_amx_extendmap_step;
+new g_bCvar_amx_vote_answers;
 
 /* Pointer Cvars */
 
