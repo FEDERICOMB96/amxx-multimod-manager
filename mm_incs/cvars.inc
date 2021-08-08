@@ -3,24 +3,6 @@
 #endif
 #define _mm_cvars_included_
 
-#include <amxmodx>
-#include "mm_incs/defines"
-
-/*
- * GameDLL Cvars
- */
-new g_pCvar_mp_timelimit;
-new g_bCvar_mp_winlimit;
-new g_bCvar_mp_maxrounds;
-
-/*
- * Plugin Cvars
- */
-new g_bCvar_amx_nextmap[64], g_pCvar_amx_nextmap;
-new g_bCvar_amx_extendmap_max;
-new g_bCvar_amx_extendmap_step;
-new g_bCvar_amx_vote_answers;
-
 Cvars_Init()
 {
 	g_pCvar_mp_timelimit = get_cvar_pointer("mp_timelimit");

@@ -3,24 +3,6 @@
 #endif
 #define _mm_modchooser_included_
 
-#include <amxmodx>
-#include "mm_incs/defines"
-#include "mm_incs/cvars"
-
-#define MAX_SELECTMODS			5
-
-new g_iModVoteNum;
-new g_iVoteModCount;
-new g_iVoteModCountGlobal[MAX_SELECTMODS + 2];
-new g_iSVM_ModInMenu[MAX_SELECTMODS + 1];
-new g_iSVM_ModInMenu_SecondRound[MAX_SELECTMODS + 1];
-
-new bool:g_bSVM_ModSecondRound;
-new bool:g_bSelectedNextMod;
-new bool:g_bVoteModHasStarted;
-
-new g_VoteModId[MAX_USERS];
-
 ModChooser_Init()
 {
 	ModChooser_ResetAllData();
@@ -229,16 +211,15 @@ public OnTaskCheckVoteMod()
 		{
 			g_bVoteModHasStarted = false;
 			g_bSVM_ModSecondRound = true;
-			g_iCountdownTime = 5;
 			g_iModVoteNum = j;
 
 			client_print_color(0, print_team_blue, "%s^1 Hubo^4 %d modos^1 con^4 %d^1 voto%s cada uno, siguiente votación en^3 10 segundos^1!", g_GlobalConfigs[GlobalConfig_ChatPrefix], j, iResult, (iResult != 1) ? "s" : "");
 
 			client_cmd(0, "spk ^"run officer(e40) voltage(e30) accelerating(s70) is required^"");
 
-			set_task(5.0, "OnTask_AlertStartNextVote", TASK_SHOWTIME);
 			set_task(10.0, "OnTask_VoteNextMod__FIX");
 
+			SetAlertStartNextVote(5.0, 5);
 			return;
 		}
 

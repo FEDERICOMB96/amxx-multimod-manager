@@ -3,26 +3,6 @@
 #endif
 #define _mm_mapchooser_included_
 
-#include <amxmodx>
-#include "mm_incs/defines"
-#include "mm_incs/cvars"
-
-#define MAX_SELECTMAPS			5
-
-new g_iMapVoteNum;
-new g_iChangeMapTime;
-new g_iVoteMapCount;
-new g_iVoteMapCountGlobal[MAX_SELECTMAPS + 2];
-new g_iSVM_MapInMenu[MAX_SELECTMAPS + 1];
-new g_iSVM_MapInMenu_SecondRound[MAX_SELECTMAPS + 1];
-
-new bool:g_bSVM_MapSecondRound;
-new bool:g_bSelectedNextMap;
-new bool:g_bVoteMapHasStarted;
-new bool:g_bChangeMapOneMoreRound;
-
-new g_VoteMapId[MAX_USERS];
-
 MapChooser_Init()
 {
 	MapChooser_ResetAllData();
@@ -55,14 +35,11 @@ MapChooser_ResetAllData()
 
 MapChooser_InitNextVoteMap(iStartVote)
 {
-	g_iCountdownTime = 10;
-
 	new Float:flStartVote = float(max(10, iStartVote));
 
-	remove_task(TASK_SHOWTIME);
-	remove_task(TASK_VOTEMAP);
+	SetAlertStartNextVote(flStartVote - 10.0, 10);
 
-	set_task(flStartVote - 10.0, "OnTask_AlertStartNextVote", TASK_SHOWTIME);
+	remove_task(TASK_VOTEMAP);
 	set_task(flStartVote, "OnTask_VoteNextMap", TASK_VOTEMAP);
 }
 
@@ -211,16 +188,15 @@ public OnTaskCheckVotesMap()
 		{
 			g_bVoteMapHasStarted = false;
 			g_bSVM_MapSecondRound = true;
-			g_iCountdownTime = 5;
 			g_iMapVoteNum = j;
 
 			client_print_color(0, print_team_blue, "%s^1 Hubo^4 %d mapas^1 con^4 %d^1 voto%s cada uno, siguiente votación en^3 10 segundos^1!", g_GlobalConfigs[GlobalConfig_ChatPrefix], j, iResult, (iResult != 1) ? "s" : "");
 
 			client_cmd(0, "spk ^"run officer(e40) voltage(e30) accelerating(s70) is required^"");
 
-			set_task(5.0, "OnTask_AlertStartNextVote", TASK_SHOWTIME);
 			set_task(10.0, "OnTask_VoteNextMap__FIX");
 
+			SetAlertStartNextVote(5.0, 5);
 			return;
 		}
 

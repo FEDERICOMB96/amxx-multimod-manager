@@ -1,7 +1,7 @@
 #pragma semicolon 1
 
 new const PLUGIN_NAME[] = "MultiMod Manager";
-new const PLUGIN_VERSION[] = "v2021.08.02";
+new const PLUGIN_VERSION[] = "v2021.08.08";
 
 new const PLUGINS_FILENAME[] = "plugins-multimodmanager.ini";
 
@@ -11,33 +11,11 @@ new const PLUGINS_FILENAME[] = "plugins-multimodmanager.ini";
 #include <engine>
 #include <json>
 #include "mm_incs/defines"
-
-/*
- * Global vars
- */
-new g_bConnected;
-
-new g_szCurrentMap[64];
-new g_szCurrentMod[64];
-
-new g_iCurrentMod = 0;
-new g_iNoMoreTime = 0;
-new g_iCountdownTime = 0;
-
-new Float:g_RestoreTimelimit = 0.0;
-
-new g_Hud_Vote = 0;
-new g_Hud_Alert = 0;
-
-new Array:g_Array_Mods;
-new Array:g_Array_MapName;
-
-new g_GlobalConfigs[GlobalConfigs_e];
-
+#include "mm_incs/global"
 #include "mm_incs/cvars"
-#include "mm_incs/rockthevote"
 #include "mm_incs/modchooser"
 #include "mm_incs/mapchooser"
+#include "mm_incs/rockthevote"
 #include "mm_incs/utils"
 
 public plugin_init()
@@ -281,13 +259,23 @@ public OnTask_CheckVoteNextMod()
 	if(g_bVoteModHasStarted || g_bSVM_ModSecondRound || g_bVoteMapHasStarted || g_bSVM_MapSecondRound || g_bIsVotingRtv)
 		return;
 
-	g_iCountdownTime = 10;
+	SetAlertStartNextVote(0.0, 10);
 
-	remove_task(TASK_SHOWTIME);
 	remove_task(TASK_VOTEMOD);
-
-	OnTask_AlertStartNextVote();
 	set_task(10.1, "OnTask_VoteNextMod", TASK_VOTEMOD);
+}
+
+SetAlertStartNextVote(const Float:flStart, const iCountdown)
+{
+	g_iCountdownTime = iCountdown;
+
+	if(flStart)
+	{
+		remove_task(TASK_SHOWTIME);
+		set_task(flStart, "OnTask_AlertStartNextVote", TASK_SHOWTIME);
+	}
+	else
+		OnTask_AlertStartNextVote();
 }
 
 public OnTask_AlertStartNextVote()

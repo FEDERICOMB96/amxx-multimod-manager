@@ -3,8 +3,6 @@
 #endif
 #define _mm_defines_included_
 
-#include <reapi>
-
 #define MAX_USERS						MAX_CLIENTS+1
 
 #define IsPlayer(%0) 					( 1 <= %0 <= MAX_CLIENTS )
@@ -13,6 +11,9 @@
 #define SetPlayerBit(%0,%1) 			( IsPlayer(%1) && ( %0 |= ( 1 << ( %1 & 31 ) ) ) )
 #define ClearPlayerBit(%0,%1) 			( IsPlayer(%1) && ( %0 &= ~( 1 << ( %1 & 31 ) ) ) )
 #define SwitchPlayerBit(%0,%1) 			( IsPlayer(%1) && ( %0 ^= ( 1 << ( %1 & 31 ) ) ) )
+
+#define MAX_SELECTMODS					5
+#define MAX_SELECTMAPS					5
 
 enum 
 {

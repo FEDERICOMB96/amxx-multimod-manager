@@ -3,19 +3,6 @@
 #endif
 #define _mm_rtv_included_
 
-#include <amxmodx>
-#include "mm_incs/defines"
-
-new g_iVoteCountRtv;
-
-new bool:g_bIsRockTheVote;
-new bool:g_bVoteRtvResult;
-new bool:g_bIsVotingRtv;
-
-new g_iSystimeRtv;
-
-new g_HasVoteRTV[MAX_USERS];
-
 RockTheVote_Init()
 {
 	RockTheVote_ResetAllData();
@@ -108,8 +95,7 @@ public ClientCommand_RockTheVote(const id)
 		
 		client_print_color(0, print_team_default, "%s^1 RockTheVote finalizado, en^4 10 segundos ^1comenzará una nueva votación para el cambio de mapa!", g_GlobalConfigs[GlobalConfig_ChatPrefix]);
 
-		g_iCountdownTime = 5;
-		set_task(5.0, "OnTask_AlertStartNextVote", TASK_SHOWTIME);
+		SetAlertStartNextVote(5.0, 5);
 		
 		remove_task(TASK_RTV);
 		set_task(10.0, "OnTask_StartRockTheVote", TASK_RTV);
