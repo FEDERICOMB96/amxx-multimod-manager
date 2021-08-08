@@ -30,18 +30,18 @@ new const g_SOUND_ExtendTime[] = "fvox/time_remaining.wav";
 new const g_SOUND_GmanChoose[][] = {"Gman/Gman_Choose1.wav", "Gman/Gman_Choose2.wav"};
 new const g_SOUND_CountDown[][] = {"", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
 
-enum _:ArrayMods_e 
-{
-	ModName[64],
-	MapsFile[64],
-	ChangeMapType,
-	Array:Cvars,
-	Array:Plugins
-};
-
 enum ChangeMap_e
 {
 	CHANGEMAP_TIMELEFT,
 	CHANGEMAP_END_OF_ROUND,
 	CHANGEMAP_ONE_MORE_ROUND
+};
+
+enum _:ArrayMods_e 
+{
+	ModName[64],
+	MapsFile[64],
+	ChangeMap_e:ChangeMapType,
+	Array:Cvars,
+	Array:Plugins
 };

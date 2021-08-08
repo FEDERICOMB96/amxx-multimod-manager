@@ -12,28 +12,32 @@ new const PLUGINS_FILENAME[] = "plugins-multimodmanager.ini";
 #include <json>
 #include "mm_incs/defines"
 
+/*
+ * Global vars
+ */
 new g_bConnected;
 
-new g_GlobalPrefix[21];
-new ChangeMap_e:g_ChangeMapType;
+new g_szCurrentMap[64];
+new g_szCurrentMod[64];
+new g_szGlobalPrefix[21];
+
+new g_iCurrentMod = 0;
+new g_iNoMoreTime = 0;
+new g_iCountdownTime = 0;
+
+new Float:g_RestoreTimelimit = 0.0;
+
+new g_Hud_Vote = 0;
+new g_Hud_Alert = 0;
 
 new Array:g_Array_Mods;
 new Array:g_Array_MapName;
-
-new g_CurrentMap[64];
-new g_szCurrentMod[64];
-new g_iCurrentMod = 0;
-new g_NoMoreTime = 0;
-new g_ShowTime = 0;
-new Float:g_RestoreTimelimit = 0.0;
-new g_HUD_Vote = 0;
-new g_HUD_Alert = 0;
-
 
 #include "mm_incs/cvars"
 #include "mm_incs/rockthevote"
 #include "mm_incs/modchooser"
 #include "mm_incs/mapchooser"
+#include "mm_incs/utils"
 
 public plugin_init()
 {
@@ -43,11 +47,11 @@ public plugin_init()
 	register_event_ex("TextMsg", "OnEvent_GameRestart", RegisterEvent_Global, "2&#Game_will_restart_in");
 	register_event_ex("HLTV", "OnEvent_HLTV", RegisterEvent_Global, "1=0", "2=0");
 
-	get_mapname(g_CurrentMap, charsmax(g_CurrentMap));
-	mb_strtolower(g_CurrentMap);
+	get_mapname(g_szCurrentMap, charsmax(g_szCurrentMap));
+	mb_strtolower(g_szCurrentMap);
 
-	g_HUD_Vote = CreateHudSyncObj();
-	g_HUD_Alert = CreateHudSyncObj();
+	g_Hud_Vote = CreateHudSyncObj();
+	g_Hud_Alert = CreateHudSyncObj();
 }
 
 public OnConfigsExecuted()
@@ -108,7 +112,7 @@ MultiMod_Init()
 	get_configsdir(szConfigDir, charsmax(szConfigDir));
 
 	formatex(szPluginsFile, charsmax(szPluginsFile), "%s/%s", szConfigDir, PLUGINS_FILENAME);
-	MultiMod_GetCurrentMod(szPluginsFile, g_szCurrentMod, charsmax(g_szCurrentMod));
+	UTIL_GetCurrentMod(szPluginsFile, g_szCurrentMod, charsmax(g_szCurrentMod));
 
 	formatex(szFileName, charsmax(szFileName), "%s/multimod_manager/configs.json", szConfigDir);
 
@@ -129,11 +133,11 @@ MultiMod_Init()
 	g_Array_Mods = ArrayCreate(ArrayMods_e);
 	g_Array_MapName = ArrayCreate(64);
 
-	json_object_get_string(jsonConfigsFile, "global_chat_prefix", g_GlobalPrefix, charsmax(g_GlobalPrefix));
+	json_object_get_string(jsonConfigsFile, "global_chat_prefix", g_szGlobalPrefix, charsmax(g_szGlobalPrefix));
 
-	replace_string(g_GlobalPrefix, charsmax(g_GlobalPrefix), "!y" , "^1");
-	replace_string(g_GlobalPrefix, charsmax(g_GlobalPrefix), "!t" , "^3");
-	replace_string(g_GlobalPrefix, charsmax(g_GlobalPrefix), "!g" , "^4");
+	replace_string(g_szGlobalPrefix, charsmax(g_szGlobalPrefix), "!y" , "^1");
+	replace_string(g_szGlobalPrefix, charsmax(g_szGlobalPrefix), "!t" , "^3");
+	replace_string(g_szGlobalPrefix, charsmax(g_szGlobalPrefix), "!g" , "^4");
 
 	new JSON:jsonObjectMods = json_object_get_value(jsonConfigsFile, "mods");
 	new iCount = json_array_get_count(jsonObjectMods);
@@ -144,7 +148,7 @@ MultiMod_Init()
 		{
 			json_object_get_string(jsonArrayValue, "modname", aMod[ModName], charsmax(aMod));
 			json_object_get_string(jsonArrayValue, "mapsfile", aMod[MapsFile], charsmax(aMod));
-			aMod[ChangeMapType] = json_object_get_number(jsonArrayValue, "change_map_type");
+			aMod[ChangeMapType] = ChangeMap_e:json_object_get_number(jsonArrayValue, "change_map_type");
 
 			aMod[Cvars] = ArrayCreate(128);
 			jsonObject = json_object_get_value(jsonArrayValue, "cvars");
@@ -180,7 +184,6 @@ MultiMod_Init()
 			if(equali(g_szCurrentMod, aMod[ModName]))
 			{
 				g_iCurrentMod = i;
-				g_ChangeMapType = ChangeMap_e:aMod[ChangeMapType];
 
 				new iCvars = ArraySize(aMod[Cvars]);
 				for(new i = 0; i < iCvars; ++i)
@@ -204,28 +207,6 @@ MultiMod_Init()
 	OnEvent_GameRestart();
 }
 
-MultiMod_GetCurrentMod(const szFilePath[PLATFORM_MAX_PATH], szOut[], const iLen)
-{
-	if(file_exists(szFilePath))
-	{
-		new iFile = fopen(szFilePath, "r");
-
-		if(iFile)
-		{
-			new szLine[128];
-			fgets(iFile, szLine, charsmax(szLine));
-			trim(szLine);
-
-			replace_string(szLine, charsmax(szLine), ";Mod:", "");
-			replace_string(szLine, charsmax(szLine), "^"", "");
-			
-			copy(szOut, iLen, szLine);
-
-			fclose(iFile);
-		}
-	}
-}
-
 public OnEvent_GameRestart()
 {
 	ModChooser_ResetAllData();
@@ -240,30 +221,30 @@ public OnEvent_GameRestart()
 
 public OnEvent_HLTV()
 {
-	if((g_NoMoreTime == 1 && !g_ChangeMapOneMoreRound) || (g_VoteRtvResult && g_NoMoreTime == 1))
+	if((g_iNoMoreTime == 1 && !g_bChangeMapOneMoreRound) || (g_VoteRtvResult && g_iNoMoreTime == 1))
 	{
-		g_NoMoreTime = 2;
+		g_iNoMoreTime = 2;
 		
 		set_task(2.0, "taskChangeMap", _, g_bCvar_amx_nextmap, sizeof(g_bCvar_amx_nextmap));
 		
 		message_begin(MSG_ALL, SVC_INTERMISSION);
 		message_end();
 		
-		client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será:^3 %s", g_GlobalPrefix, g_bCvar_amx_nextmap);
+		client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será:^3 %s", g_szGlobalPrefix, g_bCvar_amx_nextmap);
 	}
 
-	if(g_ChangeMapOneMoreRound)
+	if(g_bChangeMapOneMoreRound)
 	{
-		g_ChangeMapOneMoreRound = 0;
+		g_bChangeMapOneMoreRound = false;
 
 		client_cmd(0, "spk ^"%s^"", g_SOUND_ExtendTime);
-		client_print_color(0, print_team_default, "%s^1 El mapa cambiará al finalizar la ronda!", g_GlobalPrefix);
+		client_print_color(0, print_team_default, "%s^1 El mapa cambiará al finalizar la ronda!", g_szGlobalPrefix);
 	}
 }
 
 public OnTask_CheckVoteNextMod()
 {
-	if(g_SelectedNextMod || g_SelectedNextMap)
+	if(g_bSelectedNextMod || g_bSelectedNextMap)
 	{
 		remove_task(TASK_ENDMAP);
 		return;
@@ -289,10 +270,10 @@ public OnTask_CheckVoteNextMod()
 			return;
 	}
 	
-	if(g_VoteModHasStarted || g_SVM_ModSecondRound || g_VoteMapHasStarted || g_SVM_MapSecondRound)
+	if(g_bVoteModHasStarted || g_bSVM_ModSecondRound || g_bVoteMapHasStarted || g_bSVM_MapSecondRound)
 		return;
 
-	g_ShowTime = 10;
+	g_iCountdownTime = 10;
 
 	remove_task(TASK_SHOWTIME);
 	remove_task(TASK_VOTEMOD);
@@ -303,22 +284,22 @@ public OnTask_CheckVoteNextMod()
 
 public OnTask_AlertStartNextVote()
 {
-	if(!g_ShowTime)
+	if(!g_iCountdownTime)
 	{
-		ClearSyncHud(0, g_HUD_Alert);
+		ClearSyncHud(0, g_Hud_Alert);
 		return;
 	}
 
-	if(g_ShowTime == 10)
+	if(g_iCountdownTime == 10)
 		client_cmd(0, "spk ^"get red(e80) ninety(s45) to check(e20) use bay(s18) mass(e42) cap(s50)^"");
 
 	set_hudmessage(255, 255, 255, -1.0, 0.35, 0, 0.0, 1.1, 0.0, 0.0, -1);
-	ShowSyncHudMsg(0, g_HUD_Alert, "La votación comenzará en %d segundo%s", g_ShowTime, (g_ShowTime != 1) ? "s" : "");
+	ShowSyncHudMsg(0, g_Hud_Alert, "La votación comenzará en %d segundo%s", g_iCountdownTime, (g_iCountdownTime != 1) ? "s" : "");
 
-	if(g_ShowTime <= 5)
-		client_cmd(0, "spk ^"fvox/%s^"", g_SOUND_CountDown[g_ShowTime]);
+	if(g_iCountdownTime <= 5)
+		client_cmd(0, "spk ^"fvox/%s^"", g_SOUND_CountDown[g_iCountdownTime]);
 	
-	--g_ShowTime;
+	--g_iCountdownTime;
 	
 	remove_task(TASK_SHOWTIME);
 	set_task(1.0, "OnTask_AlertStartNextVote", TASK_SHOWTIME);
