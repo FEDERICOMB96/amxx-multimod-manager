@@ -26,11 +26,11 @@ stock UTIL_GetCurrentMod(const szFilePath[PLATFORM_MAX_PATH], szOut[], const iLe
 
 stock ChangeMap_e:UTIL_GetChangeMapType(const iMod)
 {
-	if(g_GlobalConfigs[GlobalConfig_Mods] == Invalid_Array || ArraySize(g_GlobalConfigs[GlobalConfig_Mods]) < 1)
+	if(g_GlobalConfigs[Mods] == Invalid_Array || ArraySize(g_GlobalConfigs[Mods]) < 1)
 		return CHANGEMAP_END_OF_ROUND;
 
 	new aData[ArrayMods_e];
-	ArrayGetArray(g_GlobalConfigs[GlobalConfig_Mods], iMod, aData);
+	ArrayGetArray(g_GlobalConfigs[Mods], iMod, aData);
 
 	return aData[ChangeMapType];
 }
@@ -66,8 +66,5 @@ stock UTIL_RegisterClientCommandAll(const command[], function[], flags = -1, con
 
 public UTIL_GetPercent(const iVotes, const iTotal)
 {
-	if(iTotal == 0)
-		return 0;
-
-	return (iVotes * 100) / iTotal;
+	return (iTotal < 1) ? 0 : ((iVotes * 100) / iTotal);
 }

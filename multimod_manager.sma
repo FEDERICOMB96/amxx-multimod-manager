@@ -50,12 +50,12 @@ public plugin_end()
 	if(g_RestoreTimelimit)
 		set_pcvar_float(g_pCvar_mp_timelimit, g_RestoreTimelimit);
 
-	if(g_GlobalConfigs[GlobalConfig_Mods] != Invalid_Array)
+	if(g_GlobalConfigs[Mods] != Invalid_Array)
 	{
-		new iSize = ArraySize(g_GlobalConfigs[GlobalConfig_Mods]);
+		new iSize = ArraySize(g_GlobalConfigs[Mods]);
 		for(new i = 0, aData[ArrayMods_e]; i < iSize; ++i)
 		{
-			ArrayGetArray(g_GlobalConfigs[GlobalConfig_Mods], i, aData);
+			ArrayGetArray(g_GlobalConfigs[Mods], i, aData);
 
 			if(aData[Cvars] != Invalid_Array)
 				ArrayDestroy(aData[Cvars]);
@@ -64,7 +64,7 @@ public plugin_end()
 				ArrayDestroy(aData[Plugins]);
 		}
 
-		ArrayDestroy(g_GlobalConfigs[GlobalConfig_Mods]);
+		ArrayDestroy(g_GlobalConfigs[Mods]);
 	}
 
 	if(g_Array_MapName != Invalid_Array)
@@ -113,21 +113,21 @@ MultiMod_Init()
 		return;
 	}
 
-	g_GlobalConfigs[GlobalConfig_Mods] = ArrayCreate(ArrayMods_e);
+	g_GlobalConfigs[Mods] = ArrayCreate(ArrayMods_e);
 	g_Array_MapName = ArrayCreate(64);
 
-	json_object_get_string(jsonConfigsFile, "global_chat_prefix", g_GlobalConfigs[GlobalConfig_ChatPrefix], charsmax(g_GlobalConfigs[GlobalConfig_ChatPrefix]));
+	json_object_get_string(jsonConfigsFile, "global_chat_prefix", g_GlobalConfigs[ChatPrefix], charsmax(g_GlobalConfigs[ChatPrefix]));
 
-	replace_string(g_GlobalConfigs[GlobalConfig_ChatPrefix], charsmax(g_GlobalConfigs[GlobalConfig_ChatPrefix]), "!y" , "^1");
-	replace_string(g_GlobalConfigs[GlobalConfig_ChatPrefix], charsmax(g_GlobalConfigs[GlobalConfig_ChatPrefix]), "!t" , "^3");
-	replace_string(g_GlobalConfigs[GlobalConfig_ChatPrefix], charsmax(g_GlobalConfigs[GlobalConfig_ChatPrefix]), "!g" , "^4");
+	replace_string(g_GlobalConfigs[ChatPrefix], charsmax(g_GlobalConfigs[ChatPrefix]), "!y" , "^1");
+	replace_string(g_GlobalConfigs[ChatPrefix], charsmax(g_GlobalConfigs[ChatPrefix]), "!t" , "^3");
+	replace_string(g_GlobalConfigs[ChatPrefix], charsmax(g_GlobalConfigs[ChatPrefix]), "!g" , "^4");
 
-	g_GlobalConfigs[GlobalConfig_RTV_Enabled] = json_object_get_bool(jsonConfigsFile, "rtv_enable");
-	g_GlobalConfigs[GlobalConfig_RTV_Cooldown] = max(0, json_object_get_number(jsonConfigsFile, "rtv_cooldown"));
-	g_GlobalConfigs[GlobalConfig_RTV_MinPlayers] = clamp(json_object_get_number(jsonConfigsFile, "rtv_minplayers"), 0, MAX_CLIENTS);
-	g_GlobalConfigs[GlobalConfig_RTV_Percentage] = clamp(json_object_get_number(jsonConfigsFile, "rtv_percentage"), 0, 100);
-	g_GlobalConfigs[GlobalConfig_ModsInMenu] = clamp(json_object_get_number(jsonConfigsFile, "mods_in_menu"), 1, (MAX_SELECTMODS - 1)); // La ultima opción se reserva para extender unicamente.
-	g_GlobalConfigs[GlobalConfig_MapsInMenu] = clamp(json_object_get_number(jsonConfigsFile, "maps_in_menu"), 1, MAX_SELECTMAPS);
+	g_GlobalConfigs[RTV_Enabled] = json_object_get_bool(jsonConfigsFile, "rtv_enable");
+	g_GlobalConfigs[RTV_Cooldown] = max(0, json_object_get_number(jsonConfigsFile, "rtv_cooldown"));
+	g_GlobalConfigs[RTV_MinPlayers] = clamp(json_object_get_number(jsonConfigsFile, "rtv_minplayers"), 0, MAX_CLIENTS);
+	g_GlobalConfigs[RTV_Percentage] = clamp(json_object_get_number(jsonConfigsFile, "rtv_percentage"), 0, 100);
+	g_GlobalConfigs[ModsInMenu] = clamp(json_object_get_number(jsonConfigsFile, "mods_in_menu"), 1, (MAX_SELECTMODS - 1)); // La ultima opción se reserva para extender unicamente.
+	g_GlobalConfigs[MapsInMenu] = clamp(json_object_get_number(jsonConfigsFile, "maps_in_menu"), 1, MAX_SELECTMAPS);
 
 	new JSON:jsonObjectMods = json_object_get_value(jsonConfigsFile, "mods");
 	new iCount = json_array_get_count(jsonObjectMods);
@@ -168,7 +168,7 @@ MultiMod_Init()
 			}
 			json_free(jsonObject);
 
-			ArrayPushArray(g_GlobalConfigs[GlobalConfig_Mods], aMod);
+			ArrayPushArray(g_GlobalConfigs[Mods], aMod);
 
 			// Modo actual?
 			if(equali(g_szCurrentMod, aMod[ModName]))
@@ -202,7 +202,7 @@ public OnEvent_GameRestart()
 	ModChooser_ResetAllData();
 	MapChooser_ResetAllData();
 
-	if(ArraySize(g_GlobalConfigs[GlobalConfig_Mods]))
+	if(ArraySize(g_GlobalConfigs[Mods]))
 	{
 		remove_task(TASK_ENDMAP);
 		set_task(15.0, "OnTask_CheckVoteNextMod", TASK_ENDMAP, .flags = "b");
@@ -220,7 +220,7 @@ public OnEvent_HLTV()
 		message_begin(MSG_ALL, SVC_INTERMISSION);
 		message_end();
 		
-		client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será:^3 %s", g_GlobalConfigs[GlobalConfig_ChatPrefix], g_bCvar_amx_nextmap);
+		client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será:^3 %s", g_GlobalConfigs[ChatPrefix], g_bCvar_amx_nextmap);
 	}
 
 	if(g_bChangeMapOneMoreRound)
@@ -228,7 +228,7 @@ public OnEvent_HLTV()
 		g_bChangeMapOneMoreRound = false;
 
 		client_cmd(0, "spk ^"%s^"", g_SOUND_ExtendTime);
-		client_print_color(0, print_team_default, "%s^1 El mapa cambiará al finalizar la ronda!", g_GlobalConfigs[GlobalConfig_ChatPrefix]);
+		client_print_color(0, print_team_default, "%s^1 El mapa cambiará al finalizar la ronda!", g_GlobalConfigs[ChatPrefix]);
 	}
 }
 
@@ -308,7 +308,7 @@ public OnTask_AlertStartNextVote()
 MultiMod_SetNextMod(const iNextMod)
 {
 	new aDataNextMod[ArrayMods_e];
-	ArrayGetArray(g_GlobalConfigs[GlobalConfig_Mods], iNextMod, aDataNextMod);
+	ArrayGetArray(g_GlobalConfigs[Mods], iNextMod, aDataNextMod);
 
 	new szConfigDir[PLATFORM_MAX_PATH], szFileName[PLATFORM_MAX_PATH];
 	get_configsdir(szConfigDir, charsmax(szConfigDir));

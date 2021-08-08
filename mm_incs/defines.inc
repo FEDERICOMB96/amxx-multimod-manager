@@ -52,18 +52,18 @@ enum _:ArrayMods_e
 enum GlobalConfigs_e
 {
 	// Chat prefix
-	GlobalConfig_ChatPrefix[21],
+	ChatPrefix[21],
 
 	// Rock The Vote
-	bool:GlobalConfig_RTV_Enabled,
-	GlobalConfig_RTV_Cooldown,
-	GlobalConfig_RTV_MinPlayers,
-	GlobalConfig_RTV_Percentage,
+	bool:RTV_Enabled,
+	RTV_Cooldown,
+	RTV_MinPlayers,
+	RTV_Percentage,
 
 	// Mods/Maps in menu
-	GlobalConfig_ModsInMenu,
-	GlobalConfig_MapsInMenu,
+	ModsInMenu,
+	MapsInMenu,
 
 	// Mods
-	Array:GlobalConfig_Mods,
+	Array:Mods,
 };
