@@ -131,7 +131,7 @@ ShowMenu_NominateMap(const id, menupage=0)
 
 	for(new iMapId = 0; iMapId < iArraySizeMaps; ++iMapId)
 	{
-		menu_additem(iMenu, fmt("%s%s", ArrayGetStringHandle(g_Array_MapName, iMapId), IsNominated(iMapId) ? ((iMapId == (g_SVM_MyNominate[id]-1)) ? "\y [TU NOMINASTE]" : "\y (NOMINADO)"): ""));
+		menu_additem(iMenu, fmt("%a%s", ArrayGetStringHandle(g_Array_MapName, iMapId), IsNominated(iMapId) ? ((iMapId == (g_SVM_MyNominate[id]-1)) ? "\y [TU NOMINASTE]" : "\y (NOMINADO)"): ""));
 	}
 
 	menu_setprop(iMenu, MPROP_NEXTNAME, "Siguiente");
