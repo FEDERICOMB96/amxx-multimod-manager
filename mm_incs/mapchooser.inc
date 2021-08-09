@@ -5,10 +5,10 @@
 
 MapChooser_Init()
 {
-	MapChooser_ResetAllData();
-
 	register_menu("VoteMap_Menu", KEYSMENU, "menu__CountVoteMap");
 	register_menu("VoteMapFIX_Menu", KEYSMENU, "menu__CountVoteMapFIX");
+
+	MapChooser_ResetAllData();
 }
 
 MapChooser_ResetAllData()
@@ -43,6 +43,8 @@ MapChooser_InitNextVoteMap(iStartVote)
 
 	remove_task(TASK_VOTEMAP);
 	set_task(flStartVote, "OnTask_VoteNextMap", TASK_VOTEMAP);
+
+	client_print_color(0, print_team_default, "%s^1 Puedes nominar mapas para el próximo modo durante los proximos^4 %d segundos", g_GlobalConfigs[ChatPrefix], iStartVote);
 }
 
 MapChooser_ClientPutInServer(const id)
@@ -72,13 +74,20 @@ public OnTask_VoteNextMap()
 	new iLen = formatex(sMenu, charsmax(sMenu), "\yElige el próximo mapa: ¡VOTÁ AHORA!^n^n");
 
 	g_iMapVoteNum = 0;
-	for(new iRandom; g_iMapVoteNum < iMaxMaps; ++g_iMapVoteNum)
+	for(new iRandom, iMapId, iArraySizeNoms; g_iMapVoteNum < iMaxMaps; ++g_iMapVoteNum)
 	{
 		do {
-			iRandom = random(iArraySizeMaps);
-		} while(IsMapInMenu(iRandom)); // La opcion está en el menú
+			if((iArraySizeNoms = ArraySize(g_Array_Nominations)))
+			{
+				iRandom = random(iArraySizeNoms);
+				iMapId = ArrayGetCell(g_Array_Nominations, iRandom);
+				ArrayDeleteItem(g_Array_Nominations, iRandom);
+			}
+			else
+				iMapId = random(iArraySizeMaps);
+		} while(IsMapInMenu(iMapId)); // La opcion está en el menú
 
-		g_iSVM_MapInMenu[g_iMapVoteNum] = iRandom;
+		g_iSVM_MapInMenu[g_iMapVoteNum] = iMapId;
 
 		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %a^n", (g_iMapVoteNum + 1), ArrayGetStringHandle(g_Array_MapName, g_iSVM_MapInMenu[g_iMapVoteNum]));
 

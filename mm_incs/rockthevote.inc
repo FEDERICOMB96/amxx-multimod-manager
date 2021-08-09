@@ -5,12 +5,12 @@
 
 RockTheVote_Init()
 {
-	RockTheVote_ResetAllData();
-
 	UTIL_RegisterClientCommandAll("rtv", "ClientCommand_RockTheVote");
 	UTIL_RegisterClientCommandAll("rockthevote", "ClientCommand_RockTheVote");
 
 	g_iSystimeRtv = get_systime();
+
+	RockTheVote_ResetAllData();
 }
 
 RockTheVote_ResetAllData()

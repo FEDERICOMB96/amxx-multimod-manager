@@ -32,6 +32,10 @@ public plugin_init()
 
 	g_Hud_Vote = CreateHudSyncObj();
 	g_Hud_Alert = CreateHudSyncObj();
+
+	g_GlobalConfigs[Mods] = ArrayCreate(ArrayMods_e);
+	g_Array_MapName = ArrayCreate(64);
+	g_Array_Nominations = ArrayCreate(1);
 }
 
 public OnConfigsExecuted()
@@ -43,6 +47,7 @@ public OnConfigsExecuted()
 	ModChooser_Init();
 	MapChooser_Init();
 	RockTheVote_Init();
+	Nominations_Init();
 }
 
 public plugin_end()
@@ -69,6 +74,9 @@ public plugin_end()
 
 	if(g_Array_MapName != Invalid_Array)
 		ArrayDestroy(g_Array_MapName);
+
+	if(g_Array_Nominations != Invalid_Array)
+		ArrayDestroy(g_Array_Nominations);
 }
 
 public client_putinserver(id)
@@ -78,6 +86,7 @@ public client_putinserver(id)
 	ModChooser_ClientPutInServer(id);
 	MapChooser_ClientPutInServer(id);
 	RockTheVote_ClientPutInServer(id);
+	Nominations_ClientPutInServer(id);
 }
 
 public client_disconnected(id, bool:drop, message[], maxlen)
@@ -87,6 +96,7 @@ public client_disconnected(id, bool:drop, message[], maxlen)
 	ModChooser_ClientDisconnected(id);
 	MapChooser_ClientDisconnected(id);
 	RockTheVote_ClientDisconnected(id);
+	Nominations_ClientDisconnected(id);
 }
 
 MultiMod_Init()
@@ -112,9 +122,6 @@ MultiMod_Init()
 		set_fail_state("[MULTIMOD] Archivo JSON invalido '%s'", szFileName);
 		return;
 	}
-
-	g_GlobalConfigs[Mods] = ArrayCreate(ArrayMods_e);
-	g_Array_MapName = ArrayCreate(64);
 
 	json_object_get_string(jsonConfigsFile, "global_chat_prefix", g_GlobalConfigs[ChatPrefix], charsmax(g_GlobalConfigs[ChatPrefix]));
 
@@ -201,6 +208,8 @@ public OnEvent_GameRestart()
 {
 	ModChooser_ResetAllData();
 	MapChooser_ResetAllData();
+	RockTheVote_ResetAllData();
+	Nominations_ResetAllData();
 
 	if(ArraySize(g_GlobalConfigs[Mods]))
 	{

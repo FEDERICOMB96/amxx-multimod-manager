@@ -24,6 +24,7 @@ new g_Hud_Vote;
 new g_Hud_Alert;
 
 new Array:g_Array_MapName;
+new Array:g_Array_Nominations;
 
 new g_GlobalConfigs[GlobalConfigs_e];
 
@@ -98,3 +99,5 @@ new g_HasVoteRTV[MAX_USERS];
 /* ===========================================================================
 *                 [ NOMINATIONS ]
 * ============================================================================ */
+
+new g_SVM_MyNominate[MAX_USERS];

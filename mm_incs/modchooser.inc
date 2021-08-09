@@ -5,10 +5,10 @@
 
 ModChooser_Init()
 {
-	ModChooser_ResetAllData();
-
 	register_menu("VoteMod_Menu", KEYSMENU, "menu__CountVoteMod");
 	register_menu("VoteModFIX_Menu", KEYSMENU, "menu__CountVoteModFIX");
+
+	ModChooser_ResetAllData();
 }
 
 ModChooser_ResetAllData()
@@ -59,13 +59,20 @@ public OnTask_VoteNextMod()
 	new iLen = formatex(sMenu, charsmax(sMenu), "\yElige el próximo modo: ¡VOTÁ AHORA!^n^n");
 
 	g_iModVoteNum = 0;
-	for(new iRandom, aData[ArrayMods_e]; g_iModVoteNum < iMaxMods; ++g_iModVoteNum)
+	for(new iRandom, iModId, iArraySizeNoms, aData[ArrayMods_e]; g_iModVoteNum < iMaxMods; ++g_iModVoteNum)
 	{
 		do {
-			iRandom = random(iArraySizeMods);
-		} while(IsModInMenu(iRandom) || g_iCurrentMod == iRandom); // La opcion está en el menú o es el modo actual
+			if((iArraySizeNoms = ArraySize(g_Array_Nominations)))
+			{
+				iRandom = random(iArraySizeNoms);
+				iModId = ArrayGetCell(g_Array_Nominations, iRandom);
+				ArrayDeleteItem(g_Array_Nominations, iRandom);
+			}
+			else
+				iModId = random(iArraySizeMods);
+		} while(IsModInMenu(iModId) || g_iCurrentMod == iModId); // La opcion está en el menú o es el modo actual
 
-		g_iSVM_ModInMenu[g_iModVoteNum] = iRandom;
+		g_iSVM_ModInMenu[g_iModVoteNum] = iModId;
 
 		ArrayGetArray(g_GlobalConfigs[Mods], g_iSVM_ModInMenu[g_iModVoteNum], aData);
 		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %s^n", (g_iModVoteNum + 1), aData[ModName]);
@@ -240,7 +247,7 @@ public OnTaskCheckVoteMod()
 
 		g_bSelectedNextMod = true;
 
-		MapChooser_InitNextVoteMap(60);
+		MapChooser_InitNextVoteMap(40);
 	}
 	else
 	{
@@ -266,7 +273,7 @@ public OnTaskCheckVoteMod()
 
 		g_bSelectedNextMod = true;
 
-		MapChooser_InitNextVoteMap(60);
+		MapChooser_InitNextVoteMap(40);
 	}
 }
 
@@ -422,7 +429,7 @@ public OnTaskCheckVoteModFIX()
 
 		g_bSelectedNextMod = true;
 
-		MapChooser_InitNextVoteMap(60);
+		MapChooser_InitNextVoteMap(40);
 	}
 	else
 	{
@@ -448,7 +455,7 @@ public OnTaskCheckVoteModFIX()
 
 		g_bSelectedNextMod = true;
 
-		MapChooser_InitNextVoteMap(60);
+		MapChooser_InitNextVoteMap(40);
 	}
 }
 
