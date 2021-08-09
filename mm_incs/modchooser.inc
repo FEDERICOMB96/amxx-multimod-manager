@@ -235,6 +235,7 @@ public OnTaskCheckVoteMod()
 			client_print_color(0, print_team_blue, "%s^1 El modo actual se extenderá^3 %d minutos más^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_GlobalConfigs[ChatPrefix], g_bCvar_amx_extendmap_step, iResult, g_iVoteModCount, (g_iVoteModCount != 1) ? "s" : "", UTIL_GetPercent(iResult, g_iVoteModCount));
 			
 			ModChooser_ResetAllData();
+			Nominations_ResetAllData();
 			return;
 		}
 
@@ -244,6 +245,7 @@ public OnTaskCheckVoteMod()
 		client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el modo ganador es ^3%s ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalConfigs[ChatPrefix], aData[ModName], iResult, g_iVoteModCount, (g_iVoteModCount != 1) ? "s" : "", UTIL_GetPercent(iResult, g_iVoteModCount));
 		
 		ModChooser_ResetAllData();
+		Nominations_ResetAllData();
 
 		g_bSelectedNextMod = true;
 
@@ -255,6 +257,7 @@ public OnTaskCheckVoteMod()
 		{
 			RockTheVote_ResetAllData();
 			ModChooser_ResetAllData();
+			Nominations_ResetAllData();
 			
 			client_print_color(0, print_team_red, "%s^3 (RTV) La votación solicitada por los usuarios no tuvo exito!", g_GlobalConfigs[ChatPrefix]);
 			return;
@@ -270,6 +273,7 @@ public OnTaskCheckVoteMod()
 		client_print_color(0, print_team_blue, "%s^1 Ningún voto fue emitido, por lo tanto el modo ganador al azar es:^3 %s", g_GlobalConfigs[ChatPrefix], aData[ModName]);
 
 		ModChooser_ResetAllData();
+		Nominations_ResetAllData();
 
 		g_bSelectedNextMod = true;
 
@@ -410,6 +414,7 @@ public OnTaskCheckVoteModFIX()
 				client_print_color(0, print_team_blue, "%s^1 El modo actual se extenderá^3 %d minutos más^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_GlobalConfigs[ChatPrefix], g_bCvar_amx_extendmap_step, iResult, g_iVoteModCount, (g_iVoteModCount != 1) ? "s" : "", UTIL_GetPercent(iResult, g_iVoteModCount));
 
 			ModChooser_ResetAllData();
+			Nominations_ResetAllData();
 			return;
 		}
 
@@ -426,6 +431,7 @@ public OnTaskCheckVoteModFIX()
 			client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el modo ganador es^3 %s^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_GlobalConfigs[ChatPrefix], aData[ModName], iResult, g_iVoteModCount, (g_iVoteModCount != 1) ? "s" : "", UTIL_GetPercent(iResult, g_iVoteModCount));
 		
 		ModChooser_ResetAllData();
+		Nominations_ResetAllData();
 
 		g_bSelectedNextMod = true;
 
@@ -437,6 +443,7 @@ public OnTaskCheckVoteModFIX()
 		{
 			RockTheVote_ResetAllData();
 			ModChooser_ResetAllData();
+			Nominations_ResetAllData();
 			
 			client_print_color(0, print_team_red, "%s^3 La votación solicitada por los usuarios no tuvo exito!", g_GlobalConfigs[ChatPrefix]);
 			return;
@@ -452,6 +459,7 @@ public OnTaskCheckVoteModFIX()
 		client_print_color(0, print_team_blue, "%s^1 Ningún voto fue emitido, por lo tanto el modo ganador al azar es:^3 %s", g_GlobalConfigs[ChatPrefix], aData[ModName]);
 
 		ModChooser_ResetAllData();
+		Nominations_ResetAllData();
 
 		g_bSelectedNextMod = true;
 

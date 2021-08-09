@@ -208,6 +208,7 @@ public OnTaskCheckVotesMap()
 		client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el mapa ganador es^3 %s^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_GlobalConfigs[ChatPrefix], sMap, iResult, g_iVoteMapCount, (g_iVoteMapCount != 1) ? "s" : "", UTIL_GetPercent(iResult, g_iVoteMapCount));
 		
 		MapChooser_ResetAllData();
+		Nominations_ResetAllData();
 
 		g_bSelectedNextMap = true;
 
@@ -235,6 +236,7 @@ public OnTaskCheckVotesMap()
 		client_print_color(0, print_team_blue, "%s^1 Ningún voto fue emitido, por lo tanto el mapa ganador al azar es:^3 %s", g_GlobalConfigs[ChatPrefix], sMap);
 
 		MapChooser_ResetAllData();
+		Nominations_ResetAllData();
 
 		g_bSelectedNextMap = true;
 
@@ -351,6 +353,7 @@ public OnTaskCheckVotesMapFIX()
 			client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el mapa ganador es^3 %s^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_GlobalConfigs[ChatPrefix], sMap, iResult, g_iVoteMapCount, (g_iVoteMapCount != 1) ? "s" : "", UTIL_GetPercent(iResult, g_iVoteMapCount));
 		
 		MapChooser_ResetAllData();
+		Nominations_ResetAllData();
 
 		g_bSelectedNextMap = true;
 
@@ -378,6 +381,7 @@ public OnTaskCheckVotesMapFIX()
 		client_print_color(0, print_team_blue, "%s^1 Ningún voto fue emitido, por lo tanto el mapa ganador al azar es:^3 %s", g_GlobalConfigs[ChatPrefix], sMap);
 
 		MapChooser_ResetAllData();
+		Nominations_ResetAllData();
 
 		g_bSelectedNextMap = true;
 

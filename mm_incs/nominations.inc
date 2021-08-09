@@ -6,7 +6,7 @@
 Nominations_Init()
 {
 	UTIL_RegisterClientCommandAll("nom", "ClientCommand_Nominate");
-
+	
 	Nominations_ResetAllData();
 }
 
