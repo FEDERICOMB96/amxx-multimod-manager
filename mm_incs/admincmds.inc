@@ -310,7 +310,7 @@ public menu_SelectVoteMod(const id, const key)
 		case 7:
 		{
 			CHECK_ADMINVOTEINPROGRESS(id)
-			
+
 			new sMenu[512];
 			new iKeys;
 			new iLen = formatex(sMenu, charsmax(sMenu), "\yVotación de:\w %n^n^n\yElige el próximo modo: ¡VOTÁ AHORA!^n^n", id);
@@ -444,11 +444,11 @@ ShowMenu_Votemap(const id)
 	for(new i = iStartLoop; i < iEndLoop; ++i)
 	{
 		if(g_Admin_VoteSelectedOptions[id] == MAX_ADMIN_VOTEOPTIONS || IsOptionSelected(id, (g_Admin_VoteCurrentPage[id] * 7) + j))
-			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\d%d. %a%s^n", ++j, ArrayGetStringHandle(g_Array_AdminVoteMap[id], i), (g_iCurrentMod == i) ? " (ACTUAL)" : "");
+			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\d%d. %a^n", ++j, ArrayGetStringHandle(g_Array_AdminVoteMap[id], i));
 		else
 		{
 			iKeys |= (1<<j);
-			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %a%s^n", ++j, ArrayGetStringHandle(g_Array_AdminVoteMap[id], i), (g_iCurrentMod == i) ? "\y (ACTUAL)" : "");
+			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %a^n", ++j, ArrayGetStringHandle(g_Array_AdminVoteMap[id], i));
 		}
 	}
 	
@@ -502,7 +502,7 @@ public menu_SelectVoteMap(const id, const key)
 
 			for(new i = 0; i < g_Admin_VoteSelectedOptions[id]; ++i)
 			{
-				iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %a^n", (i + 1), ArrayGetStringHandle(g_Array_AdminVoteMap[id], i));
+				iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %a^n", (i + 1), ArrayGetStringHandle(g_Array_AdminVoteMap[id], g_Admin_VoteOptions[id][i]));
 				
 				iKeys |= (1<<i);
 			}
@@ -547,7 +547,7 @@ public menu_VoteNextMap(const id, const iKey)
 		++g_Admin_iVoteCountId[iMapId];
 		++g_Admin_VoteCountTotal;
 
-		ArrayGetString(g_Array_AdminVoteMap[id], iMapId, szMap, charsmax(szMap));
+		ArrayGetString(g_Array_AdminVoteMap[id], g_Admin_VoteOptions[g_Admin_VoteUserId][iMapId], szMap, charsmax(szMap));
 
 		client_print_color(id, print_team_default, "%s^1 Has votado por la opción^4 #%d^1 (^4%s^1)!%s", 
 			g_GlobalConfigs[ChatPrefix], (iMapId + 1), szMap, (bRandom) ? "^3 [ELECCIÓN ALEATORIA]" : "");
