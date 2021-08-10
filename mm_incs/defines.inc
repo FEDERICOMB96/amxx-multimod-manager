@@ -18,6 +18,8 @@
 
 #define OPTION_EXTEND_MOD				-1
 
+#define CHECK_ADMINVOTEINPROGRESS(%0)	if(g_bCvar_amx_last_voting > get_gametime()) { client_print_color(%0, print_team_default, "%s^1 Existe una votación en curso!", g_GlobalConfigs[ChatPrefix]); return PLUGIN_HANDLED; }
+
 enum 
 {
 	TASK_VOTEMAP = MAX_USERS,
