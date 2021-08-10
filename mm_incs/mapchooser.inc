@@ -519,8 +519,10 @@ ExecChangeTimeleft()
 		: set_task((float(get_timeleft()) - 1.1), "OnTaskChangeTimeLeft", TASK_TIMELEFT);
 }
 
-MapChooser_LoadMaps(const szFileName[])
+MapChooser_LoadMaps(&Array:aMyArray, const szFileName[])
 {
+	ArrayClear(aMyArray);
+
 	if(file_exists(szFileName))
 	{
 		new iFile = fopen(szFileName, "r");
@@ -539,7 +541,7 @@ MapChooser_LoadMaps(const szFileName[])
 				
 				if(szMap[0] != ';' && IsValidMap(szMap))
 				{
-					ArrayPushString(g_Array_MapName, szMap);
+					ArrayPushString(aMyArray, szMap);
 				}
 			}
 			

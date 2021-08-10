@@ -65,7 +65,7 @@ ShowMenu_NominateMod(const id, menupage=0)
 		ArrayGetArray(g_GlobalConfigs[Mods], iModId, aData);
 
 		(g_iCurrentMod == iModId)
-			? menu_additem(iMenu, fmt("%s \r(ACTUAL)", aData[ModName]), .callback=menu_makecallback("DisableItem"))
+			? menu_additem(iMenu, fmt("%s \r(ACTUAL)", aData[ModName]), .callback=menu_makecallback("UTIL_DisableItem"))
 			: menu_additem(iMenu, fmt("%s%s", aData[ModName], IsNominated(iModId) ? ((iModId == (g_SVM_MyNominate[id]-1)) ? "\y [TU NOMINASTE]" : "\y (NOMINADO)"): ""));
 	}
 
@@ -181,11 +181,6 @@ public menu_NominateMap(const id, const menuid, const item)
 
 	menu_destroy(menuid);
 	ShowMenu_NominateMap(id, iMenuPage);
-}
-
-public DisableItem(const id, const menuid, const item)
-{
-	return ITEM_DISABLED;
 }
 
 bool:IsNominated(const iNom)

@@ -25,6 +25,7 @@ new g_Hud_Alert;
 
 new Array:g_Array_MapName;
 new Array:g_Array_Nominations;
+new Array:g_Array_AdminVoteMap[MAX_USERS];
 
 new g_GlobalConfigs[GlobalConfigs_e];
 
@@ -43,6 +44,25 @@ new g_bCvar_amx_nextmap[64], g_pCvar_amx_nextmap;
 new g_bCvar_amx_extendmap_max;
 new g_bCvar_amx_extendmap_step;
 new g_bCvar_amx_vote_answers;
+new g_bCvar_amx_last_voting, g_pCvar_amx_last_voting;
+new g_bCvar_amx_vote_delay;
+
+
+/* ===========================================================================
+*                 [ ADMIN COMMANDS ]
+* ============================================================================ */
+
+new g_Admin_VoteUserId;
+new g_Admin_SelectedNextMod;
+new g_Admin_VoteCountTotal;
+
+new g_Admin_iVoteCountId[MAX_ADMIN_VOTEOPTIONS];
+
+new g_Admin_VoteOptions[MAX_USERS][MAX_ADMIN_VOTEOPTIONS];
+new g_Admin_VoteSelectedOptions[MAX_USERS];
+new g_Admin_VoteCurrentPage[MAX_USERS];
+new g_Admin_SelectedMod[MAX_USERS];
+new g_Admin_SelectedMap[MAX_USERS];
 
 
 /* ===========================================================================

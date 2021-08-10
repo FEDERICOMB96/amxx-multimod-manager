@@ -1,5 +1,6 @@
 {
 	"global_chat_prefix": "!g[MULTIMOD]",
+	"admin_flag_menu": "j",
 	"rtv_enable": true,
 	"rtv_cooldown": 120,
 	"rtv_minplayers": 3,

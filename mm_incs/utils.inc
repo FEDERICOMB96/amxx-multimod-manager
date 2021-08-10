@@ -68,3 +68,8 @@ public UTIL_GetPercent(const iVotes, const iTotal)
 {
 	return (iTotal < 1) ? 0 : ((iVotes * 100) / iTotal);
 }
+
+public UTIL_DisableItem(const id, const menuid, const item)
+{
+	return ITEM_DISABLED;
+}

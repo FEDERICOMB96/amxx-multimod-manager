@@ -12,6 +12,7 @@
 #define ClearPlayerBit(%0,%1) 			( IsPlayer(%1) && ( %0 &= ~( 1 << ( %1 & 31 ) ) ) )
 #define SwitchPlayerBit(%0,%1) 			( IsPlayer(%1) && ( %0 ^= ( 1 << ( %1 & 31 ) ) ) )
 
+#define MAX_ADMIN_VOTEOPTIONS			9
 #define MAX_SELECTMODS					9
 #define MAX_SELECTMAPS					9
 
@@ -24,7 +25,8 @@ enum
 	TASK_TIMELEFT,
 	TASK_RTV,
 	TASK_SHOWTIME,
-	TASK_ENDMAP
+	TASK_ENDMAP,
+	TASK_VOTE_ADMIN
 };
 
 const KEYSMENU = (1<<0) | (1<<1) | (1<<2) | (1<<3) | (1<<4) | (1<<5) | (1<<6) | (1<<7) | (1<<8) | (1<<9);
@@ -53,6 +55,9 @@ enum GlobalConfigs_e
 {
 	// Chat prefix
 	ChatPrefix[21],
+
+	// Admin flags
+	AdminFlags,
 
 	// Rock The Vote
 	bool:RTV_Enabled,

@@ -8,11 +8,11 @@ new const PLUGINS_FILENAME[] = "plugins-multimodmanager.ini";
 #include <amxmodx>
 #include <amxmisc>
 #include <reapi>
-#include <engine>
 #include <json>
 #include "mm_incs/defines"
 #include "mm_incs/global"
 #include "mm_incs/cvars"
+#include "mm_incs/admincmds"
 #include "mm_incs/modchooser"
 #include "mm_incs/mapchooser"
 #include "mm_incs/rockthevote"
@@ -36,6 +36,7 @@ public plugin_init()
 	g_GlobalConfigs[Mods] = ArrayCreate(ArrayMods_e);
 	g_Array_MapName = ArrayCreate(64);
 	g_Array_Nominations = ArrayCreate(1);
+	for(new i = 1; i < MAX_USERS; ++i) g_Array_AdminVoteMap[i] = ArrayCreate(64);
 }
 
 public OnConfigsExecuted()
@@ -44,6 +45,7 @@ public OnConfigsExecuted()
 
 	Cvars_Init();
 	MultiMod_Init();
+	AdminCmd_Init();
 	ModChooser_Init();
 	MapChooser_Init();
 	RockTheVote_Init();
@@ -77,12 +79,16 @@ public plugin_end()
 
 	if(g_Array_Nominations != Invalid_Array)
 		ArrayDestroy(g_Array_Nominations);
+
+	for(new i = 1; i < MAX_USERS; ++i) if(g_Array_AdminVoteMap[i] != Invalid_Array)
+		ArrayDestroy(g_Array_AdminVoteMap[i]);
 }
 
 public client_putinserver(id)
 {
 	SetPlayerBit(g_bConnected, id);
 
+	AdminCmd_ClientPutInServer(id);
 	ModChooser_ClientPutInServer(id);
 	MapChooser_ClientPutInServer(id);
 	RockTheVote_ClientPutInServer(id);
@@ -93,6 +99,7 @@ public client_disconnected(id, bool:drop, message[], maxlen)
 {
 	ClearPlayerBit(g_bConnected, id);
 
+	AdminCmd_ClientDisconnected(id);
 	ModChooser_ClientDisconnected(id);
 	MapChooser_ClientDisconnected(id);
 	RockTheVote_ClientDisconnected(id);
@@ -101,7 +108,7 @@ public client_disconnected(id, bool:drop, message[], maxlen)
 
 MultiMod_Init()
 {
-	new szConfigDir[PLATFORM_MAX_PATH], szFileName[PLATFORM_MAX_PATH], szPluginsFile[PLATFORM_MAX_PATH];
+	new szConfigDir[PLATFORM_MAX_PATH], szFileName[PLATFORM_MAX_PATH], szPluginsFile[PLATFORM_MAX_PATH], szMapsFile[PLATFORM_MAX_PATH];
 	get_configsdir(szConfigDir, charsmax(szConfigDir));
 
 	formatex(szPluginsFile, charsmax(szPluginsFile), "%s/%s", szConfigDir, PLUGINS_FILENAME);
@@ -128,6 +135,10 @@ MultiMod_Init()
 	replace_string(g_GlobalConfigs[ChatPrefix], charsmax(g_GlobalConfigs[ChatPrefix]), "!y" , "^1");
 	replace_string(g_GlobalConfigs[ChatPrefix], charsmax(g_GlobalConfigs[ChatPrefix]), "!t" , "^3");
 	replace_string(g_GlobalConfigs[ChatPrefix], charsmax(g_GlobalConfigs[ChatPrefix]), "!g" , "^4");
+
+	new szReadFlags[30];
+	json_object_get_string(jsonConfigsFile, "admin_flag_menu", szReadFlags, charsmax(szReadFlags));
+	g_GlobalConfigs[AdminFlags] = read_flags(szReadFlags);
 
 	g_GlobalConfigs[RTV_Enabled] = json_object_get_bool(jsonConfigsFile, "rtv_enable");
 	g_GlobalConfigs[RTV_Cooldown] = max(0, json_object_get_number(jsonConfigsFile, "rtv_cooldown"));
@@ -187,6 +198,9 @@ MultiMod_Init()
 				{
 					server_cmd("%a", ArrayGetStringHandle(aMod[Cvars], i));
 				}
+
+				formatex(szMapsFile, charsmax(szMapsFile), "%s/multimod_manager/mapsfiles/%s", szConfigDir, aMod[MapsFile]);
+				MapChooser_LoadMaps(g_Array_MapName, szMapsFile);
 			}
 		}
 		json_free(jsonArrayValue);
@@ -340,5 +354,5 @@ MultiMod_SetNextMod(const iNextMod)
 	}
 	
 	formatex(szFileName, charsmax(szFileName), "%s/multimod_manager/mapsfiles/%s", szConfigDir, aDataNextMod[MapsFile]);
-	MapChooser_LoadMaps(szFileName);
+	MapChooser_LoadMaps(g_Array_MapName, szFileName);
 }
