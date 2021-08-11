@@ -117,8 +117,7 @@ public OnTask_VoteNextMap()
 
 public menu__CountVoteMap(const id, const iKey)
 {
-	if(!GetPlayerBit(g_bConnected, id))
-		return;
+	CHECK_CONNECTED(id)
 
 	new sMap[32];
 	new iMapId = iKey;
@@ -150,6 +149,7 @@ public menu__CountVoteMap(const id, const iKey)
 	++g_iVoteMapCount;
 
 	g_VoteMapId[id] = iMapId+1;
+	return PLUGIN_HANDLED;
 }
 
 public OnTaskCheckVotesMap()
@@ -289,8 +289,7 @@ public OnTask_VoteNextMap__FIX()
 
 public menu__CountVoteMapFIX(const id, const iKey)
 {
-	if(!GetPlayerBit(g_bConnected, id))
-		return;
+	CHECK_CONNECTED(id)
 
 	new sMap[32];
 	new iMapId = iKey;
@@ -309,6 +308,7 @@ public menu__CountVoteMapFIX(const id, const iKey)
 	++g_iVoteMapCount;
 
 	g_VoteMapId[id] = iMapId+1;
+	return PLUGIN_HANDLED;
 }
 
 public OnTaskCheckVotesMapFIX()

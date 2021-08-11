@@ -108,8 +108,7 @@ public OnTask_VoteNextMod()
 
 public menu__CountVoteMod(const id, const iKey)
 {
-	if(!GetPlayerBit(g_bConnected, id))
-		return;
+	CHECK_CONNECTED(id)
 
 	new iModId = iKey;
 	
@@ -158,6 +157,7 @@ public menu__CountVoteMod(const id, const iKey)
 	++g_iVoteModCount;
 
 	g_VoteModId[id] = iModId+1;
+	return PLUGIN_HANDLED;
 }
 
 public OnTaskCheckVoteMod()
@@ -320,8 +320,7 @@ public OnTask_VoteNextMod__FIX()
 
 public menu__CountVoteModFIX(const id, const iKey)
 {
-	if(!GetPlayerBit(g_bConnected, id))
-		return;
+	CHECK_CONNECTED(id)
 
 	new iModId = iKey;
 	
@@ -347,6 +346,7 @@ public menu__CountVoteModFIX(const id, const iKey)
 	++g_iVoteModCount;
 
 	g_VoteModId[id] = iModId+1;
+	return PLUGIN_HANDLED;
 }
 
 public OnTaskCheckVoteModFIX()
@@ -389,7 +389,7 @@ public OnTaskCheckVoteModFIX()
 			if(g_iVoteModCountGlobal[i] == iResult)
 				iModsIds[j++] = g_iSVM_ModInMenu_SecondRound[i];
 		}
-		
+
 		if(j > 1) // Hubo más de 1 ganador (otra vez)
 			iWinner = iModsIds[random(j)];
 

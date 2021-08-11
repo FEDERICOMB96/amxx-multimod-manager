@@ -46,7 +46,9 @@ AdminCmd_ClientDisconnected(const id)
 
 public ClientCommand__AdminMultimod(const id, const level, const cid)
 {
-	if(!GetPlayerBit(g_bConnected, id) || !cmd_access(id, level, cid, 1))
+	CHECK_CONNECTED(id)
+
+	if(!cmd_access(id, level, cid, 1))
 		return PLUGIN_HANDLED;
 
 	CHECK_ADMINVOTEINPROGRESS(id)
@@ -59,8 +61,7 @@ public ClientCommand__AdminMultimod(const id, const level, const cid)
 
 ShowMenu_AdminMultimod(const id)
 {
-	if(!GetPlayerBit(g_bConnected, id))
-		return;
+	CHECK_CONNECTED(id)
 
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], g_iCurrentMod, aMods);
@@ -86,15 +87,19 @@ ShowMenu_AdminMultimod(const id)
 	menu_additem(iMenu, fmt("Iniciar una\y votación de mapas\r [ %s ]", aMods[ModName]));
 
 	menu_setprop(iMenu, MPROP_EXITNAME, "Salir");
+
 	menu_display(id, iMenu, 0);
+	return PLUGIN_HANDLED;
 }
 
 public menu_AdminMultimod(const id, const menuid, const item)
 {
 	menu_destroy(menuid);
 
-	if(!GetPlayerBit(g_bConnected, id) || item == MENU_EXIT)
-		return;
+	CHECK_CONNECTED(id)
+
+	if(item == MENU_EXIT)
+		return PLUGIN_HANDLED;
 
 	switch(item)
 	{
@@ -115,12 +120,13 @@ public menu_AdminMultimod(const id, const menuid, const item)
 			ShowMenu_Votemap(id);
 		}
 	}
+
+	return PLUGIN_HANDLED;
 }
 
 ShowMenu_SelectMod(const id)
 {
-	if(!GetPlayerBit(g_bConnected, id))
-		return;
+	CHECK_CONNECTED(id)
 
 	new iMenu = menu_create("\ySelecciona un Modo\r:\R", "menu_SelectMod");
 
@@ -141,14 +147,17 @@ ShowMenu_SelectMod(const id)
 	menu_setprop(iMenu, MPROP_EXITNAME, "Salir");
 
 	menu_display(id, iMenu, 0);
+	return PLUGIN_HANDLED;
 }
 
 public menu_SelectMod(const id, const menuid, const item)
 {
 	menu_destroy(menuid);
 
-	if(!GetPlayerBit(g_bConnected, id) || item == MENU_EXIT)
-		return;
+	CHECK_CONNECTED(id)
+
+	if(item == MENU_EXIT)
+		return PLUGIN_HANDLED;
 
 	new iModId = item;
 	new aMods[ArrayMods_e];
@@ -159,12 +168,12 @@ public menu_SelectMod(const id, const menuid, const item)
 	client_print_color(id, print_team_default, "%s^1 Ahora puedes cambiar a un mapa del modo seleccionado o iniciar una votación!", g_GlobalConfigs[ChatPrefix]);
 
 	ShowMenu_AdminMultimod(id);
+	return PLUGIN_HANDLED;
 }
 
 ShowMenu_SelectMap(const id)
 {
-	if(!GetPlayerBit(g_bConnected, id))
-		return;
+	CHECK_CONNECTED(id)
 
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_SelectedMod[id], aMods);
@@ -173,7 +182,7 @@ ShowMenu_SelectMap(const id)
 	if(iArraySize < 1)
 	{
 		client_print_color(id, print_team_default, "%s^1 No hay mapas disponibles para seleccionar!", g_GlobalConfigs[ChatPrefix]);
-		return;
+		return PLUGIN_HANDLED;
 	}
 
 	new iMenu = menu_create(fmt("\ySelecciona un Mapa\r:^n\dLista de mapas del modo [ %s ]\R", aMods[ModName]), "menu_SelectMap");
@@ -186,14 +195,17 @@ ShowMenu_SelectMap(const id)
 	menu_setprop(iMenu, MPROP_EXITNAME, "Salir");
 
 	menu_display(id, iMenu, 0);
+	return PLUGIN_HANDLED;
 }
 
 public menu_SelectMap(const id, const menuid, const item)
 {
 	menu_destroy(menuid);
 
-	if(!GetPlayerBit(g_bConnected, id) || item == MENU_EXIT)
-		return;
+	CHECK_CONNECTED(id)
+
+	if(item == MENU_EXIT)
+		return PLUGIN_HANDLED;
 
 	new iMapId = item;
 	new aMods[ArrayMods_e];
@@ -204,6 +216,7 @@ public menu_SelectMap(const id, const menuid, const item)
 	client_print_color(id, print_team_default, "%s^1 Ahora puedes cambiar al mapa seleccionado!", g_GlobalConfigs[ChatPrefix]);
 
 	ShowMenu_AdminMultimod(id);
+	return PLUGIN_HANDLED;
 }
 
 OnFunc_ChangeModAndMap(const id)
@@ -234,8 +247,7 @@ ShowMenu_ManageMods(const id)
 
 ShowMenu_Votemod(const id)
 {
-	if(!GetPlayerBit(g_bConnected, id))
-		return;
+	CHECK_CONNECTED(id)
 
 	new sMenu[512];
 	new aMods[ArrayMods_e];
@@ -288,12 +300,12 @@ ShowMenu_Votemod(const id)
 	}
 	
 	show_menu(id, iKeys, sMenu, -1, "SelectVoteMod_AdminMenu");
+	return PLUGIN_HANDLED;
 }
 
 public menu_SelectVoteMod(const id, const key)
 {
-	if(!GetPlayerBit(g_bConnected, id))
-		return PLUGIN_HANDLED;
+	CHECK_CONNECTED(id)
 
 	switch(key)
 	{
@@ -341,8 +353,7 @@ public menu_SelectVoteMod(const id, const key)
 
 public menu_VoteNextMod(const id, const iKey)
 {
-	if(!GetPlayerBit(g_bConnected, id))
-		return;
+	CHECK_CONNECTED(id)
 	
 	if(task_exists(g_Admin_VoteUserId + TASK_VOTE_ADMIN))
 	{
@@ -367,14 +378,15 @@ public menu_VoteNextMod(const id, const iKey)
 		if(g_bCvar_amx_vote_answers)
 			client_print(0, print_console, "%n ha votado por la opcion #%d (%s)%s", id, (iModId + 1), aMods[ModName], (bRandom) ? " [ELECCIÓN ALEATORIA]" : "");
 	}
+
+	return PLUGIN_HANDLED;
 }
 
 public OnTask_CheckAdminVotemod(const taskid)
 {
 	new id = (taskid - TASK_VOTE_ADMIN);
 
-	if(!GetPlayerBit(g_bConnected, id))
-		return;
+	CHECK_CONNECTED(id)
 	
 	new aMods[ArrayMods_e];
 	new iWinner = 0;
@@ -425,12 +437,12 @@ public OnTask_CheckAdminVotemod(const taskid)
 	}
 
 	arrayset(g_Admin_iVoteCountId, 0, MAX_ADMIN_VOTEOPTIONS);
+	return PLUGIN_HANDLED;
 }
 
 ShowMenu_Votemap(const id)
 {
-	if(!GetPlayerBit(g_bConnected, id))
-		return;
+	CHECK_CONNECTED(id)
 
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_SelectedMod[id], aMods);
@@ -439,7 +451,7 @@ ShowMenu_Votemap(const id)
 	if(iArraySize < 1)
 	{
 		client_print_color(id, print_team_default, "%s^1 No hay mapas disponibles para seleccionar!", g_GlobalConfigs[ChatPrefix]);
-		return;
+		return PLUGIN_HANDLED;
 	}
 
 	new sMenu[512];
@@ -486,12 +498,12 @@ ShowMenu_Votemap(const id)
 	}
 	
 	show_menu(id, iKeys, sMenu, -1, "SelectVoteMap_AdminMenu");
+	return PLUGIN_HANDLED;
 }
 
 public menu_SelectVoteMap(const id, const key)
 {
-	if(!GetPlayerBit(g_bConnected, id))
-		return PLUGIN_HANDLED;
+	CHECK_CONNECTED(id)
 
 	switch(key)
 	{
@@ -541,8 +553,7 @@ public menu_SelectVoteMap(const id, const key)
 
 public menu_VoteNextMap(const id, const iKey)
 {
-	if(!GetPlayerBit(g_bConnected, id))
-		return;
+	CHECK_CONNECTED(id)
 	
 	if(task_exists(g_Admin_VoteUserId + TASK_VOTE_ADMIN))
 	{
@@ -569,15 +580,16 @@ public menu_VoteNextMap(const id, const iKey)
 		if(g_bCvar_amx_vote_answers)
 			client_print(0, print_console, "%n ha votado por la opcion #%d (%s)%s", id, (iMapId + 1), szMap, (bRandom) ? " [ELECCIÓN ALEATORIA]" : "");
 	}
+
+	return PLUGIN_HANDLED;
 }
 
 public OnTask_CheckAdminVotemap(const taskid)
 {
 	new id = (taskid - TASK_VOTE_ADMIN);
 
-	if(!GetPlayerBit(g_bConnected, id))
-		return;
-		
+	CHECK_CONNECTED(id)
+
 	new aMods[ArrayMods_e];
 	new sMap[32];
 	new iWinner = 0;
@@ -630,6 +642,7 @@ public OnTask_CheckAdminVotemap(const taskid)
 	}
 
 	arrayset(g_Admin_iVoteCountId, 0, MAX_ADMIN_VOTEOPTIONS);
+	return PLUGIN_HANDLED;
 }
 
 bool:IsOptionSelected(const id, const position)

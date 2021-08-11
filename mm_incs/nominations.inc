@@ -32,8 +32,7 @@ Nominations_ClientDisconnected(const id)
 
 public ClientCommand_Nominate(const id)
 {
-	if(!GetPlayerBit(g_bConnected, id))
-		return PLUGIN_HANDLED;
+	CHECK_CONNECTED(id)
 
 	if(!g_bSelectedNextMod && !g_bVoteModHasStarted && !g_bSVM_ModSecondRound)
 	{
@@ -52,8 +51,7 @@ public ClientCommand_Nominate(const id)
 
 ShowMenu_NominateMod(const id, menupage=0)
 {
-	if(!GetPlayerBit(g_bConnected, id))
-		return;
+	CHECK_CONNECTED(id)
 
 	new iMenu = menu_create("\yNominar próximo modo:\R", "menu_NominateMod");
 
@@ -74,14 +72,17 @@ ShowMenu_NominateMod(const id, menupage=0)
 	menu_setprop(iMenu, MPROP_EXITNAME, "Salir");
 
 	menu_display(id, iMenu, min(menupage, menu_pages(iMenu) - 1));
+	return PLUGIN_HANDLED;
 }
 
 public menu_NominateMod(const id, const menuid, const item)
 {
-	if(!GetPlayerBit(g_bConnected, id) || item == MENU_EXIT)
+	CHECK_CONNECTED_NEWMENU(id, menuid)
+
+	if(item == MENU_EXIT)
 	{
 		menu_destroy(menuid);
-		return;
+		return PLUGIN_HANDLED;
 	}
 
 	new iModId = item;
@@ -118,12 +119,12 @@ public menu_NominateMod(const id, const menuid, const item)
 
 	menu_destroy(menuid);
 	ShowMenu_NominateMod(id, iMenuPage);
+	return PLUGIN_HANDLED;
 }
 
 ShowMenu_NominateMap(const id, menupage=0)
 {
-	if(!GetPlayerBit(g_bConnected, id))
-		return;
+	CHECK_CONNECTED(id)
 
 	new iMenu = menu_create("\yNominar próximo mapa:\R", "menu_NominateMap");
 
@@ -142,14 +143,17 @@ ShowMenu_NominateMap(const id, menupage=0)
 	menu_setprop(iMenu, MPROP_EXITNAME, "Salir");
 
 	menu_display(id, iMenu, min(menupage, menu_pages(iMenu) - 1));
+	return PLUGIN_HANDLED;
 }
 
 public menu_NominateMap(const id, const menuid, const item)
 {
-	if(!GetPlayerBit(g_bConnected, id) || item == MENU_EXIT)
+	CHECK_CONNECTED_NEWMENU(id, menuid)
+
+	if(item == MENU_EXIT)
 	{
 		menu_destroy(menuid);
-		return;
+		return PLUGIN_HANDLED;
 	}
 
 	new iMapId = item;
@@ -187,6 +191,7 @@ public menu_NominateMap(const id, const menuid, const item)
 
 	menu_destroy(menuid);
 	ShowMenu_NominateMap(id, iMenuPage);
+	return PLUGIN_HANDLED;
 }
 
 bool:IsNominated(const iNom)
