@@ -351,7 +351,7 @@ public OnTaskCheckVotesMapFIX()
 		}
 
 		if(j > 1) // Hubo más de 1 ganador (otra vez)
-			iWinner = iMapsIds[random_num(0, (j - 1))];
+			iWinner = iMapsIds[random(j)];
 
 		ArrayGetString(aMods[Maps], iWinner, sMap, 31);
 		set_pcvar_string(g_pCvar_amx_nextmap, sMap);

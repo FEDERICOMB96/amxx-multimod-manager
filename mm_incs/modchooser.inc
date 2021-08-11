@@ -389,10 +389,9 @@ public OnTaskCheckVoteModFIX()
 			if(g_iVoteModCountGlobal[i] == iResult)
 				iModsIds[j++] = g_iSVM_ModInMenu_SecondRound[i];
 		}
-
-		// Hubo más de 1 ganador (otra vez)
-		if(j > 1)
-			iWinner = iModsIds[random_num(0, (j - 1))];
+		
+		if(j > 1) // Hubo más de 1 ganador (otra vez)
+			iWinner = iModsIds[random(j)];
 
 		// Ganador, extender el modo
 		if(iWinner == OPTION_EXTEND_MOD)

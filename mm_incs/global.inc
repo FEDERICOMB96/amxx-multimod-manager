@@ -52,7 +52,6 @@ new g_bCvar_amx_vote_delay_mm;
 * ============================================================================ */
 
 new g_Admin_VoteUserId;
-new g_Admin_SelectedNextMod;
 new g_Admin_VoteCountTotal;
 
 new g_Admin_iVoteCountId[MAX_ADMIN_VOTEOPTIONS];

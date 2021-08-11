@@ -376,26 +376,45 @@ public OnTask_CheckAdminVotemod(const taskid)
 	if(!GetPlayerBit(g_bConnected, id))
 		return;
 	
-	new iMaxVotes = -1;
+	new aMods[ArrayMods_e];
+	new iWinner = 0;
+	new iResult = -1;
 
-	g_Admin_SelectedNextMod = -1;
-	
+	client_print(0, print_console, "Resultados de la votacion:");
+
 	for(new i = 0; i < g_Admin_VoteSelectedOptions[id]; ++i)
 	{
-		if(g_Admin_iVoteCountId[i] > iMaxVotes)
+		if(g_Admin_iVoteCountId[i] > iResult)
 		{
-			iMaxVotes = g_Admin_iVoteCountId[i];
-			g_Admin_SelectedNextMod = i+1;
+			iResult = g_Admin_iVoteCountId[i];
+			iWinner = i;
 		}
+
+		ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_VoteOptions[id][i], aMods);
+		client_print(0, print_console, "Modo: %s - Votos: %d - Porcentaje: %d%%", aMods[ModName], g_Admin_iVoteCountId[i], UTIL_GetPercent(g_Admin_iVoteCountId[i], g_Admin_VoteCountTotal));
 	}
 	
-	if(iMaxVotes)
+	if(iResult)
 	{
-		new aMods[ArrayMods_e];
-		ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_VoteOptions[id][g_Admin_SelectedNextMod-1], aMods);
+		new j = 0;
+		new iModsIds[MAX_ADMIN_VOTEOPTIONS];
+
+		iWinner = g_Admin_VoteOptions[id][iWinner];
+
+		// Chequeo si hubo 2 o más mapas con los mismos votos
+		for(new i = 0; i < g_Admin_VoteSelectedOptions[id]; ++i)
+		{
+			if(g_Admin_iVoteCountId[i] == iResult)
+				iModsIds[j++] = g_Admin_VoteOptions[id][i];
+		}
+
+		if(j > 1) // Hubo más de 1 ganador (otra vez)
+			iWinner = iModsIds[random(j)];
+
+		ArrayGetArray(g_GlobalConfigs[Mods], iWinner, aMods);
 
 		client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el modo ganador es^3 %s^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", 
-			g_GlobalConfigs[ChatPrefix], aMods[ModName], iMaxVotes, g_Admin_VoteCountTotal, (g_Admin_VoteCountTotal != 1) ? "s" : "", UTIL_GetPercent(iMaxVotes, g_Admin_VoteCountTotal));
+			g_GlobalConfigs[ChatPrefix], aMods[ModName], iResult, g_Admin_VoteCountTotal, (g_Admin_VoteCountTotal != 1) ? "s" : "", UTIL_GetPercent(iResult, g_Admin_VoteCountTotal));
 	}
 	else
 	{
@@ -558,28 +577,49 @@ public OnTask_CheckAdminVotemap(const taskid)
 
 	if(!GetPlayerBit(g_bConnected, id))
 		return;
-	
-	new iMaxVotes = -1;
+		
+	new aMods[ArrayMods_e];
+	new sMap[32];
+	new iWinner = 0;
+	new iResult = -1;
 
-	g_Admin_SelectedNextMod = -1;
-	
+	client_print(0, print_console, "Resultados de la votacion:");
+
 	for(new i = 0; i < g_Admin_VoteSelectedOptions[id]; ++i)
 	{
-		if(g_Admin_iVoteCountId[i] > iMaxVotes)
+		if(g_Admin_iVoteCountId[i] > iResult)
 		{
-			iMaxVotes = g_Admin_iVoteCountId[i];
-			g_Admin_SelectedNextMod = i+1;
+			iResult = g_Admin_iVoteCountId[i];
+			iWinner = i;
 		}
+
+		ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_SelectedMod[id], aMods);
+		ArrayGetString(aMods[Maps], g_Admin_VoteOptions[id][i], sMap, 31);
+		client_print(0, print_console, "Modo: %s - Votos: %d - Porcentaje: %d%%", sMap, g_Admin_iVoteCountId[i], UTIL_GetPercent(g_Admin_iVoteCountId[i], g_Admin_VoteCountTotal));
 	}
 	
-	if(iMaxVotes)
+	if(iResult)
 	{
-		new aMods[ArrayMods_e];
-		ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_SelectedMod[id], aMods);
+		new j = 0;
+		new iMapsIds[MAX_ADMIN_VOTEOPTIONS];
 
-		client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el mapa ganador es^3 %a^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", 
-			g_GlobalConfigs[ChatPrefix], ArrayGetStringHandle(aMods[Maps], g_Admin_VoteOptions[id][g_Admin_SelectedNextMod-1]), 
-			iMaxVotes, g_Admin_VoteCountTotal, (g_Admin_VoteCountTotal != 1) ? "s" : "", UTIL_GetPercent(iMaxVotes, g_Admin_VoteCountTotal));
+		iWinner = g_Admin_VoteOptions[id][iWinner];
+
+		// Chequeo si hubo 2 o más mapas con los mismos votos
+		for(new i = 0; i < g_Admin_VoteSelectedOptions[id]; ++i)
+		{
+			if(g_Admin_iVoteCountId[i] == iResult)
+				iMapsIds[j++] = g_Admin_VoteOptions[id][i];
+		}
+
+		if(j > 1) // Hubo más de 1 ganador (otra vez)
+			iWinner = iMapsIds[random(j)];
+
+		ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_SelectedMod[id], aMods);
+		ArrayGetString(aMods[Maps], iWinner, sMap, 31);
+
+		client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el mapa ganador es^3 %s^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", 
+			g_GlobalConfigs[ChatPrefix], sMap, iResult, g_Admin_VoteCountTotal, (g_Admin_VoteCountTotal != 1) ? "s" : "", UTIL_GetPercent(iResult, g_Admin_VoteCountTotal));
 	}
 	else
 	{
