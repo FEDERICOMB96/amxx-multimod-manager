@@ -13,6 +13,7 @@ new g_szCurrentMap[64];
 new g_szCurrentMod[64];
 
 new g_iCurrentMod;
+new g_iNextSelectMod;
 new g_iNoMoreTime;
 new g_iCountdownTime;
 
@@ -23,9 +24,7 @@ new bool:g_bVoteInProgress;
 new g_Hud_Vote;
 new g_Hud_Alert;
 
-new Array:g_Array_MapName;
 new Array:g_Array_Nominations;
-new Array:g_Array_AdminVoteMap[MAX_USERS];
 
 new g_GlobalConfigs[GlobalConfigs_e];
 
@@ -45,7 +44,7 @@ new g_bCvar_amx_extendmap_max;
 new g_bCvar_amx_extendmap_step;
 new g_bCvar_amx_vote_answers;
 new g_bCvar_amx_last_voting, g_pCvar_amx_last_voting;
-new g_bCvar_amx_vote_delay;
+new g_bCvar_amx_vote_delay_mm;
 
 
 /* ===========================================================================

@@ -34,9 +34,7 @@ public plugin_init()
 	g_Hud_Alert = CreateHudSyncObj();
 
 	g_GlobalConfigs[Mods] = ArrayCreate(ArrayMods_e);
-	g_Array_MapName = ArrayCreate(64);
 	g_Array_Nominations = ArrayCreate(1);
-	for(new i = 1; i < MAX_USERS; ++i) g_Array_AdminVoteMap[i] = ArrayCreate(64);
 }
 
 public OnConfigsExecuted()
@@ -64,6 +62,9 @@ public plugin_end()
 		{
 			ArrayGetArray(g_GlobalConfigs[Mods], i, aData);
 
+			if(aData[Maps] != Invalid_Array)
+				ArrayDestroy(aData[Maps]);
+
 			if(aData[Cvars] != Invalid_Array)
 				ArrayDestroy(aData[Cvars]);
 
@@ -74,14 +75,8 @@ public plugin_end()
 		ArrayDestroy(g_GlobalConfigs[Mods]);
 	}
 
-	if(g_Array_MapName != Invalid_Array)
-		ArrayDestroy(g_Array_MapName);
-
 	if(g_Array_Nominations != Invalid_Array)
 		ArrayDestroy(g_Array_Nominations);
-
-	for(new i = 1; i < MAX_USERS; ++i) if(g_Array_AdminVoteMap[i] != Invalid_Array)
-		ArrayDestroy(g_Array_AdminVoteMap[i]);
 }
 
 public client_putinserver(id)
@@ -155,8 +150,13 @@ MultiMod_Init()
 		jsonArrayValue = json_array_get_value(jsonObjectMods, i);
 		{
 			json_object_get_string(jsonArrayValue, "modname", aMod[ModName], charsmax(aMod));
-			json_object_get_string(jsonArrayValue, "mapsfile", aMod[MapsFile], charsmax(aMod));
+
 			aMod[ChangeMapType] = ChangeMap_e:json_object_get_number(jsonArrayValue, "change_map_type");
+
+			aMod[Maps] = ArrayCreate(64);
+			json_object_get_string(jsonArrayValue, "mapsfile", szMapsFile, charsmax(szMapsFile));
+			format(szMapsFile, charsmax(szMapsFile), "%s/multimod_manager/mapsfiles/%s", szConfigDir, szMapsFile);
+			MapChooser_LoadMaps(aMod[Maps], szMapsFile);
 
 			aMod[Cvars] = ArrayCreate(128);
 			jsonObject = json_object_get_value(jsonArrayValue, "cvars");
@@ -198,9 +198,6 @@ MultiMod_Init()
 				{
 					server_cmd("%a", ArrayGetStringHandle(aMod[Cvars], i));
 				}
-
-				formatex(szMapsFile, charsmax(szMapsFile), "%s/multimod_manager/mapsfiles/%s", szConfigDir, aMod[MapsFile]);
-				MapChooser_LoadMaps(g_Array_MapName, szMapsFile);
 			}
 		}
 		json_free(jsonArrayValue);
@@ -352,7 +349,4 @@ MultiMod_SetNextMod(const iNextMod)
 
 		fclose(pPluginsFile);
 	}
-	
-	formatex(szFileName, charsmax(szFileName), "%s/multimod_manager/mapsfiles/%s", szConfigDir, aDataNextMod[MapsFile]);
-	MapChooser_LoadMaps(g_Array_MapName, szFileName);
 }

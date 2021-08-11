@@ -47,8 +47,8 @@ enum ChangeMap_e
 enum _:ArrayMods_e 
 {
 	ModName[64],
-	MapsFile[64],
 	ChangeMap_e:ChangeMapType,
+	Array:Maps,
 	Array:Cvars,
 	Array:Plugins
 };

@@ -127,11 +127,14 @@ ShowMenu_NominateMap(const id, menupage=0)
 
 	new iMenu = menu_create("\yNominar próximo mapa:\R", "menu_NominateMap");
 
-	new iArraySizeMaps = ArraySize(g_Array_MapName);
+	new aMods[ArrayMods_e];
+	ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMods);
+
+	new iArraySizeMaps = ArraySize(aMods[Maps]);
 
 	for(new iMapId = 0; iMapId < iArraySizeMaps; ++iMapId)
 	{
-		menu_additem(iMenu, fmt("%a%s", ArrayGetStringHandle(g_Array_MapName, iMapId), IsNominated(iMapId) ? ((iMapId == (g_SVM_MyNominate[id]-1)) ? "\y [TU NOMINASTE]" : "\y (NOMINADO)"): ""));
+		menu_additem(iMenu, fmt("%a%s", ArrayGetStringHandle(aMods[Maps], iMapId), IsNominated(iMapId) ? ((iMapId == (g_SVM_MyNominate[id]-1)) ? "\y [TU NOMINASTE]" : "\y (NOMINADO)"): ""));
 	}
 
 	menu_setprop(iMenu, MPROP_NEXTNAME, "Siguiente");
@@ -151,6 +154,9 @@ public menu_NominateMap(const id, const menuid, const item)
 
 	new iMapId = item;
 
+	new aMods[ArrayMods_e];
+	ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMods);
+
 	if(IsNominated(iMapId))
 	{
 		if(iMapId == (g_SVM_MyNominate[id]-1))
@@ -158,10 +164,10 @@ public menu_NominateMap(const id, const menuid, const item)
 			DeleteNominated(g_SVM_MyNominate[id]-1);
 
 			g_SVM_MyNominate[id] = 0;
-			client_print_color(0, print_team_red, "%s^3 %n^1 ha eliminado de las nominaciones el mapa:^4 %a", g_GlobalConfigs[ChatPrefix], id, ArrayGetStringHandle(g_Array_MapName, iMapId));
+			client_print_color(0, print_team_red, "%s^3 %n^1 ha eliminado de las nominaciones el mapa:^4 %a", g_GlobalConfigs[ChatPrefix], id, ArrayGetStringHandle(aMods[Maps], iMapId));
 		}
 		else
-			client_print_color(id, print_team_blue, "%s^1 El mapa^4 %a^1 ya fue nominado!", g_GlobalConfigs[ChatPrefix], ArrayGetStringHandle(g_Array_MapName, iMapId));
+			client_print_color(id, print_team_blue, "%s^1 El mapa^4 %a^1 ya fue nominado!", g_GlobalConfigs[ChatPrefix], ArrayGetStringHandle(aMods[Maps], iMapId));
 	}
 	else
 	{
@@ -172,7 +178,7 @@ public menu_NominateMap(const id, const menuid, const item)
 			ArrayPushCell(g_Array_Nominations, iMapId);
 
 			g_SVM_MyNominate[id] = iMapId+1;
-			client_print_color(0, print_team_blue, "%s^3 %n^1 ha nominado el mapa:^4 %a", g_GlobalConfigs[ChatPrefix], id, ArrayGetStringHandle(g_Array_MapName, iMapId));
+			client_print_color(0, print_team_blue, "%s^3 %n^1 ha nominado el mapa:^4 %a", g_GlobalConfigs[ChatPrefix], id, ArrayGetStringHandle(aMods[Maps], iMapId));
 		}
 	}
 

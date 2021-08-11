@@ -167,6 +167,8 @@ public OnTaskCheckVoteMod()
 	new iResult = -1;
 	new i;
 
+	client_print(0, print_console, "Resultados de la votacion:");
+
 	for(i = 0; i <= g_iModVoteNum; ++i)
 	{
 		if(g_iVoteModCountGlobal[i] > iResult)
@@ -174,12 +176,7 @@ public OnTaskCheckVoteMod()
 			iWinner = i;
 			iResult = g_iVoteModCountGlobal[i];
 		}
-	}
 
-	client_print(0, print_console, "Resultados de la votacion:");
-	
-	for(i = 0; i <= g_iModVoteNum; ++i)
-	{
 		if(i < g_iModVoteNum)
 		{
 			ArrayGetArray(g_GlobalConfigs[Mods], g_iSVM_ModInMenu[i], aData);
@@ -239,9 +236,10 @@ public OnTaskCheckVoteMod()
 			return;
 		}
 
-		MultiMod_SetNextMod(g_iSVM_ModInMenu[iWinner]);
+		g_iNextSelectMod = g_iSVM_ModInMenu[iWinner];
+		MultiMod_SetNextMod(g_iNextSelectMod);
 
-		ArrayGetArray(g_GlobalConfigs[Mods], g_iSVM_ModInMenu[iWinner], aData);
+		ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aData);
 		client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el modo ganador es ^3%s ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalConfigs[ChatPrefix], aData[ModName], iResult, g_iVoteModCount, (g_iVoteModCount != 1) ? "s" : "", UTIL_GetPercent(iResult, g_iVoteModCount));
 		
 		ModChooser_ResetAllData();
@@ -267,9 +265,10 @@ public OnTaskCheckVoteMod()
 			iWinner = random(g_iModVoteNum);
 		} while(iWinner == g_iModVoteNum);
 
-		MultiMod_SetNextMod(g_iSVM_ModInMenu[iWinner]);
+		g_iNextSelectMod = g_iSVM_ModInMenu[iWinner];
+		MultiMod_SetNextMod(g_iNextSelectMod);
 
-		ArrayGetArray(g_GlobalConfigs[Mods], g_iSVM_ModInMenu[iWinner], aData);
+		ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aData);
 		client_print_color(0, print_team_blue, "%s^1 Ningún voto fue emitido, por lo tanto el modo ganador al azar es:^3 %s", g_GlobalConfigs[ChatPrefix], aData[ModName]);
 
 		ModChooser_ResetAllData();
@@ -357,6 +356,8 @@ public OnTaskCheckVoteModFIX()
 	new iResult = -1;
 	new i;
 
+	client_print(0, print_console, "Resultados de la votacion:");
+
 	for(i = 0; i < g_iModVoteNum; ++i)
 	{
 		if(g_iVoteModCountGlobal[i] > iResult)
@@ -364,20 +365,14 @@ public OnTaskCheckVoteModFIX()
 			iWinner = i;
 			iResult = g_iVoteModCountGlobal[i];
 		}
-	}
 
-	client_print(0, print_console, "Resultados de la votacion:");
-	
-	for(i = 0; i < g_iModVoteNum; ++i)
-	{
 		if(g_iSVM_ModInMenu_SecondRound[i] == OPTION_EXTEND_MOD)
-		{
 			client_print(0, print_console, "Extender modo: %d' - Votos: %d - Porcentaje: %d%%", g_bCvar_amx_extendmap_step, g_iVoteModCountGlobal[i], UTIL_GetPercent(g_iVoteModCountGlobal[i], g_iVoteModCount));
-			continue;
+		else
+		{
+			ArrayGetArray(g_GlobalConfigs[Mods], g_iSVM_ModInMenu_SecondRound[i], aData);
+			client_print(0, print_console, "Modo: %s - Votos: %d - Porcentaje: %d%%^n", aData[ModName], g_iVoteModCountGlobal[i], UTIL_GetPercent(g_iVoteModCountGlobal[i], g_iVoteModCount));
 		}
-
-		ArrayGetArray(g_GlobalConfigs[Mods], g_iSVM_ModInMenu_SecondRound[i], aData);
-		client_print(0, print_console, "Modo: %s - Votos: %d - Porcentaje: %d%%^n", aData[ModName], g_iVoteModCountGlobal[i], UTIL_GetPercent(g_iVoteModCountGlobal[i], g_iVoteModCount));
 	}
 
 	// Hubo votos emitidos..
@@ -418,9 +413,10 @@ public OnTaskCheckVoteModFIX()
 			return;
 		}
 
-		MultiMod_SetNextMod(iWinner);
+		g_iNextSelectMod = iWinner;
+		MultiMod_SetNextMod(g_iNextSelectMod);
 
-		ArrayGetArray(g_GlobalConfigs[Mods], iWinner, aData);
+		ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aData);
 		
 		if(j > 1)
 		{
@@ -453,9 +449,10 @@ public OnTaskCheckVoteModFIX()
 			iWinner = random(g_iModVoteNum);
 		} while(g_iSVM_ModInMenu_SecondRound[iWinner] == OPTION_EXTEND_MOD);
 
-		MultiMod_SetNextMod(g_iSVM_ModInMenu_SecondRound[iWinner]);
+		g_iNextSelectMod = g_iSVM_ModInMenu_SecondRound[iWinner];
+		MultiMod_SetNextMod(g_iNextSelectMod);
 
-		ArrayGetArray(g_GlobalConfigs[Mods], g_iSVM_ModInMenu_SecondRound[iWinner], aData);
+		ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aData);
 		client_print_color(0, print_team_blue, "%s^1 Ningún voto fue emitido, por lo tanto el modo ganador al azar es:^3 %s", g_GlobalConfigs[ChatPrefix], aData[ModName]);
 
 		ModChooser_ResetAllData();
