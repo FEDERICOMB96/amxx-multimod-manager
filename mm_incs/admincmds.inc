@@ -122,7 +122,7 @@ ShowMenu_SelectMod(const id)
 	if(!GetPlayerBit(g_bConnected, id))
 		return;
 
-	new iMenu = menu_create("\ySelecciona un Modo:\R", "menu_SelectMod");
+	new iMenu = menu_create("\ySelecciona un Modo\r:\R", "menu_SelectMod");
 
 	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
 	new aMods[ArrayMods_e];
@@ -176,7 +176,7 @@ ShowMenu_SelectMap(const id)
 		return;
 	}
 
-	new iMenu = menu_create(fmt("\ySelecciona un Mapa:^n\dLista de mapas del modo %s\R", aMods[ModName]), "menu_SelectMap");
+	new iMenu = menu_create(fmt("\ySelecciona un Mapa\r:^n\dLista de mapas del modo [ %s ]\R", aMods[ModName]), "menu_SelectMap");
 
 	for(new iMapId = 0; iMapId < iArraySize; ++iMapId)
 		menu_additem(iMenu, fmt("%a", ArrayGetStringHandle(aMods[Maps], iMapId)));
@@ -303,7 +303,7 @@ public menu_SelectVoteMod(const id, const key)
 
 			new sMenu[512];
 			new iKeys;
-			new iLen = formatex(sMenu, charsmax(sMenu), "\yVotación de:\w %n^n^n\yElige el próximo modo: ¡VOTÁ AHORA!^n^n", id);
+			new iLen = formatex(sMenu, charsmax(sMenu), "\yVotación de\r:\w %n^n^n\yElige el próximo modo\r:\y ¡VOTÁ AHORA!^n^n", id);
 
 			g_Admin_VoteUserId = id;
 			g_Admin_VoteCountTotal = 0;
@@ -429,7 +429,7 @@ ShowMenu_Votemap(const id)
 	new iKeys = MENU_KEY_0;
 	new j = 0;
 
-	new iLen = formatex(sMenu, charsmax(sMenu), "\yVotación de Mapas:^n\dLista de mapas del modo [ %s ]\r:\R\y%d/%d^n^n", aMods[ModName], (g_Admin_VoteCurrentPage[id] + 1), ((iArraySize / 7) + ((iArraySize % 7) ? 1 : 0)));
+	new iLen = formatex(sMenu, charsmax(sMenu), "\yVotación de Mapas\r:^n\dLista de mapas del modo [ %s ]\R\y%d/%d^n^n", aMods[ModName], (g_Admin_VoteCurrentPage[id] + 1), ((iArraySize / 7) + ((iArraySize % 7) ? 1 : 0)));
 	
 	for(new i = iStartLoop; i < iEndLoop; ++i)
 	{
@@ -482,7 +482,7 @@ public menu_SelectVoteMap(const id, const key)
 			
 			new sMenu[512];
 			new iKeys;
-			new iLen = formatex(sMenu, charsmax(sMenu), "\yVotación de:\w %n^n^n\yElige el próximo mapa: ¡VOTÁ AHORA!^n^n", id);
+			new iLen = formatex(sMenu, charsmax(sMenu), "\yVotación de\r:\w %n^n^n\yElige el próximo mapa\r:\y ¡VOTÁ AHORA!^n^n", id);
 
 			g_Admin_VoteUserId = id;
 			g_Admin_VoteCountTotal = 0;
