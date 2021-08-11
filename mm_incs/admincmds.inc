@@ -15,7 +15,7 @@ AdminCmd_Init()
 
 AdminCmd_ResetUserData(const id)
 {
-	arrayset(g_Admin_VoteOptions[id], 0, 9);
+	arrayset(g_Admin_VoteOptions[id], 0, MAX_ADMIN_VOTEOPTIONS);
 	g_Admin_VoteSelectedOptions[id] = 0;
 	g_Admin_VoteCurrentPage[id] = 0;
 	g_Admin_SelectedMod[id] = g_iCurrentMod;
@@ -34,6 +34,8 @@ AdminCmd_ReloadMapList(const id, const iMod)
 	new szConfigDir[PLATFORM_MAX_PATH], szMapsFile[PLATFORM_MAX_PATH];
 	get_configsdir(szConfigDir, charsmax(szConfigDir));
 	formatex(szMapsFile, charsmax(szMapsFile), "%s/multimod_manager/mapsfiles/%s", szConfigDir, aMods[MapsFile]);
+
+	g_Admin_SelectedMap[id] = 0;
 
 	MapChooser_LoadMaps(g_Array_AdminVoteMap[id], szMapsFile);
 }
@@ -77,31 +79,28 @@ ShowMenu_AdminMultimod(const id)
 	if(!GetPlayerBit(g_bConnected, id))
 		return;
 
-	new iMenu = menu_create("\y[ADMIN] Multimod Manager\R", "menu_AdminMultimod");
 	new aMods[ArrayMods_e];
+	ArrayGetArray(g_GlobalConfigs[Mods], g_iCurrentMod, aMods);
+
+	new iMenu = menu_create(fmt("\yMULTIMOD MANAGER^n\dModo actual: [ %s ]\y\R", aMods[ModName]), "menu_AdminMultimod");
 
 	ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_SelectedMod[id], aMods);
-	menu_additem(iMenu, fmt("Elegir un\y siguiente modo:\r [%s]", aMods[ModName]));
+	menu_additem(iMenu, fmt("Elegir un\y siguiente modo\r [ %s ]", aMods[ModName]));
 
 	if(g_Admin_SelectedMap[id])
-		menu_additem(iMenu, fmt("Elegir un\y siguiente mapa:\r [%a]", ArrayGetStringHandle(g_Array_AdminVoteMap[id], g_Admin_SelectedMap[id]-1)));
+		menu_additem(iMenu, fmt("Elegir un\y siguiente mapa\r [ %a ]", ArrayGetStringHandle(g_Array_AdminVoteMap[id], g_Admin_SelectedMap[id]-1)));
 	else
-		menu_additem(iMenu, "Elegir un\y siguiente mapa\r [ sin definir ]");
+		menu_additem(iMenu, "Elegir un\y siguiente mapa\r [\d sin definir\r ]");
 
 	if(g_Admin_SelectedMap[id])
-	{
-		ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_SelectedMod[id], aMods);
-		menu_additem(iMenu, fmt("Cambiar a: Modo\y [%s]\w Mapa\r [%a]^n", aMods[ModName],  ArrayGetStringHandle(g_Array_AdminVoteMap[id], g_Admin_SelectedMap[id]-1)));
-	}
+		menu_additem(iMenu, fmt("Cambiar a Modo\y [ %s ]\w Mapa\r [ %a ]^n", aMods[ModName],  ArrayGetStringHandle(g_Array_AdminVoteMap[id], g_Admin_SelectedMap[id]-1)));
 	else
-		menu_additem(iMenu, "Cambiar a [ sin definir ] [ sin definir ]^n", .callback=menu_makecallback("UTIL_DisableItem"));
+		menu_additem(iMenu, fmt("Cambiar a Modo [ %s ] Mapa [ sin definir ]^n", aMods[ModName]), .callback=menu_makecallback("UTIL_DisableItem"));
 
 	menu_additem(iMenu, "Administrar\y modos^n");
 
 	menu_additem(iMenu, "Iniciar una\y votación de modos");
-
-	ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_SelectedMod[id], aMods);
-	menu_additem(iMenu, fmt("Iniciar una\y votación de mapas:\r [%s]", aMods[ModName]));
+	menu_additem(iMenu, fmt("Iniciar una\y votación de mapas\r [ %s ]", aMods[ModName]));
 
 	menu_setprop(iMenu, MPROP_EXITNAME, "Salir");
 	menu_display(id, iMenu, 0);
@@ -120,8 +119,18 @@ public menu_AdminMultimod(const id, const menuid, const item)
 		case 1: ShowMenu_SelectMap(id);
 		case 2: OnFunc_ChangeModAndMap(id);
 		case 3: ShowMenu_ManageMods(id);
-		case 4: ShowMenu_Votemod(id);
-		case 5: ShowMenu_Votemap(id);
+		case 4:
+		{
+			arrayset(g_Admin_VoteOptions[id], 0, MAX_ADMIN_VOTEOPTIONS);
+			g_Admin_VoteSelectedOptions[id] = g_Admin_VoteCurrentPage[id] = 0;
+			ShowMenu_Votemod(id);
+		}
+		case 5:
+		{
+			arrayset(g_Admin_VoteOptions[id], 0, MAX_ADMIN_VOTEOPTIONS);
+			g_Admin_VoteSelectedOptions[id] = g_Admin_VoteCurrentPage[id] = 0;
+			ShowMenu_Votemap(id);
+		}
 	}
 }
 
@@ -439,7 +448,7 @@ ShowMenu_Votemap(const id)
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_SelectedMod[id], aMods);
 
-	new iLen = formatex(sMenu, charsmax(sMenu), "\yVotación de Mapas:^n\dLista de mapas del modo %s\r:\R\y%d/%d^n^n", aMods[ModName], (g_Admin_VoteCurrentPage[id] + 1), ((iArraySize / 7) + ((iArraySize % 7) ? 1 : 0)));
+	new iLen = formatex(sMenu, charsmax(sMenu), "\yVotación de Mapas:^n\dLista de mapas del modo [ %s ]\r:\R\y%d/%d^n^n", aMods[ModName], (g_Admin_VoteCurrentPage[id] + 1), ((iArraySize / 7) + ((iArraySize % 7) ? 1 : 0)));
 	
 	for(new i = iStartLoop; i < iEndLoop; ++i)
 	{
