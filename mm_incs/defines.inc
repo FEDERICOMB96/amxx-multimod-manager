@@ -12,6 +12,8 @@
 #define ClearPlayerBit(%0,%1) 			( IsPlayer(%1) && ( %0 &= ~( 1 << ( %1 & 31 ) ) ) )
 #define SwitchPlayerBit(%0,%1) 			( IsPlayer(%1) && ( %0 ^= ( 1 << ( %1 & 31 ) ) ) )
 
+#define likely(%0) 						(%0)
+
 #define MAX_ADMIN_VOTEOPTIONS			9
 #define MAX_SELECTMODS					9
 #define MAX_SELECTMAPS					9
@@ -19,8 +21,10 @@
 #define OPTION_EXTEND_MOD				-1
 
 #define CHECK_CONNECTED(%0)				if(!GetPlayerBit(g_bConnected, %0)) { return PLUGIN_HANDLED; }
-#define CHECK_CONNECTED_NEWMENU(%0,%1)	if(!GetPlayerBit(g_bConnected, %0)) { menu_destroy(%1); return PLUGIN_HANDLED; }
 #define CHECK_ADMINVOTEINPROGRESS(%0)	if(g_bCvar_amx_last_voting > get_gametime()) { client_print_color(%0, print_team_default, "%s^1 Existe una votación en curso, debes esperar unos segundos para utilizar esta función!", g_GlobalConfigs[ChatPrefix]); return PLUGIN_HANDLED; }
+
+#define CHECK_CONNECTED_NEWMENU(%0,%1)	if(!GetPlayerBit(g_bConnected, %0)) { menu_destroy(%1); return PLUGIN_HANDLED; }
+#define CHECK_TIMEOUT_NEWMENU(%0,%1,%2)	if(likely(%2 == MENU_TIMEOUT)) { menu_destroy(%1); return PLUGIN_HANDLED; }
 
 enum 
 {
@@ -68,6 +72,9 @@ enum GlobalConfigs_e
 	RTV_Cooldown,
 	RTV_MinPlayers,
 	RTV_Percentage,
+
+	// Admin options in menu
+	AdminMaxOptionsInMenu,
 
 	// Mods/Maps in menu
 	ModsInMenu,
