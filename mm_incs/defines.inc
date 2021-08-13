@@ -12,7 +12,8 @@
 #define ClearPlayerBit(%0,%1) 			( IsPlayer(%1) && ( %0 &= ~( 1 << ( %1 & 31 ) ) ) )
 #define SwitchPlayerBit(%0,%1) 			( IsPlayer(%1) && ( %0 ^= ( 1 << ( %1 & 31 ) ) ) )
 
-#define likely(%0) 						(%0)
+#define likely(%0) 						((%0))
+#define unlikely(%0) 					(!(%0))
 
 #define MAX_ADMIN_VOTEOPTIONS			9
 #define MAX_SELECTMODS					9

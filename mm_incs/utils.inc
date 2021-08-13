@@ -73,3 +73,14 @@ public UTIL_DisableItem(const id, const menuid, const item)
 {
 	return ITEM_DISABLED;
 }
+
+UTIL_MenuDisplayAll(menu, page=0, time=-1)
+{
+	for(new i = 1; i < MAX_USERS; ++i)
+	{
+		if(GetPlayerBit(g_bConnected, i))
+			menu_display(i, menu, page, time);
+	}
+
+	return 1;
+}
