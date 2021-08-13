@@ -12,16 +12,22 @@ stock UTIL_GetCurrentMod(const szFilePath[PLATFORM_MAX_PATH], szOut[], const iLe
 		if(iFile)
 		{
 			new szLine[PLATFORM_MAX_PATH];
-			fgets(iFile, szLine, charsmax(szLine));
-			trim(szLine);
+			new iLen = 0;
 
-			replace_string(szLine, charsmax(szLine), ";Mod:", "");
-			
-			copy(szOut, iLen, szLine);
+			if(fgets(iFile, szLine, charsmax(szLine)))
+			{
+				trim(szLine);
+				replace_string(szLine, charsmax(szLine), ";Mod:", "");
+				
+				iLen = copy(szOut, iLen, szLine);
+			}
 
 			fclose(iFile);
+			return iLen;
 		}
 	}
+
+	return 0;
 }
 
 stock ChangeMap_e:UTIL_GetChangeMapType(const iMod)
