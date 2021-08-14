@@ -11,6 +11,7 @@ new const PLUGINS_FILENAME[] = "plugins-multimodmanager.ini";
 #include <json>
 #include "mm_incs/defines"
 #include "mm_incs/global"
+#include "mm_incs/natives"
 #include "mm_incs/cvars"
 #include "mm_incs/admincmds"
 #include "mm_incs/modchooser"
@@ -18,6 +19,12 @@ new const PLUGINS_FILENAME[] = "plugins-multimodmanager.ini";
 #include "mm_incs/rockthevote"
 #include "mm_incs/nominations"
 #include "mm_incs/utils"
+
+public plugin_natives()
+{
+	register_native("mm_get_mod_name", "_mm_get_mod_name");
+	register_native("mm_get_mod_id", "_mm_get_mod_id");
+}
 
 public plugin_init()
 {
