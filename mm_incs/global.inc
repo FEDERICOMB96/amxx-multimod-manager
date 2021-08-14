@@ -9,7 +9,7 @@
 
 new g_bConnected;
 
-new g_szCurrentMap[64];
+new g_szCurrentMap[MAX_MAPNAME_LENGTH];
 new g_szCurrentMod[64];
 
 new g_iCurrentMod;
