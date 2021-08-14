@@ -32,7 +32,7 @@ public _mm_get_mod_id(plugin_id, argc)
  */
 public _mm_get_mod_name(plugin_id, argc)
 {
-	if(iParams != 3)
+	if(argc != 3)
 		return 0;
 
 	new iModId = get_param(1);
