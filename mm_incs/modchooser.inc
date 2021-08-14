@@ -51,7 +51,7 @@ ModChooser_ClientDisconnected(const id)
 
 public OnTask_VoteNextMod()
 {
-	new sMenu[400];
+	new sMenu[MAX_MENU_LENGTH];
 	new iMenuKeys = 0;
 	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
 	new iMaxMods = min(g_GlobalConfigs[ModsInMenu], (iArraySizeMods - 1));
@@ -282,7 +282,7 @@ public OnTaskCheckVoteMod()
 
 public OnTask_VoteNextMod__FIX()
 {
-	new sMenu[400];
+	new sMenu[MAX_MENU_LENGTH];
 	new iMenuKeys;
 
 	new iLen = formatex(sMenu, charsmax(sMenu), "\yElige el próximo modo: ¡VOTÁ AHORA!^n^n");

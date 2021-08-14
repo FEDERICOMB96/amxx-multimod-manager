@@ -15,6 +15,8 @@
 #define likely(%0) 						((%0))
 #define unlikely(%0) 					(!(%0))
 
+#define MAX_MAPNAME_LENGTH 				64
+
 #define MAX_ADMIN_VOTEOPTIONS			9
 #define MAX_SELECTMODS					9
 #define MAX_SELECTMAPS					9

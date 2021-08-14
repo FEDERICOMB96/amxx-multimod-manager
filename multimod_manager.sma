@@ -154,7 +154,7 @@ MultiMod_Init()
 
 			aMod[ChangeMapType] = ChangeMap_e:json_object_get_number(jsonArrayValue, "change_map_type");
 
-			aMod[Maps] = ArrayCreate(64);
+			aMod[Maps] = ArrayCreate(MAX_MAPNAME_LENGTH);
 			json_object_get_string(jsonArrayValue, "mapsfile", szMapsFile, charsmax(szMapsFile));
 			format(szMapsFile, charsmax(szMapsFile), "%s/multimod_manager/mapsfiles/%s", szConfigDir, szMapsFile);
 			MapChooser_LoadMaps(aMod[Maps], szMapsFile);

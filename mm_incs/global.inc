@@ -39,7 +39,7 @@ new g_bCvar_mp_winlimit;
 new g_bCvar_mp_maxrounds;
 
 // Plugin Cvars
-new g_bCvar_amx_nextmap[64], g_pCvar_amx_nextmap;
+new g_bCvar_amx_nextmap[MAX_MAPNAME_LENGTH], g_pCvar_amx_nextmap;
 new g_bCvar_amx_extendmap_max;
 new g_bCvar_amx_extendmap_step;
 new g_bCvar_amx_vote_answers;
@@ -61,6 +61,8 @@ new g_Admin_VoteSelectedOptions[MAX_USERS];
 new g_Admin_VoteCurrentPage[MAX_USERS];
 new g_Admin_SelectedMod[MAX_USERS];
 new g_Admin_SelectedMap[MAX_USERS];
+
+new bool:g_Admin_VoteStartInMod[MAX_USERS];
 
 
 /* ===========================================================================

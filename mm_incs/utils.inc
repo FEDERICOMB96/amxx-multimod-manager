@@ -12,18 +12,18 @@ stock UTIL_GetCurrentMod(const szFilePath[PLATFORM_MAX_PATH], szOut[], const iLe
 		if(iFile)
 		{
 			new szLine[PLATFORM_MAX_PATH];
-			new iLen = 0;
+			new iRetLen = 0;
 
 			if(fgets(iFile, szLine, charsmax(szLine)))
 			{
 				trim(szLine);
 				replace_string(szLine, charsmax(szLine), ";Mod:", "");
 				
-				iLen = copy(szOut, iLen, szLine);
+				iRetLen = copy(szOut, iLen, szLine);
 			}
 
 			fclose(iFile);
-			return iLen;
+			return iRetLen;
 		}
 	}
 

@@ -27,6 +27,8 @@ AdminCmd_ResetUserData(const id)
 	g_Admin_SelectedMod[id] = g_iCurrentMod;
 	g_Admin_SelectedMap[id] = 0;
 
+	g_Admin_VoteStartInMod[id] = false;
+
 	remove_task(id + TASK_VOTE_ADMIN);
 }
 
@@ -37,15 +39,14 @@ AdminCmd_ClientPutInServer(const id)
 
 AdminCmd_ClientDisconnected(const id)
 {
-	if(task_exists(id + TASK_VOTE_ADMIN) && g_Admin_VoteUserId == id)
+	if(IsPlayer(g_Admin_VoteUserId) && likely(g_Admin_VoteUserId == id) && task_exists(id + TASK_VOTE_ADMIN))
 	{
 		remove_task(id + TASK_VOTE_ADMIN);
-
 		client_print_color(0, print_team_blue, "%s^3 %n^1 se desconectó, por lo tanto, su votación fue anulada!", g_GlobalConfigs[ChatPrefix], id);
 	}
 	
-	if(g_Admin_VoteUserId == id)
-		g_Admin_VoteUserId = -1;
+	if(likely(g_Admin_VoteUserId == id))
+		g_Admin_VoteUserId = 0;
 
 	AdminCmd_ResetUserData(id);
 }
@@ -100,12 +101,13 @@ ShowMenu_AdminMultimod(const id)
 
 public menu_AdminMultimod(const id, const menuid, const item)
 {
-	menu_destroy(menuid);
-
-	CHECK_CONNECTED(id)
+	CHECK_CONNECTED_NEWMENU(id, menuid)
 
 	if(item == MENU_EXIT)
+	{
+		menu_destroy(menuid);
 		return PLUGIN_HANDLED;
+	}
 
 	switch(item)
 	{
@@ -127,6 +129,7 @@ public menu_AdminMultimod(const id, const menuid, const item)
 		}
 	}
 
+	menu_destroy(menuid);
 	return PLUGIN_HANDLED;
 }
 
@@ -158,12 +161,13 @@ ShowMenu_SelectMod(const id)
 
 public menu_SelectMod(const id, const menuid, const item)
 {
-	menu_destroy(menuid);
-
-	CHECK_CONNECTED(id)
+	CHECK_CONNECTED_NEWMENU(id, menuid)
 
 	if(item == MENU_EXIT)
+	{
+		menu_destroy(menuid);
 		return PLUGIN_HANDLED;
+	}
 
 	new iModId = item;
 	new aMods[ArrayMods_e];
@@ -172,6 +176,8 @@ public menu_SelectMod(const id, const menuid, const item)
 	g_Admin_SelectedMod[id] = iModId;
 	client_print_color(id, print_team_default, "%s^1 Has seleccionado el modo^4 %s^1!", g_GlobalConfigs[ChatPrefix], aMods[ModName]);
 	client_print_color(id, print_team_default, "%s^1 Ahora puedes cambiar a un mapa del modo seleccionado o iniciar una votación!", g_GlobalConfigs[ChatPrefix]);
+
+	menu_destroy(menuid);
 
 	ShowMenu_AdminMultimod(id);
 	return PLUGIN_HANDLED;
@@ -206,12 +212,13 @@ ShowMenu_SelectMap(const id)
 
 public menu_SelectMap(const id, const menuid, const item)
 {
-	menu_destroy(menuid);
-
-	CHECK_CONNECTED(id)
+	CHECK_CONNECTED_NEWMENU(id, menuid)
 
 	if(item == MENU_EXIT)
+	{
+		menu_destroy(menuid);
 		return PLUGIN_HANDLED;
+	}
 
 	new iMapId = item;
 	new aMods[ArrayMods_e];
@@ -220,6 +227,8 @@ public menu_SelectMap(const id, const menuid, const item)
 	g_Admin_SelectedMap[id] = iMapId+1;
 	client_print_color(id, print_team_default, "%s^1 Has seleccionado el mapa^4 %a^1 del modo^3 %s^1!", g_GlobalConfigs[ChatPrefix], ArrayGetStringHandle(aMods[Maps], iMapId), aMods[ModName]);
 	client_print_color(id, print_team_default, "%s^1 Ahora puedes cambiar al mapa seleccionado!", g_GlobalConfigs[ChatPrefix]);
+
+	menu_destroy(menuid);
 
 	ShowMenu_AdminMultimod(id);
 	return PLUGIN_HANDLED;
@@ -234,8 +243,8 @@ OnFunc_ChangeModAndMap(const id)
 		new aMods[ArrayMods_e];
 		ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_SelectedMod[id], aMods);
 
-		new szNextMap[64];
-		ArrayGetString(aMods[Maps], g_Admin_SelectedMap[id]-1, szNextMap, charsmax(szNextMap));
+		new szNextMap[MAX_MAPNAME_LENGTH];
+		ArrayGetString(aMods[Maps], g_Admin_SelectedMap[id]-1, szNextMap, MAX_MAPNAME_LENGTH-1);
 
 		message_begin(MSG_ALL, SVC_INTERMISSION);
 		message_end();
@@ -255,7 +264,7 @@ ShowMenu_Votemod(const id)
 {
 	CHECK_CONNECTED(id)
 
-	new sMenu[512];
+	new sMenu[MAX_MENU_LENGTH];
 	new aMods[ArrayMods_e];
 	new iArraySize = ArraySize(g_GlobalConfigs[Mods]);
 	new iStartLoop = g_Admin_VoteCurrentPage[id] * 7;
@@ -323,6 +332,8 @@ public menu_SelectVoteMod(const id, const key)
 			g_Admin_VoteUserId = id;
 
 			set_pcvar_float(g_pCvar_amx_last_voting, get_gametime() + 15.0 + 2.0 + float(g_bCvar_amx_vote_delay_mm));
+
+			g_Admin_VoteStartInMod[id] = false;
 
 			ShowMenu_StartCustomVotemod();
 			return PLUGIN_HANDLED;
@@ -557,6 +568,8 @@ public menu_SelectVoteMap(const id, const key)
 
 			set_pcvar_float(g_pCvar_amx_last_voting, get_gametime() + 15.0 + 2.0 + float(g_bCvar_amx_vote_delay_mm));
 
+			g_Admin_VoteStartInMod[id] = true;
+
 			ShowMenu_StartCustomVotemap();
 			return PLUGIN_HANDLED;
 		}
@@ -606,17 +619,17 @@ public menu_StartCustomVotemap(const id, const menuid, const item)
 		new iMapId = item;
 		new bool:bRandom = false;
 
-		new sMap[32];
+		new szMap[MAX_MAPNAME_LENGTH];
 
 		new aMods[ArrayMods_e];
 		ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_SelectedMod[id], aMods);
 
 		if(iMapId < g_Admin_VoteSelectedOptions[id])
-			ArrayGetString(aMods[Maps], g_Admin_VoteOptions[g_Admin_VoteUserId][iMapId], sMap, 31);
+			ArrayGetString(aMods[Maps], g_Admin_VoteOptions[g_Admin_VoteUserId][iMapId], szMap, MAX_MAPNAME_LENGTH-1);
 		else
 		{
 			iMapId = random(g_Admin_VoteSelectedOptions[id]);
-			ArrayGetString(aMods[Maps], g_Admin_VoteOptions[g_Admin_VoteUserId][iMapId], sMap, 31);
+			ArrayGetString(aMods[Maps], g_Admin_VoteOptions[g_Admin_VoteUserId][iMapId], szMap, MAX_MAPNAME_LENGTH-1);
 
 			bRandom = true;
 		}
@@ -625,10 +638,10 @@ public menu_StartCustomVotemap(const id, const menuid, const item)
 		++g_Admin_VoteCountTotal;
 
 		client_print_color(id, print_team_default, "%s^1 Has votado por la opción^4 #%d^1 (^4%s^1)!%s", 
-			g_GlobalConfigs[ChatPrefix], (iMapId + 1), sMap, (bRandom) ? "^3 [ELECCIÓN ALEATORIA]" : "");
+			g_GlobalConfigs[ChatPrefix], (iMapId + 1), szMap, (bRandom) ? "^3 [ELECCIÓN ALEATORIA]" : "");
 
 		if(g_bCvar_amx_vote_answers)
-			client_print(0, print_console, "%n ha votado por la opcion #%d (%s)%s", id, (iMapId + 1), sMap, (bRandom) ? " [ELECCIÓN ALEATORIA]" : "");
+			client_print(0, print_console, "%n ha votado por la opcion #%d (%s)%s", id, (iMapId + 1), szMap, (bRandom) ? " [ELECCIÓN ALEATORIA]" : "");
 	}
 
 	menu_destroy(menuid);
@@ -660,14 +673,15 @@ public OnTask_AdminCountVotes_Map(const taskid)
 			iWinner = i;
 		}
 
-		client_print(0, print_console, "Mapa: %a - Votos: %d - Porcentaje: %d%%",  ArrayGetStringHandle(aMods[Maps], g_Admin_VoteOptions[admin][i]), g_Admin_iVoteCountId[i], UTIL_GetPercent(g_Admin_iVoteCountId[i], g_Admin_VoteCountTotal));
+		client_print(0, print_console, "Mapa: %a - Votos: %d - Porcentaje: %d%%",
+			ArrayGetStringHandle(aMods[Maps], g_Admin_VoteOptions[admin][i]), g_Admin_iVoteCountId[i], UTIL_GetPercent(g_Admin_iVoteCountId[i], g_Admin_VoteCountTotal));
 	}
 
 	if(iResult)
 	{
 		new j = 0;
 		new iMapsIds[MAX_ADMIN_VOTEOPTIONS];
-		new szMap[64];
+		new szMap[MAX_MAPNAME_LENGTH];
 
 		iWinner = g_Admin_VoteOptions[admin][iWinner];
 
@@ -681,13 +695,13 @@ public OnTask_AdminCountVotes_Map(const taskid)
 		if(j > 1) // Hubo más de 1 ganador (otra vez)
 			iWinner = iMapsIds[random(j)];
 
-		ArrayGetString(aMods[Maps], iWinner, szMap, charsmax(szMap));
+		ArrayGetString(aMods[Maps], iWinner, szMap, MAX_MAPNAME_LENGTH-1);
 
 		client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el mapa ganador es^3 %s^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", 
 			g_GlobalConfigs[ChatPrefix], szMap, iResult, g_Admin_VoteCountTotal, (g_Admin_VoteCountTotal != 1) ? "s" : "", UTIL_GetPercent(iResult, g_Admin_VoteCountTotal));
 
 		g_Admin_SelectedMap[admin] = iWinner+1;
-		ShowMenu_VoteAdminConfirm(admin, aMods[ModName], szMap);
+		ShowMenu_VoteAdminConfirm(admin, aMods[ModName], szMap, g_Admin_VoteStartInMod[admin]);
 	}
 	else
 	{
@@ -699,11 +713,11 @@ public OnTask_AdminCountVotes_Map(const taskid)
 	return PLUGIN_HANDLED;
 }
 
-ShowMenu_VoteAdminConfirm(const id, const szMod[], const szMap[])
+ShowMenu_VoteAdminConfirm(const id, const szMod[], const szMap[], const bool:bModWinner)
 {
 	CHECK_CONNECTED(id)
 
-	new iMenu = menu_create(fmt("\y¡VOTACIÓN FINALIZADA!^n^n\wModo ganador\r:\y %s^n\wMapa ganador\r:\y%s", szMod, szMap), "menu_VoteAdminConfirm");
+	new iMenu = menu_create(fmt("\y¡VOTACIÓN FINALIZADA!^n^n\wModo%s\r:\y %s^n\wMapa ganador\r:\y %s", likely(bModWinner == true) ? " ganador" : "", szMod, szMap), "menu_VoteAdminConfirm");
 
 	menu_additem(iMenu, "\yConfirmar y cambiar ahora");
 	menu_additem(iMenu, "Rechazar votación");
