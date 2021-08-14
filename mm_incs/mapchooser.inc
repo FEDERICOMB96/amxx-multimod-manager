@@ -278,7 +278,7 @@ public OnTask_VoteNextMap__FIX()
 	set_task(15.1, "OnTaskCheckVotesMapFIX");
 	
 	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
-	client_print_color(0, print_team_default, "%s^1 Es momento de elegir el próximo mapa (SEGUNDA VOTACIÓN)!", g_GlobalConfigs[ChatPrefix]);
+	client_print_color(0, print_team_grey, "%s^1 Es momento de elegir el próximo mapa!^3 (SEGUNDA VOTACIÓN)", g_GlobalConfigs[ChatPrefix]);
 	
 	ClearSyncHud(0, g_Hud_Vote);
 	OnTask_MapChooserHudVote();
