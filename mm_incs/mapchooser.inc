@@ -5,9 +5,6 @@
 
 MapChooser_Init()
 {
-	register_menu("VoteMap_Menu", KEYSMENU, "menu__CountVoteMap");
-	register_menu("VoteMapFIX_Menu", KEYSMENU, "menu__CountVoteMapFIX");
-
 	MapChooser_ResetAllData();
 }
 
@@ -55,7 +52,7 @@ MapChooser_ClientPutInServer(const id)
 MapChooser_ClientDisconnected(const id)
 {
 	// Si votó y se fue antes de terminar la votacion, su voto es removido!
-	if(g_VoteMapId[id] && g_bVoteMapHasStarted)
+	if(g_VoteMapId[id] > 0 && g_bVoteMapHasStarted)
 	{
 		--g_iVoteMapCountGlobal[g_VoteMapId[id]-1];
 		--g_iVoteMapCount;
@@ -69,12 +66,10 @@ public OnTask_VoteNextMap()
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMods);
 
-	new sMenu[MAX_MENU_LENGTH];
-	new iMenuKeys = 0;
 	new iArraySizeMaps = ArraySize(aMods[Maps]);
 	new iMaxMaps = min(g_GlobalConfigs[MapsInMenu], iArraySizeMaps);
 
-	new iLen = formatex(sMenu, charsmax(sMenu), "\yElige el próximo mapa: ¡VOTÁ AHORA!^n^n");
+	new iMenu = menu_create("\yElige el próximo mapa: ¡VOTÁ AHORA!", "menu__CountVoteMap");
 
 	g_iMapVoteNum = 0;
 	for(new iRandom, iMapId, iArraySizeNoms; g_iMapVoteNum < iMaxMaps; ++g_iMapVoteNum)
@@ -91,21 +86,22 @@ public OnTask_VoteNextMap()
 		} while(IsMapInMenu(iMapId)); // La opcion está en el menú
 
 		g_iSVM_MapInMenu[g_iMapVoteNum] = iMapId;
-
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %a^n", (g_iMapVoteNum + 1), ArrayGetStringHandle(aMods[Maps], g_iSVM_MapInMenu[g_iMapVoteNum]));
-
-		iMenuKeys |= (1<<g_iMapVoteNum);
+		menu_additem(iMenu, fmt("\w%a%s", ArrayGetStringHandle(aMods[Maps], g_iSVM_MapInMenu[g_iMapVoteNum]), likely(g_iMapVoteNum == (iMaxMaps-1)) ? "^n" : ""));
 	}
 
+	menu_additem(iMenu, "\ySeleccionar al azar");
+
+	menu_setprop(iMenu, MPROP_PERPAGE, 0);
+	menu_setprop(iMenu, MPROP_EXIT, MEXIT_NEVER);
+
+	UTIL_MenuDisplayAll(iMenu, _, 15);
+
+	arrayset(g_VoteMapId, -1, MAX_USERS);
 	arrayset(g_iVoteMapCountGlobal, 0, MAX_SELECTMAPS);
 	g_iVoteMapCount = 0;
 	g_bVoteMapHasStarted = true;
 	g_bSVM_MapSecondRound = false;
 
-	iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r%d.\y Seleccionar al azar", ((iMaxMaps + 1) > 9) ? 0 : (iMaxMaps + 1));
-	iMenuKeys |= (1<<iMaxMaps);
-	
-	show_menu(0, iMenuKeys, sMenu, 15, "VoteMap_Menu");
 	set_task(15.1, "OnTaskCheckVotesMap");
 	
 	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
@@ -115,17 +111,18 @@ public OnTask_VoteNextMap()
 	OnTask_MapChooserHudVote();
 }
 
-public menu__CountVoteMap(const id, const iKey)
+public menu__CountVoteMap(const id, const menuid, const item)
 {
-	CHECK_CONNECTED(id)
+	CHECK_CONNECTED_NEWMENU(id, menuid)
+	CHECK_TIMEOUT_NEWMENU(id, menuid, item)
 
 	new szMap[MAX_MAPNAME_LENGTH];
-	new iMapId = iKey;
+	new iMapId = item;
 
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMods);
 
-	if(iKey < g_iMapVoteNum)
+	if(iMapId < g_iMapVoteNum)
 	{
 		ArrayGetString(aMods[Maps], g_iSVM_MapInMenu[iMapId], szMap, MAX_MAPNAME_LENGTH-1);
 		
@@ -149,6 +146,8 @@ public menu__CountVoteMap(const id, const iKey)
 	++g_iVoteMapCount;
 
 	g_VoteMapId[id] = iMapId+1;
+
+	menu_destroy(menuid);
 	return PLUGIN_HANDLED;
 }
 
@@ -159,11 +158,12 @@ public OnTaskCheckVotesMap()
 
 	new iWinner = 0;
 	new iResult = -1;
-	new i;
+
+	ResetMapMenuAll();
 
 	client_print(0, print_console, "Resultados de la votacion:");
 
-	for(i = 0; i < g_iMapVoteNum; ++i)
+	for(new i = 0; i < g_iMapVoteNum; ++i)
 	{
 		if(g_iVoteMapCountGlobal[i] > iResult)
 		{
@@ -182,7 +182,7 @@ public OnTaskCheckVotesMap()
 		new szMap[MAX_MAPNAME_LENGTH];
 
 		// Chequeo si hubo 2 o más mapas con los mismos votos
-		for(i = 0; i < g_iMapVoteNum; ++i)
+		for(new i = 0; i < g_iMapVoteNum; ++i)
 		{
 			if(g_iVoteMapCountGlobal[i] == iResult)
 				g_iSVM_MapInMenu_SecondRound[j++] = g_iSVM_MapInMenu[i];
@@ -259,27 +259,22 @@ public OnTask_VoteNextMap__FIX()
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMods);
 
-	new sMenu[MAX_MENU_LENGTH];
-	new iMenuKeys;
-	new iLen;
-	new i;
+	new iMenu = menu_create("\yElige el próximo mapa: ¡VOTÁ AHORA!", "menu__CountVoteMapFIX");
 
-	iLen = formatex(sMenu, charsmax(sMenu), "\yElige el próximo mapa: ¡VOTÁ AHORA!^n^n");
+	for(new i = 0; i < g_iMapVoteNum; ++i)
+		menu_additem(iMenu, fmt("\w%a%s", ArrayGetStringHandle(aMods[Maps], g_iSVM_MapInMenu_SecondRound[i]), likely(i == (g_iMapVoteNum-1)) ? "^n^n\d(SEGUNDA VOTACIÓN)" : ""));
 
-	for(i = 0; i < g_iMapVoteNum; ++i)
-	{
-		iMenuKeys |= (1<<i);
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %a^n", i+1, ArrayGetStringHandle(aMods[Maps], g_iSVM_MapInMenu_SecondRound[i]));
-	}
+	menu_setprop(iMenu, MPROP_PERPAGE, 0);
+	menu_setprop(iMenu, MPROP_EXIT, MEXIT_NEVER);
 
-	iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n^n\d(SEGUNDA VOTACIÓN)");
+	UTIL_MenuDisplayAll(iMenu, _, 15);
 
+	arrayset(g_VoteMapId, -1, MAX_USERS);
 	arrayset(g_iVoteMapCountGlobal, 0, MAX_SELECTMAPS);
 	g_iVoteMapCount = 0;
 	g_bVoteMapHasStarted = true;
 	g_bSVM_MapSecondRound = true;
 
-	show_menu(0, iMenuKeys, sMenu, 15, "VoteMapFIX_Menu");
 	set_task(15.1, "OnTaskCheckVotesMapFIX");
 	
 	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
@@ -289,12 +284,13 @@ public OnTask_VoteNextMap__FIX()
 	OnTask_MapChooserHudVote();
 }
 
-public menu__CountVoteMapFIX(const id, const iKey)
+public menu__CountVoteMapFIX(const id, const menuid, const item)
 {
-	CHECK_CONNECTED(id)
+	CHECK_CONNECTED_NEWMENU(id, menuid)
+	CHECK_TIMEOUT_NEWMENU(id, menuid, item)
 
 	new szMap[MAX_MAPNAME_LENGTH];
-	new iMapId = iKey;
+	new iMapId = item;
 
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMods);
@@ -310,6 +306,8 @@ public menu__CountVoteMapFIX(const id, const iKey)
 	++g_iVoteMapCount;
 
 	g_VoteMapId[id] = iMapId+1;
+
+	menu_destroy(menuid);
 	return PLUGIN_HANDLED;
 }
 
@@ -320,11 +318,12 @@ public OnTaskCheckVotesMapFIX()
 
 	new iWinner = 0;
 	new iResult = -1;
-	new i;
+
+	ResetMapMenuAll();
 
 	client_print(0, print_console, "Resultados de la votacion:");
 
-	for(i = 0; i < g_iMapVoteNum; ++i)
+	for(new i = 0; i < g_iMapVoteNum; ++i)
 	{
 		if(g_iVoteMapCountGlobal[i] > iResult)
 		{
@@ -346,7 +345,7 @@ public OnTaskCheckVotesMapFIX()
 		iWinner = g_iSVM_MapInMenu_SecondRound[iWinner];
 
 		// Chequeo si hubo 2 o más mapas con los mismos votos
-		for(i = 0; i < g_iMapVoteNum; ++i)
+		for(new i = 0; i < g_iMapVoteNum; ++i)
 		{
 			if(g_iVoteMapCountGlobal[i] == iResult)
 				iMapsIds[j++] = g_iSVM_MapInMenu_SecondRound[i];
@@ -599,4 +598,15 @@ bool:IsMapInMenu(const i)
 	}
 
 	return false;
+}
+
+bool:ResetMapMenuAll()
+{
+	for(new i = 1; i < MAX_USERS; ++i) if(GetPlayerBit(g_bConnected, i) && likely(g_VoteMapId[i] == -1))
+	{
+		menu_cancel(i);
+		reset_menu(i);
+	}
+
+	return true;
 }
