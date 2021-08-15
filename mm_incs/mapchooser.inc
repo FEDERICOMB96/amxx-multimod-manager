@@ -17,8 +17,8 @@ MapChooser_ResetAllData()
 	g_iVoteMapCount = 0;
 
 	arrayset(g_iVoteMapCountGlobal, 0, MAX_SELECTMAPS);
-	arrayset(g_iSVM_MapInMenu, -1, MAX_SELECTMAPS);
-	arrayset(g_iSVM_MapInMenu_SecondRound, -1, MAX_SELECTMAPS);
+	arrayset(g_iSVM_MapInMenu, 0, MAX_SELECTMAPS);
+	arrayset(g_iSVM_MapInMenu_SecondRound, 0, MAX_SELECTMAPS);
 
 	g_bSVM_MapSecondRound = false;
 	g_bSelectedNextMap = false;

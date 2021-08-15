@@ -16,8 +16,8 @@ ModChooser_ResetAllData()
 	g_iVoteModCount = 0;
 
 	arrayset(g_iVoteModCountGlobal, 0, MAX_SELECTMODS);
-	arrayset(g_iSVM_ModInMenu, -1, MAX_SELECTMODS);
-	arrayset(g_iSVM_ModInMenu_SecondRound, -1, MAX_SELECTMODS);
+	arrayset(g_iSVM_ModInMenu, 0, MAX_SELECTMODS);
+	arrayset(g_iSVM_ModInMenu_SecondRound, 0, MAX_SELECTMODS);
 
 	g_bSVM_ModSecondRound = false;
 	g_bSelectedNextMod = false;
