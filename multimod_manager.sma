@@ -159,6 +159,8 @@ MultiMod_Init()
 	{
 		jsonArrayValue = json_array_get_value(jsonObjectMods, i);
 		{
+			aMod[Enabled] = true;
+			
 			json_object_get_string(jsonArrayValue, "modname", aMod[ModName], charsmax(aMod));
 
 			aMod[ChangeMapType] = ChangeMap_e:json_object_get_number(jsonArrayValue, "change_map_type");

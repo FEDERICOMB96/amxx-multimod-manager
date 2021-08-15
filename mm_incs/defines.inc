@@ -55,6 +55,7 @@ enum ChangeMap_e
 
 enum _:ArrayMods_e 
 {
+	bool:Enabled,
 	ModName[64],
 	ChangeMap_e:ChangeMapType,
 	Array:Maps,
