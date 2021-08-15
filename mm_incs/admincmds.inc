@@ -17,6 +17,8 @@ AdminCmd_ResetGlobalData()
 	g_Admin_VoteCountTotal = 0;
 
 	arrayset(g_Admin_iVoteCountId, 0, MAX_ADMIN_VOTEOPTIONS);
+
+	arrayset(g_Admin_VoteId, -1, MAX_USERS);
 }
 
 AdminCmd_ResetUserData(const id)
@@ -26,6 +28,8 @@ AdminCmd_ResetUserData(const id)
 	g_Admin_VoteCurrentPage[id] = 0;
 	g_Admin_SelectedMod[id] = g_iCurrentMod;
 	g_Admin_SelectedMap[id] = 0;
+
+	g_Admin_VoteId[id] = 0;
 
 	g_Admin_VoteStartInMod[id] = false;
 
@@ -47,6 +51,15 @@ AdminCmd_ClientDisconnected(const id)
 	
 	if(likely(g_Admin_VoteUserId == id))
 		g_Admin_VoteUserId = 0;
+
+	// Si votó y se fue antes de terminar la votacion, su voto es removido!
+	if(g_Admin_VoteId[id] > 0 && IsPlayer(g_Admin_VoteUserId) && task_exists(g_Admin_VoteUserId + TASK_VOTE_ADMIN))
+	{
+		--g_Admin_iVoteCountId[g_Admin_VoteId[id]-1];
+		--g_Admin_VoteCountTotal;
+
+		g_Admin_VoteId[id] = 0;
+	}
 
 	AdminCmd_ResetUserData(id);
 }
@@ -402,6 +415,8 @@ public menu_StartCustomVotemod(const id, const menuid, const item)
 		++g_Admin_iVoteCountId[iModId];
 		++g_Admin_VoteCountTotal;
 
+		g_Admin_VoteId[id] = iModId+1;
+
 		client_print_color(id, print_team_default, "%s^1 Has votado por la opción^4 #%d^1 (^4%s^1)!%s", 
 			g_GlobalConfigs[ChatPrefix], (iModId + 1), aMods[ModName], (bRandom) ? "^3 [ELECCIÓN ALEATORIA]" : "");
 
@@ -422,6 +437,8 @@ public OnTask_CountVotes_Mod(const taskid)
 	new aMods[ArrayMods_e];
 	new iWinner = 0;
 	new iResult = -1;
+
+	ResetAdminVoteMenuAll();
 
 	client_print(0, print_console, "Resultados de la votacion:");
 
@@ -643,6 +660,8 @@ public menu_StartCustomVotemap(const id, const menuid, const item)
 		++g_Admin_iVoteCountId[iMapId];
 		++g_Admin_VoteCountTotal;
 
+		g_Admin_VoteId[id] = iMapId+1;
+
 		client_print_color(id, print_team_default, "%s^1 Has votado por la opción^4 #%d^1 (^4%s^1)!%s", 
 			g_GlobalConfigs[ChatPrefix], (iMapId + 1), szMap, (bRandom) ? "^3 [ELECCIÓN ALEATORIA]" : "");
 
@@ -666,8 +685,7 @@ public OnTask_AdminCountVotes_Map(const taskid)
 	new iWinner = 0;
 	new iResult = -1;
 
-	for(new i = 1; i < MAX_USERS; ++i) if(GetPlayerBit(g_bConnected, i))
-		menu_cancel(i);
+	ResetAdminVoteMenuAll();
 
 	client_print(0, print_console, "Resultados de la votacion:");
 
@@ -757,4 +775,15 @@ bool:IsOptionSelected(const id, const position)
 	}
 	
 	return false;
+}
+
+bool:ResetAdminVoteMenuAll()
+{
+	for(new i = 1; i < MAX_USERS; ++i) if(GetPlayerBit(g_bConnected, i) && likely(g_Admin_VoteId[i] == -1))
+	{
+		menu_cancel(i);
+		reset_menu(i);
+	}
+
+	return true;
 }

@@ -62,6 +62,8 @@ new g_Admin_VoteCurrentPage[MAX_USERS];
 new g_Admin_SelectedMod[MAX_USERS];
 new g_Admin_SelectedMap[MAX_USERS];
 
+new g_Admin_VoteId[MAX_USERS];
+
 new bool:g_Admin_VoteStartInMod[MAX_USERS];
 
 
