@@ -277,6 +277,9 @@ ShowMenu_Votemod(const id)
 {
 	CHECK_CONNECTED(id)
 
+	if(g_Admin_VoteCurrentPage[id] < 0)
+		return PLUGIN_HANDLED;
+
 	new iArraySize = ArraySize(g_GlobalConfigs[Mods]);
 	if(iArraySize < 2)
 	{
@@ -352,7 +355,7 @@ public menu_SelectVoteMod(const id, const key)
 
 			set_pcvar_float(g_pCvar_amx_last_voting, get_gametime() + 15.0 + 2.0 + float(g_bCvar_amx_vote_delay_mm));
 
-			g_Admin_VoteStartInMod[id] = false;
+			g_Admin_VoteStartInMod[id] = true;
 
 			ShowMenu_StartCustomVotemod();
 			return PLUGIN_HANDLED;
@@ -519,6 +522,9 @@ ShowMenu_Votemap(const id)
 {
 	CHECK_CONNECTED(id)
 
+	if(g_Admin_VoteCurrentPage[id] < 0)
+		return PLUGIN_HANDLED;
+
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_SelectedMod[id], aMods);
 
@@ -591,7 +597,7 @@ public menu_SelectVoteMap(const id, const key)
 
 			set_pcvar_float(g_pCvar_amx_last_voting, get_gametime() + 15.0 + 2.0 + float(g_bCvar_amx_vote_delay_mm));
 
-			g_Admin_VoteStartInMod[id] = true;
+			g_Admin_VoteStartInMod[id] = false;
 
 			ShowMenu_StartCustomVotemap();
 			return PLUGIN_HANDLED;
