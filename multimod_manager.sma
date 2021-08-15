@@ -146,7 +146,7 @@ MultiMod_Init()
 	g_GlobalConfigs[RTV_Cooldown] = max(0, json_object_get_number(jsonConfigsFile, "rtv_cooldown"));
 	g_GlobalConfigs[RTV_MinPlayers] = clamp(json_object_get_number(jsonConfigsFile, "rtv_minplayers"), 0, MAX_CLIENTS);
 	g_GlobalConfigs[RTV_Percentage] = clamp(json_object_get_number(jsonConfigsFile, "rtv_percentage"), 0, 100);
-	g_GlobalConfigs[AdminMaxOptionsInMenu] = clamp(json_object_get_number(jsonConfigsFile, "admin_max_options_in_menu"), 1, MAX_ADMIN_VOTEOPTIONS);
+	g_GlobalConfigs[AdminMaxOptionsInMenu] = clamp(json_object_get_number(jsonConfigsFile, "admin_max_options_in_menu"), 2, MAX_ADMIN_VOTEOPTIONS);
 	g_GlobalConfigs[ModsInMenu] = clamp(json_object_get_number(jsonConfigsFile, "mods_in_menu"), 1, (MAX_SELECTMODS - 1)); // La ultima opción se reserva para extender unicamente.
 	g_GlobalConfigs[MapsInMenu] = clamp(json_object_get_number(jsonConfigsFile, "maps_in_menu"), 1, MAX_SELECTMAPS);
 

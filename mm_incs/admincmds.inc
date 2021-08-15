@@ -264,9 +264,15 @@ ShowMenu_Votemod(const id)
 {
 	CHECK_CONNECTED(id)
 
+	new iArraySize = ArraySize(g_GlobalConfigs[Mods]);
+	if(iArraySize < 2)
+	{
+		client_print_color(id, print_team_default, "%s^1 No hay modos disponibles para seleccionar!", g_GlobalConfigs[ChatPrefix]);
+		return PLUGIN_HANDLED;
+	}
+
 	new sMenu[MAX_MENU_LENGTH];
 	new aMods[ArrayMods_e];
-	new iArraySize = ArraySize(g_GlobalConfigs[Mods]);
 	new iStartLoop = g_Admin_VoteCurrentPage[id] * 7;
 	new iEndLoop = clamp(((g_Admin_VoteCurrentPage[id] + 1) * 7), 0, iArraySize);
 	new iKeys = MENU_KEY_0;
@@ -278,7 +284,7 @@ ShowMenu_Votemod(const id)
 	{
 		ArrayGetArray(g_GlobalConfigs[Mods], i, aMods);
 
-		if(g_Admin_VoteSelectedOptions[id] == MAX_ADMIN_VOTEOPTIONS || IsOptionSelected(id, (g_Admin_VoteCurrentPage[id] * 7) + j))
+		if(g_Admin_VoteSelectedOptions[id] == g_GlobalConfigs[AdminMaxOptionsInMenu] || IsOptionSelected(id, (g_Admin_VoteCurrentPage[id] * 7) + j))
 			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\d%d. %s%s^n", ++j, aMods[ModName], (g_iCurrentMod == i) ? " (ACTUAL)" : "");
 		else
 		{
@@ -293,7 +299,7 @@ ShowMenu_Votemod(const id)
 		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r8.\w Comenzar la votación^n");
 	}
 	else
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\d8. Tenés que seleccionar al menos 2 modos (%d máx)^n", MAX_ADMIN_VOTEOPTIONS);
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\d8. Tenés que seleccionar al menos 2 modos (%d máx)^n", g_GlobalConfigs[AdminMaxOptionsInMenu]);
 	
 	if(iEndLoop != iArraySize)
 	{
@@ -500,13 +506,13 @@ ShowMenu_Votemap(const id)
 	ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_SelectedMod[id], aMods);
 
 	new iArraySize = ArraySize(aMods[Maps]);
-	if(iArraySize < 1)
+	if(iArraySize < 2)
 	{
 		client_print_color(id, print_team_default, "%s^1 No hay mapas disponibles para seleccionar!", g_GlobalConfigs[ChatPrefix]);
 		return PLUGIN_HANDLED;
 	}
 
-	new sMenu[512];
+	new sMenu[MAX_MENU_LENGTH];
 	new iStartLoop = g_Admin_VoteCurrentPage[id] * 7;
 	new iEndLoop = clamp(((g_Admin_VoteCurrentPage[id] + 1) * 7), 0, iArraySize);
 	new iKeys = MENU_KEY_0;
@@ -516,7 +522,7 @@ ShowMenu_Votemap(const id)
 	
 	for(new i = iStartLoop; i < iEndLoop; ++i)
 	{
-		if(g_Admin_VoteSelectedOptions[id] == MAX_ADMIN_VOTEOPTIONS || IsOptionSelected(id, (g_Admin_VoteCurrentPage[id] * 7) + j))
+		if(g_Admin_VoteSelectedOptions[id] == g_GlobalConfigs[AdminMaxOptionsInMenu] || IsOptionSelected(id, (g_Admin_VoteCurrentPage[id] * 7) + j))
 			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\d%d. %a^n", ++j, ArrayGetStringHandle(aMods[Maps], i));
 		else
 		{
@@ -531,7 +537,7 @@ ShowMenu_Votemap(const id)
 		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r8.\w Comenzar la votación^n");
 	}
 	else
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\d8. Tenés que seleccionar al menos 2 mapas (%d máx)^n", MAX_ADMIN_VOTEOPTIONS);
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\d8. Tenés que seleccionar al menos 2 mapas (%d máx)^n", g_GlobalConfigs[AdminMaxOptionsInMenu]);
 	
 	if(iEndLoop != iArraySize)
 	{
