@@ -153,6 +153,8 @@ MultiMod_Init()
 	new JSON:jsonObjectMods = json_object_get_value(jsonConfigsFile, "mods");
 	new iCount = json_array_get_count(jsonObjectMods);
 
+	new bool:bReloadMod = true;
+
 	for(new i = 0, j, aMod[ArrayMods_e], JSON:jsonArrayValue, JSON:jsonObject, iJsonObjetCount; i < iCount; ++i)
 	{
 		jsonArrayValue = json_array_get_value(jsonObjectMods, i);
@@ -199,6 +201,7 @@ MultiMod_Init()
 			// Modo actual?
 			if(equali(g_szCurrentMod, aMod[ModName]))
 			{
+				bReloadMod = false;
 				g_iCurrentMod = i;
 
 				new iCvars = ArraySize(aMod[Cvars]);
@@ -217,6 +220,14 @@ MultiMod_Init()
 	if(!iCount)
 	{
 		set_fail_state("[MULTIMOD] No se detectaron modos cargados!");
+		return;
+	}
+
+	if(bReloadMod)
+	{
+		MultiMod_SetNextMod(0); // First mod as default
+		
+		engine_changelevel(g_szCurrentMap);
 		return;
 	}
 
