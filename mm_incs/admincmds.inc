@@ -158,10 +158,7 @@ ShowMenu_SelectMod(const id)
 	for(new iModId = 0; iModId < iArraySizeMods; ++iModId)
 	{
 		ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
-
-		(g_iCurrentMod == iModId)
-			? menu_additem(iMenu, fmt("%s \r(ACTUAL)", aMods[ModName]), .callback=menu_makecallback("UTIL_DisableItem"))
-			: menu_additem(iMenu, fmt("%s%s", aMods[ModName], IsNominated(iModId) ? ((iModId == (g_SVM_MyNominate[id]-1)) ? "\y [TU NOMINASTE]" : "\y (NOMINADO)"): ""));
+		menu_additem(iMenu, fmt("%s%s", aMods[ModName], likely(g_iCurrentMod == iModId) ? "\y (ACTUAL)" : ""));
 	}
 
 	menu_setprop(iMenu, MPROP_NEXTNAME, "Siguiente");
