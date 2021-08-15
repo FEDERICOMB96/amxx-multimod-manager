@@ -48,13 +48,30 @@ ModChooser_ClientDisconnected(const id)
 
 public OnTask_VoteNextMod()
 {
+	new aMods[ArrayMods_e];
 	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
+	if(iArraySizeMods < 2)
+	{
+		g_iNextSelectMod = 0;
+		MultiMod_SetNextMod(g_iNextSelectMod);
+
+		ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMods);
+		client_print_color(0, print_team_blue, "%s^1 El próximo modo será^3 %s^1!", aMods[ModName]);
+		
+		ModChooser_ResetAllData();
+		Nominations_ResetAllData();
+
+		g_bSelectedNextMod = true;
+
+		MapChooser_InitNextVoteMap(40);
+	}
+
 	new iMaxMods = min(g_GlobalConfigs[ModsInMenu], (iArraySizeMods - 1));
 
 	new iMenu = menu_create("\yElige el próximo modo: ¡VOTÁ AHORA!", "menu__CountVoteMod");
 
 	g_iModVoteNum = 0;
-	for(new iRandom, iModId, iArraySizeNoms, aData[ArrayMods_e]; g_iModVoteNum < iMaxMods; ++g_iModVoteNum)
+	for(new iRandom, iModId, iArraySizeNoms; g_iModVoteNum < iMaxMods; ++g_iModVoteNum)
 	{
 		do {
 			if((iArraySizeNoms = ArraySize(g_Array_Nominations)))
@@ -69,8 +86,8 @@ public OnTask_VoteNextMod()
 
 		g_iSVM_ModInMenu[g_iModVoteNum] = iModId;
 
-		ArrayGetArray(g_GlobalConfigs[Mods], g_iSVM_ModInMenu[g_iModVoteNum], aData);
-		menu_additem(iMenu, fmt("\w%s%s", aData[ModName], likely(g_iMapVoteNum == (iMaxMods-1)) ? "^n" : ""));
+		ArrayGetArray(g_GlobalConfigs[Mods], g_iSVM_ModInMenu[g_iModVoteNum], aMods);
+		menu_additem(iMenu, fmt("\w%s%s", aMods[ModName], likely(g_iMapVoteNum == (iMaxMods-1)) ? "^n" : ""));
 	}
 
 	arrayset(g_VoteModId, -1, MAX_USERS);
@@ -239,7 +256,7 @@ public OnTaskCheckVoteMod()
 		MultiMod_SetNextMod(g_iNextSelectMod);
 
 		ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aData);
-		client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el modo ganador es ^3%s ^1con^4 %d ^1/^4 %d ^1voto%s (%d%%)!", g_GlobalConfigs[ChatPrefix], aData[ModName], iResult, g_iVoteModCount, (g_iVoteModCount != 1) ? "s" : "", UTIL_GetPercent(iResult, g_iVoteModCount));
+		client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el modo ganador es^3 %s^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_GlobalConfigs[ChatPrefix], aData[ModName], iResult, g_iVoteModCount, (g_iVoteModCount != 1) ? "s" : "", UTIL_GetPercent(iResult, g_iVoteModCount));
 		
 		ModChooser_ResetAllData();
 		Nominations_ResetAllData();
