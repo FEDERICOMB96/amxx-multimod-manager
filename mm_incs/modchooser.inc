@@ -56,7 +56,7 @@ public OnTask_VoteNextMod()
 		MultiMod_SetNextMod(g_iNextSelectMod);
 
 		ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMods);
-		client_print_color(0, print_team_blue, "%s^1 El próximo modo será^3 %s^1!", aMods[ModName]);
+		client_print_color(0, print_team_blue, "%s^1 El próximo modo será^3 %s^1!", g_GlobalConfigs[ChatPrefix], aMods[ModName]);
 		
 		ModChooser_ResetAllData();
 		Nominations_ResetAllData();
