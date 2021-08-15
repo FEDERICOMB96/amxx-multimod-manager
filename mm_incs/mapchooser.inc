@@ -67,6 +67,34 @@ public OnTask_VoteNextMap()
 	ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMods);
 
 	new iArraySizeMaps = ArraySize(aMods[Maps]);
+	if(iArraySizeMaps < 2)
+	{
+		new szMap[MAX_MAPNAME_LENGTH];
+		ArrayGetString(aMods[Maps], 0, szMap, MAX_MAPNAME_LENGTH-1);
+		set_pcvar_string(g_pCvar_amx_nextmap, szMap);
+
+		client_print_color(0, print_team_blue, "%s^1 El próximo mapa será^3 %s^1!", g_GlobalConfigs[ChatPrefix], aMods[ModName]);
+		
+		MapChooser_ResetAllData();
+		Nominations_ResetAllData();
+
+		g_bSelectedNextMap = true;
+
+		if(g_bIsRockTheVote)
+		{
+			g_bVoteRtvResult = true;
+			
+			remove_task(TASK_TIMELEFT);
+			set_task(1.0, "OnTaskChangeTimeLeft", TASK_TIMELEFT);
+			
+			return;
+		}
+
+		g_iChangeMapTime = 10;
+
+		ExecChangeTimeleft();
+	}
+
 	new iMaxMaps = min(g_GlobalConfigs[MapsInMenu], iArraySizeMaps);
 
 	new iMenu = menu_create("\yElige el próximo mapa: ¡VOTÁ AHORA!", "menu__CountVoteMap");
