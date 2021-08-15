@@ -17,7 +17,7 @@ MapChooser_ResetAllData()
 	g_iVoteMapCount = 0;
 
 	arrayset(g_iVoteMapCountGlobal, 0, MAX_SELECTMAPS);
-	arrayset(g_iSVM_MapInMenu, 0, MAX_SELECTMAPS);
+	arrayset(g_iSVM_MapInMenu, -1, MAX_SELECTMAPS);
 	arrayset(g_iSVM_MapInMenu_SecondRound, 0, MAX_SELECTMAPS);
 
 	g_bSVM_MapSecondRound = false;
@@ -471,9 +471,9 @@ public OnTask_MapChooserHudVote()
 	}
 
 	// Ordenamiento por seleccion
-	for(i = 0; i < g_iMapVoteNum; ++i)
+	for(i = 0; i < (g_iMapVoteNum - 1); ++i)
 	{
-		for(j = (i + 1); j < (g_iMapVoteNum + 1); ++j)
+		for(j = (i + 1); j < g_iMapVoteNum; ++j)
 		{
 			if(iVoteMaps[j] > iVoteMaps[i])
 			{

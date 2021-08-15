@@ -16,7 +16,7 @@ ModChooser_ResetAllData()
 	g_iVoteModCount = 0;
 
 	arrayset(g_iVoteModCountGlobal, 0, MAX_SELECTMODS);
-	arrayset(g_iSVM_ModInMenu, 0, MAX_SELECTMODS);
+	arrayset(g_iSVM_ModInMenu, -1, MAX_SELECTMODS);
 	arrayset(g_iSVM_ModInMenu_SecondRound, 0, MAX_SELECTMODS);
 
 	g_bSVM_ModSecondRound = false;
@@ -90,12 +90,6 @@ public OnTask_VoteNextMod()
 		menu_additem(iMenu, fmt("\w%s%s", aMods[ModName], likely(g_iMapVoteNum == (iMaxMods-1)) ? "^n" : ""));
 	}
 
-	arrayset(g_VoteModId, -1, MAX_USERS);
-	arrayset(g_iVoteModCountGlobal, 0, MAX_SELECTMODS);
-	g_iVoteModCount = 0;
-	g_bVoteModHasStarted = true;
-	g_bSVM_ModSecondRound = false;
-
 	if(IsAvailableExtendMap())
 	{
 		menu_additem(iMenu, fmt("\wExtender\y %s\w %dm^n", g_szCurrentMod, g_bCvar_amx_extendmap_step));
@@ -108,6 +102,12 @@ public OnTask_VoteNextMod()
 	menu_setprop(iMenu, MPROP_EXIT, MEXIT_NEVER);
 
 	UTIL_MenuDisplayAll(iMenu, _, 15);
+
+	arrayset(g_VoteModId, -1, MAX_USERS);
+	arrayset(g_iVoteModCountGlobal, 0, MAX_SELECTMODS);
+	g_iVoteModCount = 0;
+	g_bVoteModHasStarted = true;
+	g_bSVM_ModSecondRound = false;
 
 	set_task(15.1, "OnTaskCheckVoteMod");
 	
@@ -516,9 +516,9 @@ public OnTask_ModChooserHudVote()
 	}
 
 	// Ordenamiento por seleccion
-	for(i = 0; i < g_iModVoteNum; ++i)
+	for(i = 0; i < (g_iModVoteNum - 1); ++i)
 	{
-		for(j = (i + 1); j < (g_iModVoteNum + 1); ++j)
+		for(j = (i + 1); j < g_iModVoteNum; ++j)
 		{
 			if(iVoteMods[j] > iVoteMods[i])
 			{
