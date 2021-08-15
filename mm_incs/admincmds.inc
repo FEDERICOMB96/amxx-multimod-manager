@@ -268,9 +268,60 @@ OnFunc_ChangeModAndMap(const id)
 	}
 }
 
-ShowMenu_ManageMods(const id)
+ShowMenu_ManageMods(const id, menupage=0)
 {
-	
+	CHECK_CONNECTED(id)
+
+	new iMenu = menu_create("\yADMINISTRAR MODOS\r:\R", "menu_ManageMods");
+
+	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
+	new aMods[ArrayMods_e];
+
+	for(new iModId = 0; iModId < iArraySizeMods; ++iModId)
+	{
+		ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
+		menu_additem(iMenu, fmt("%s%s", aMods[ModName], likely(aMods[Enabled] == true) ? "" : "\r (DESACTIVADO)"));
+	}
+
+	menu_setprop(iMenu, MPROP_NEXTNAME, "Siguiente");
+	menu_setprop(iMenu, MPROP_BACKNAME, "Atrás");
+	menu_setprop(iMenu, MPROP_EXITNAME, "Salir");
+
+	menu_display(id, iMenu, min(menupage, menu_pages(iMenu) - 1));
+	return PLUGIN_HANDLED;
+}
+
+public menu_ManageMods(const id, const menuid, const item)
+{
+	CHECK_CONNECTED_NEWMENU(id, menuid)
+
+	if(item == MENU_EXIT)
+	{
+		menu_destroy(menuid);
+		return PLUGIN_HANDLED;
+	}
+
+	new iModId = item;
+	new aMods[ArrayMods_e];
+	ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
+
+	//likely(aMods[Enabled] == true) ? (aMods[Enabled] = false) : (aMods[Enabled] = true);
+	//aMods[Enabled] = !aMods[Enabled];
+	#emit ADDR.alt aMods
+	#emit CONST.pri 0
+	#emit LIDX
+	#emit NOT
+	#emit STOR.S.pri aMods
+	client_print_color(id, print_team_blue, "%s^1 Has^3 %s^1 el modo^4 %s^1!", g_GlobalConfigs[ChatPrefix], likely(aMods[Enabled] == true) ? "ACTIVADO" : "DESACTIVADO", aMods[ModName]);
+
+	ArraySetArray(g_GlobalConfigs[Mods], iModId, aMods);
+
+	new iNothing, iMenuPage;
+	player_menu_info(id, iNothing, iNothing, iMenuPage);
+
+	menu_destroy(menuid);
+	ShowMenu_ManageMods(id, iMenuPage);
+	return PLUGIN_HANDLED;
 }
 
 ShowMenu_Votemod(const id)
