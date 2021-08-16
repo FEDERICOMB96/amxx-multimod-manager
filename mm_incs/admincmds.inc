@@ -150,7 +150,7 @@ ShowMenu_SelectMod(const id)
 {
 	CHECK_CONNECTED(id)
 
-	new iMenu = menu_create("\ySelecciona un Modo\r:\R", "menu_SelectMod");
+	new iMenu = menu_create("\ySELECCIONA UN MODO\R", "menu_SelectMod");
 
 	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
 	new aMods[ArrayMods_e];
@@ -158,7 +158,7 @@ ShowMenu_SelectMod(const id)
 	for(new iModId = 0; iModId < iArraySizeMods; ++iModId)
 	{
 		ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
-		menu_additem(iMenu, fmt("%s%s", aMods[ModName], likely(g_iCurrentMod == iModId) ? "\y (ACTUAL)" : ""));
+		menu_additem(iMenu, fmt("%s%s", aMods[ModName], likely(g_Admin_SelectedMod[id] == iModId) ? "\y (SELECCIONADO)" : (likely(g_iCurrentMod == iModId) ? "\y (ACTUAL)" : "")));
 	}
 
 	menu_setprop(iMenu, MPROP_NEXTNAME, "Siguiente");
@@ -207,10 +207,10 @@ ShowMenu_SelectMap(const id)
 		return PLUGIN_HANDLED;
 	}
 
-	new iMenu = menu_create(fmt("\ySelecciona un Mapa\r:^n\dLista de mapas del modo [ %s ]\R", aMods[ModName]), "menu_SelectMap");
+	new iMenu = menu_create(fmt("\ySELECCIONA UN MAPA^n\dLista de mapas del modo [ %s ]\R", aMods[ModName]), "menu_SelectMap");
 
 	for(new iMapId = 0; iMapId < iArraySize; ++iMapId)
-		menu_additem(iMenu, fmt("%a", ArrayGetStringHandle(aMods[Maps], iMapId)));
+		menu_additem(iMenu, fmt("%a%s", ArrayGetStringHandle(aMods[Maps], iMapId), likely(g_Admin_SelectedMap[id] == iMapId+1) ? "\y (SELECCIONADO)" : ""));
 
 	menu_setprop(iMenu, MPROP_NEXTNAME, "Siguiente");
 	menu_setprop(iMenu, MPROP_BACKNAME, "Atrás");
@@ -269,7 +269,7 @@ ShowMenu_ManageMods(const id, menupage=0)
 {
 	CHECK_CONNECTED(id)
 
-	new iMenu = menu_create("\yADMINISTRAR MODOS\r:\R", "menu_ManageMods");
+	new iMenu = menu_create("\yADMINISTRAR MODOS\R", "menu_ManageMods");
 
 	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
 	new aMods[ArrayMods_e];
@@ -342,13 +342,18 @@ ShowMenu_Votemod(const id)
 	new iKeys = MENU_KEY_0;
 	new j = 0;
 
-	new iLen = formatex(sMenu, charsmax(sMenu), "\yVotación de Modos\r:\R\y%d/%d^n^n", (g_Admin_VoteCurrentPage[id] + 1), ((iArraySize / 7) + ((iArraySize % 7) ? 1 : 0)));
+	new iLen = formatex(sMenu, charsmax(sMenu), "\yVOTACIÓN DE MODOS\R\y%d/%d^n^n", (g_Admin_VoteCurrentPage[id] + 1), ((iArraySize / 7) + ((iArraySize % 7) ? 1 : 0)));
 	
 	for(new i = iStartLoop; i < iEndLoop; ++i)
 	{
 		ArrayGetArray(g_GlobalConfigs[Mods], i, aMods);
 
-		if(g_Admin_VoteSelectedOptions[id] == g_GlobalConfigs[AdminMaxOptionsInMenu] || IsOptionSelected(id, (g_Admin_VoteCurrentPage[id] * 7) + j))
+		if(IsOptionSelected(id, (g_Admin_VoteCurrentPage[id] * 7) + j))
+		{
+			iKeys |= (1<<j);
+			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\d %s%s^n", ++j, aMods[ModName], (g_iCurrentMod == i) ? " (ACTUAL)" : "");
+		}
+		else if(IsFullSelected(id))
 			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\d%d. %s%s^n", ++j, aMods[ModName], (g_iCurrentMod == i) ? " (ACTUAL)" : "");
 		else
 		{
@@ -375,7 +380,7 @@ ShowMenu_Votemod(const id)
 	
 	if(g_Admin_VoteSelectedOptions[id])
 	{
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n^n\yModos seleccionados\r:^n");
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n^n\yModos seleccionados\w (%d%s)\r:^n", g_Admin_VoteSelectedOptions[id], IsFullSelected(id) ? " Max" : "");
 		
 		for(j = 0; j < g_Admin_VoteSelectedOptions[id]; ++j)
 		{
@@ -410,7 +415,11 @@ public menu_SelectVoteMod(const id, const key)
 		}
 		case 8: ++g_Admin_VoteCurrentPage[id];
 		case 9: --g_Admin_VoteCurrentPage[id];
-		default: g_Admin_VoteOptions[id][g_Admin_VoteSelectedOptions[id]++] = ((g_Admin_VoteCurrentPage[id] * 7) + key);
+		default:
+		{
+			new iValue = ((g_Admin_VoteCurrentPage[id] * 7) + key);
+			(IsOptionSelected(id, iValue)) ? DeleteOption(id, iValue) : PushOption(id, iValue);
+		}
 	}
 	
 	ShowMenu_Votemod(id);
@@ -589,11 +598,17 @@ ShowMenu_Votemap(const id)
 	new iKeys = MENU_KEY_0;
 	new j = 0;
 
-	new iLen = formatex(sMenu, charsmax(sMenu), "\yVotación de Mapas\r:^n\dLista de mapas del modo [ %s ]\R\y%d/%d^n^n", aMods[ModName], (g_Admin_VoteCurrentPage[id] + 1), ((iArraySize / 7) + ((iArraySize % 7) ? 1 : 0)));
+	new iLen = formatex(sMenu, charsmax(sMenu), "\yVOTACIÓN DE MAPAS^n\dLista de mapas del modo [ %s ]\R\y%d/%d^n^n", 
+		aMods[ModName], (g_Admin_VoteCurrentPage[id] + 1), ((iArraySize / 7) + ((iArraySize % 7) ? 1 : 0)));
 	
 	for(new i = iStartLoop; i < iEndLoop; ++i)
 	{
-		if(g_Admin_VoteSelectedOptions[id] == g_GlobalConfigs[AdminMaxOptionsInMenu] || IsOptionSelected(id, (g_Admin_VoteCurrentPage[id] * 7) + j))
+		if(IsOptionSelected(id, (g_Admin_VoteCurrentPage[id] * 7) + j))
+		{
+			iKeys |= (1<<j);
+			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\d %a^n", ++j, ArrayGetStringHandle(aMods[Maps], i));
+		}
+		else if(IsFullSelected(id))
 			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\d%d. %a^n", ++j, ArrayGetStringHandle(aMods[Maps], i));
 		else
 		{
@@ -620,7 +635,7 @@ ShowMenu_Votemap(const id)
 	
 	if(g_Admin_VoteSelectedOptions[id])
 	{
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n^n\yMapas seleccionados\r:^n");
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n^n\yMapas seleccionados\w (%d%s)\r:^n", g_Admin_VoteSelectedOptions[id], IsFullSelected(id) ? " Max" : "");
 		
 		for(j = 0; j < g_Admin_VoteSelectedOptions[id]; ++j)
 			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\w%a^n", ArrayGetStringHandle(aMods[Maps], g_Admin_VoteOptions[id][j]));
@@ -652,7 +667,11 @@ public menu_SelectVoteMap(const id, const key)
 		}
 		case 8: ++g_Admin_VoteCurrentPage[id];
 		case 9: --g_Admin_VoteCurrentPage[id];
-		default: g_Admin_VoteOptions[id][g_Admin_VoteSelectedOptions[id]++] = ((g_Admin_VoteCurrentPage[id] * 7) + key);
+		default:
+		{
+			new iValue = ((g_Admin_VoteCurrentPage[id] * 7) + key);
+			(IsOptionSelected(id, iValue)) ? DeleteOption(id, iValue) : PushOption(id, iValue);
+		}
 	}
 	
 	ShowMenu_Votemap(id);
@@ -813,21 +832,58 @@ public menu_VoteAdminConfirm(const id, const menuid, const item)
 	switch(item)
 	{
 		case 0: OnFunc_ChangeModAndMap(id);
-		case 1: client_print_color(0, print_team_blue, "%s^3 %n^1 Ha rechazado la votación!", g_GlobalConfigs[ChatPrefix], id);
+		case 1: client_print_color(0, print_team_blue, "%s^3 %n^1 ha rechazado la votación!", g_GlobalConfigs[ChatPrefix], id);
 	}
 
 	menu_destroy(menuid);
 	return PLUGIN_HANDLED;
 }
 
-bool:IsOptionSelected(const id, const position)
+bool:IsOptionSelected(const id, const value)
 {
 	for(new i = 0; i < g_Admin_VoteSelectedOptions[id]; ++i)
 	{
-		if(g_Admin_VoteOptions[id][i] == position)
+		if(g_Admin_VoteOptions[id][i] == value)
 			return true;
 	}
 	
+	return false;
+}
+
+bool:IsFullSelected(const id)
+{
+	return bool:likely(g_Admin_VoteSelectedOptions[id] == g_GlobalConfigs[AdminMaxOptionsInMenu]);
+}
+
+bool:PushOption(const id, const value)
+{
+	if(IsFullSelected(id))
+		return false;
+
+	g_Admin_VoteOptions[id][g_Admin_VoteSelectedOptions[id]++] = value;
+	return true;
+}
+
+bool:DeleteOption(const id, const value)
+{
+	new iPos = -1;
+	for(new i = 0; (i < g_Admin_VoteSelectedOptions[id]) && likely(iPos == -1); ++i)
+	{
+		if(g_Admin_VoteOptions[id][i] == value)
+			iPos = i;
+	}
+
+	if(unlikely(iPos == -1))
+	{
+		for(new i = iPos; i < g_Admin_VoteSelectedOptions[id]-1; ++i)
+		{
+			g_Admin_VoteOptions[id][i] = g_Admin_VoteOptions[id][i+1];
+		}
+
+		--g_Admin_VoteSelectedOptions[id];
+		return true;
+	}
+
 	return false;
 }
 
