@@ -48,9 +48,12 @@ ModChooser_ClientDisconnected(const id)
 
 public OnTask_VoteNextMod()
 {
+	new iOffMods = UTIL_GetOffModsCount();
+	
 	new aMods[ArrayMods_e];
 	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
-	if(iArraySizeMods < 2)
+
+	if((iArraySizeMods - 1 - iOffMods) < 2) // No cuento el modo actual (-1) y los modos desactivados (UTIL_GetOffModsCount)
 	{
 		g_iNextSelectMod = 0;
 		MultiMod_SetNextMod(g_iNextSelectMod);
@@ -66,7 +69,7 @@ public OnTask_VoteNextMod()
 		MapChooser_InitNextVoteMap(40);
 	}
 
-	new iMaxMods = min(g_GlobalConfigs[ModsInMenu], (iArraySizeMods - 1));
+	new iMaxMods = min(g_GlobalConfigs[ModsInMenu], (iArraySizeMods - 1 - iOffMods));
 
 	new iMenu = menu_create("\yElige el próximo modo: ¡VOTÁ AHORA!", "menu__CountVoteMod");
 
@@ -82,7 +85,7 @@ public OnTask_VoteNextMod()
 			}
 			else
 				iModId = random(iArraySizeMods);
-		} while(IsModInMenu(iModId) || g_iCurrentMod == iModId); // La opcion está en el menú o es el modo actual
+		} while(IsModInMenu(iModId) || g_iCurrentMod == iModId || UTIL_IsModOff(iModId)); // La opcion está en el menú, es el modo actual o se encuentra desactivado
 
 		g_iSVM_ModInMenu[g_iModVoteNum] = iModId;
 

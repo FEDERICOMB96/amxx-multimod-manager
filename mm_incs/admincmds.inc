@@ -306,7 +306,19 @@ public menu_ManageMods(const id, const menuid, const item)
 		return PLUGIN_HANDLED;
 	}
 
+	new iNothing, iMenuPage;
+	player_menu_info(id, iNothing, iNothing, iMenuPage);
+
 	new iModId = item;
+	if(likely(iModId == 0))
+	{
+		menu_destroy(menuid);
+
+		client_print_color(id, print_team_blue, "%s^1 Este modo no se puede desactivar (MODO POR DEFECTO)!", g_GlobalConfigs[ChatPrefix]);
+		ShowMenu_ManageMods(id, iMenuPage);
+		return PLUGIN_HANDLED;
+	}
+
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
 
@@ -320,9 +332,7 @@ public menu_ManageMods(const id, const menuid, const item)
 	client_print_color(id, print_team_blue, "%s^1 Has^3 %s^1 el modo^4 %s^1!", g_GlobalConfigs[ChatPrefix], likely(aMods[Enabled] == true) ? "ACTIVADO" : "DESACTIVADO", aMods[ModName]);
 
 	ArraySetArray(g_GlobalConfigs[Mods], iModId, aMods);
-
-	new iNothing, iMenuPage;
-	player_menu_info(id, iNothing, iNothing, iMenuPage);
+	MultiMod_SaveOffMods();
 
 	menu_destroy(menuid);
 	ShowMenu_ManageMods(id, iMenuPage);

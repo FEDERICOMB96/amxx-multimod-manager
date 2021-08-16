@@ -242,6 +242,7 @@ MultiMod_Init()
 		return;
 	}
 
+	MultiMod_GetOffMods();
 	OnEvent_GameRestart();
 }
 
@@ -379,4 +380,90 @@ MultiMod_SetNextMod(const iNextMod)
 
 		fclose(pPluginsFile);
 	}
+}
+
+MultiMod_GetOffMods()
+{
+	new szConfigDir[PLATFORM_MAX_PATH], szFileName[PLATFORM_MAX_PATH];
+	get_configsdir(szConfigDir, charsmax(szConfigDir));
+
+	formatex(szFileName, charsmax(szFileName), "%s/multimod_manager/off_mods.json", szConfigDir);
+
+	if(!file_exists(szFileName))
+		return;
+
+	new JSON:jsonConfigsFile = json_parse(szFileName, true);
+
+	if(jsonConfigsFile == Invalid_JSON)
+	{
+		abort(AMX_ERR_GENERAL, "Archivo JSON invalido [%s]", szFileName);
+		return;
+	}
+
+	if(!json_is_object(jsonConfigsFile))
+		return;
+
+	new JSON:jsonObjectMods = json_object_get_value(jsonConfigsFile, "off_mods");
+	new iCount = json_array_get_count(jsonObjectMods);
+	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
+
+	for(new i = 0, j, aMods[ArrayMods_e], szModName[64], bool:bFoundIt; i < iCount; ++i)
+	{
+		json_array_get_string(jsonObjectMods, i, szModName, charsmax(szModName));
+
+		j = 0;
+		bFoundIt = false;
+		while(j < iArraySizeMods && likely(bFoundIt == false))
+		{
+			ArrayGetArray(g_GlobalConfigs[Mods], j, aMods);
+
+			if(equali(aMods[ModName], szModName))
+			{
+				aMods[Enabled] = false;
+				ArraySetArray(g_GlobalConfigs[Mods], j, aMods);
+				
+				bFoundIt = true;
+			}
+
+			++j;
+		}
+	}
+	json_free(jsonObjectMods);
+	json_free(jsonConfigsFile);
+}
+
+bool:MultiMod_SaveOffMods()
+{
+	new JSON:root_value = json_init_object();
+
+	if(root_value != Invalid_JSON)
+	{
+		new JSON:array = json_init_array();
+
+		if(array != Invalid_JSON)
+		{
+			new iArraySize = ArraySize(g_GlobalConfigs[Mods]);
+			for(new i = 0, aMods[ArrayMods_e]; i < iArraySize; ++i)
+			{
+				ArrayGetArray(g_GlobalConfigs[Mods], i, aMods);
+
+				if(likely(aMods[Enabled] == false))
+					json_array_append_string(array, aMods[ModName]);
+			}
+
+			json_object_set_value(root_value, "off_mods", array);
+			json_free(array);
+		}
+
+		new szConfigDir[PLATFORM_MAX_PATH], szFileName[PLATFORM_MAX_PATH];
+		get_configsdir(szConfigDir, charsmax(szConfigDir));
+
+		formatex(szFileName, charsmax(szFileName), "%s/multimod_manager/off_mods.json", szConfigDir);
+
+		json_serial_to_file(root_value, szFileName, false);
+		json_free(root_value);
+		return true;
+	}
+
+	return false;
 }

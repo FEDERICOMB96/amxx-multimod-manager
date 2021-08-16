@@ -90,3 +90,35 @@ UTIL_MenuDisplayAll(menu, page=0, time=-1)
 
 	return 1;
 }
+
+UTIL_GetOffModsCount()
+{
+	new i = 0;
+	new j = 0;
+	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
+	new aMods[ArrayMods_e];
+
+	while(i < iArraySizeMods)
+	{
+		ArrayGetArray(g_GlobalConfigs[Mods], i, aMods);
+
+		if(likely(aMods[Enabled] == false))
+			++j;
+
+		++i;
+	}
+
+	return j;
+}
+
+bool:UTIL_IsModOff(const iMod)
+{
+	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
+	if(likely(iMod < 0) || likely(iMod >= iArraySizeMods))
+		return true;
+
+	new aMods[ArrayMods_e];
+	ArrayGetArray(g_GlobalConfigs[Mods], iMod, aMods);
+
+	return aMods[Enabled];
+}
