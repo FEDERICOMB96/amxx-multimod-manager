@@ -185,6 +185,7 @@ public menu_SelectMod(const id, const menuid, const item)
 	ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
 
 	g_Admin_SelectedMod[id] = iModId;
+	g_Admin_SelectedMap[id] = 0;
 	client_print_color(id, print_team_default, "%s^1 Has seleccionado el modo^4 %s^1!", g_GlobalConfigs[ChatPrefix], aMods[ModName]);
 	client_print_color(id, print_team_default, "%s^1 Ahora puedes cambiar a un mapa del modo seleccionado o iniciar una votación!", g_GlobalConfigs[ChatPrefix]);
 
@@ -359,7 +360,7 @@ ShowMenu_Votemod(const id)
 		if(IsOptionSelected(id, (g_Admin_VoteCurrentPage[id] * 7) + j))
 		{
 			iKeys |= (1<<j);
-			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\d %s%s^n", ++j, aMods[ModName], (g_iCurrentMod == i) ? " (ACTUAL)" : "");
+			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^t^t\r%d.\d %s%s\y [ X ]^n", ++j, aMods[ModName], (g_iCurrentMod == i) ? " (ACTUAL)" : "");
 		}
 		else if(IsFullSelected(id))
 			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\d%d. %s%s^n", ++j, aMods[ModName], (g_iCurrentMod == i) ? " (ACTUAL)" : "");
@@ -388,13 +389,13 @@ ShowMenu_Votemod(const id)
 	
 	if(g_Admin_VoteSelectedOptions[id])
 	{
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n^n\yModos seleccionados\w (%d%s)\r:^n", g_Admin_VoteSelectedOptions[id], IsFullSelected(id) ? " Max" : "");
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n^n\yModos seleccionados\w (%d%s)", g_Admin_VoteSelectedOptions[id], IsFullSelected(id) ? " Max" : "");
 		
-		for(j = 0; j < g_Admin_VoteSelectedOptions[id]; ++j)
-		{
-			ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_VoteOptions[id][j], aMods);
-			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\w%s^n", aMods[ModName]);
-		}
+		//for(j = 0; j < g_Admin_VoteSelectedOptions[id]; ++j)
+		//{
+		//	ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_VoteOptions[id][j], aMods);
+		//	iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\w%s^n", aMods[ModName]);
+		//}
 	}
 	
 	show_menu(id, iKeys, sMenu, -1, "SelectVoteMod_AdminMenu");
@@ -615,7 +616,7 @@ ShowMenu_Votemap(const id)
 		if(IsOptionSelected(id, (g_Admin_VoteCurrentPage[id] * 7) + j))
 		{
 			iKeys |= (1<<j);
-			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\d %a^n", ++j, ArrayGetStringHandle(aMods[Maps], i));
+			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^t^t\r%d.\d %a\y [ X ]^n", ++j, ArrayGetStringHandle(aMods[Maps], i));
 		}
 		else if(IsFullSelected(id))
 			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\d%d. %a^n", ++j, ArrayGetStringHandle(aMods[Maps], i));
@@ -644,10 +645,10 @@ ShowMenu_Votemap(const id)
 	
 	if(g_Admin_VoteSelectedOptions[id])
 	{
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n^n\yMapas seleccionados\w (%d%s)\r:^n", g_Admin_VoteSelectedOptions[id], IsFullSelected(id) ? " Max" : "");
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n^n\yMapas seleccionados\w (%d%s)", g_Admin_VoteSelectedOptions[id], IsFullSelected(id) ? " Max" : "");
 		
-		for(j = 0; j < g_Admin_VoteSelectedOptions[id]; ++j)
-			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\w%a^n", ArrayGetStringHandle(aMods[Maps], g_Admin_VoteOptions[id][j]));
+		//for(j = 0; j < g_Admin_VoteSelectedOptions[id]; ++j)
+		//	iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\w%a^n", ArrayGetStringHandle(aMods[Maps], g_Admin_VoteOptions[id][j]));
 	}
 	
 	show_menu(id, iKeys, sMenu, -1, "SelectVoteMap_AdminMenu");
