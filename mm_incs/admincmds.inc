@@ -5,7 +5,7 @@
 
 AdminCmd_Init()
 {
-	register_clcmd("amx_multimod", "ClientCommand__AdminMultimod", g_GlobalConfigs[AdminFlags]);
+	register_clcmd("amx_multimod", "ClientCommand__AdminMultimod", g_GlobalConfigs[AdminFlags_Menu]);
 
 	register_menu("SelectVoteMod_AdminMenu", KEYSMENU, "menu_SelectVoteMod");
 	register_menu("SelectVoteMap_AdminMenu", KEYSMENU, "menu_SelectVoteMap");
@@ -149,6 +149,7 @@ public menu_AdminMultimod(const id, const menuid, const item)
 ShowMenu_SelectMod(const id)
 {
 	CHECK_CONNECTED(id)
+	CHECK_ADMIN_ACCESS(id, g_GlobalConfigs[AdminFlags_SelectMenu])
 
 	new iMenu = menu_create("\ySELECCIONA UN MODO\R", "menu_SelectMod");
 
@@ -196,6 +197,7 @@ public menu_SelectMod(const id, const menuid, const item)
 ShowMenu_SelectMap(const id)
 {
 	CHECK_CONNECTED(id)
+	CHECK_ADMIN_ACCESS(id, g_GlobalConfigs[AdminFlags_SelectMenu])
 
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_SelectedMod[id], aMods);
@@ -246,6 +248,8 @@ public menu_SelectMap(const id, const menuid, const item)
 
 OnFunc_ChangeModAndMap(const id)
 {
+	CHECK_ADMIN_ACCESS(id, g_GlobalConfigs[AdminFlags_SelectMenu])
+
 	if(g_Admin_SelectedMap[id])
 	{
 		MultiMod_SetNextMod(g_Admin_SelectedMod[id]);
@@ -263,11 +267,14 @@ OnFunc_ChangeModAndMap(const id)
 		
 		client_print_color(0, print_team_blue, "%s^3 %n^1 cambió el modo a^4 %s^1 y el mapa a^4 %s", g_GlobalConfigs[ChatPrefix], id, aMods[ModName], szNextMap);
 	}
+
+	return PLUGIN_HANDLED;
 }
 
 ShowMenu_ManageMods(const id, menupage=0)
 {
 	CHECK_CONNECTED(id)
+	CHECK_ADMIN_ACCESS(id, g_GlobalConfigs[AdminFlags_ManageMods])
 
 	new iMenu = menu_create("\yADMINISTRAR MODOS\R", "menu_ManageMods");
 
@@ -324,6 +331,7 @@ public menu_ManageMods(const id, const menuid, const item)
 ShowMenu_Votemod(const id)
 {
 	CHECK_CONNECTED(id)
+	CHECK_ADMIN_ACCESS(id, g_GlobalConfigs[AdminFlags_VoteMenu])
 
 	if(g_Admin_VoteCurrentPage[id] < 0)
 		return PLUGIN_HANDLED;
@@ -578,6 +586,7 @@ public OnTask_CountVotes_Mod(const taskid)
 ShowMenu_Votemap(const id)
 {
 	CHECK_CONNECTED(id)
+	CHECK_ADMIN_ACCESS(id, g_GlobalConfigs[AdminFlags_VoteMenu])
 
 	if(g_Admin_VoteCurrentPage[id] < 0)
 		return PLUGIN_HANDLED;

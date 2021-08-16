@@ -1,6 +1,12 @@
 {
 	"global_chat_prefix": "!g[MULTIMOD]",
-	"admin_flag_menu": "j",
+	"adminflags":
+	{
+		"menu": "u",
+		"managemods": "a",
+		"selectmenu": "f",
+		"votemenu": "j"
+	},
 	"rtv_enable": true,
 	"rtv_cooldown": 120,
 	"rtv_minplayers": 3,

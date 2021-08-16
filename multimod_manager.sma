@@ -139,8 +139,17 @@ MultiMod_Init()
 	replace_string(g_GlobalConfigs[ChatPrefix], charsmax(g_GlobalConfigs[ChatPrefix]), "!g" , "^4");
 
 	new szReadFlags[30];
-	json_object_get_string(jsonConfigsFile, "admin_flag_menu", szReadFlags, charsmax(szReadFlags));
-	g_GlobalConfigs[AdminFlags] = read_flags(szReadFlags);
+	json_object_get_string(jsonConfigsFile, "adminflags.menu", szReadFlags, charsmax(szReadFlags), true);
+	g_GlobalConfigs[AdminFlags_Menu] = read_flags(szReadFlags);
+
+	json_object_get_string(jsonConfigsFile, "adminflags.managemods", szReadFlags, charsmax(szReadFlags), true);
+	g_GlobalConfigs[AdminFlags_ManageMods] = read_flags(szReadFlags);
+
+	json_object_get_string(jsonConfigsFile, "adminflags.selectmenu", szReadFlags, charsmax(szReadFlags), true);
+	g_GlobalConfigs[AdminFlags_SelectMenu] = read_flags(szReadFlags);
+
+	json_object_get_string(jsonConfigsFile, "adminflags.votemenu", szReadFlags, charsmax(szReadFlags), true);
+	g_GlobalConfigs[AdminFlags_VoteMenu] = read_flags(szReadFlags);
 
 	g_GlobalConfigs[RTV_Enabled] = json_object_get_bool(jsonConfigsFile, "rtv_enable");
 	g_GlobalConfigs[RTV_Cooldown] = max(0, json_object_get_number(jsonConfigsFile, "rtv_cooldown"));
@@ -160,7 +169,7 @@ MultiMod_Init()
 		jsonArrayValue = json_array_get_value(jsonObjectMods, i);
 		{
 			aMod[Enabled] = true;
-			
+
 			json_object_get_string(jsonArrayValue, "modname", aMod[ModName], charsmax(aMod));
 
 			aMod[ChangeMapType] = ChangeMap_e:json_object_get_number(jsonArrayValue, "change_map_type");
