@@ -65,7 +65,7 @@ ShowMenu_NominateMod(const id, menupage=0)
 		if(g_iCurrentMod == iModId)
 			menu_additem(iMenu, fmt("%s \y(ACTUAL)", aData[ModName]), .callback=menu_makecallback("UTIL_DisableItem"));
 		else if(UTIL_IsModOff(iModId))
-			menu_additem(iMenu, fmt("%s \r(DESACTIVADO)", aData[ModName]), .callback=menu_makecallback("UTIL_DisableItem"))
+			menu_additem(iMenu, fmt("%s \r(DESACTIVADO)", aData[ModName]), .callback=menu_makecallback("UTIL_DisableItem"));
 		else
 			menu_additem(iMenu, fmt("%s%s", aData[ModName], IsNominated(iModId) ? ((iModId == (g_SVM_MyNominate[id]-1)) ? "\y [TU NOMINASTE]" : "\y [NOMINADO]"): ""));
 	}

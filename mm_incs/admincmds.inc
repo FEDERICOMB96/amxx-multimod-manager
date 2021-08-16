@@ -363,7 +363,7 @@ ShowMenu_Votemod(const id)
 
 	new iLen = formatex(sMenu, charsmax(sMenu), "\yVOTACIÓN DE MODOS\R\y%d/%d^n^n", (g_Admin_VoteCurrentPage[id] + 1), ((iArraySize / 7) + ((iArraySize % 7) ? 1 : 0)));
 	
-	for(new i = iStartLoop; i < iEndLoop; ++i)
+	for(new i = iStartLoop, bool:bEnabled; i < iEndLoop; ++i)
 	{
 		ArrayGetArray(g_GlobalConfigs[Mods], i, aMods);
 
@@ -372,8 +372,8 @@ ShowMenu_Votemod(const id)
 			iKeys |= (1<<j);
 			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^t^t\r%d.\d %s%s\y [ X ]^n", ++j, aMods[ModName], (g_iCurrentMod == i) ? " (ACTUAL)" : "");
 		}
-		else if(IsFullSelected(id))
-			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\d%d. %s%s^n", ++j, aMods[ModName], (g_iCurrentMod == i) ? " (ACTUAL)" : "");
+		else if(IsFullSelected(id) || likely((bEnabled = UTIL_IsModOff(i)) == false))
+			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\d%d. %s%s%s^n", ++j, aMods[ModName], (g_iCurrentMod == i) ? " (ACTUAL)" : "", likely(bEnabled == false) ? "\r (DESACTIVADO)" : "");
 		else
 		{
 			iKeys |= (1<<j);
