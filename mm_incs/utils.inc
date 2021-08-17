@@ -102,7 +102,7 @@ UTIL_GetOffModsCount()
 	{
 		ArrayGetArray(g_GlobalConfigs[Mods], i, aMods);
 
-		if(likely(aMods[Enabled] == false))
+		if(unlikely(aMods[Enabled] == true))
 			++j;
 
 		++i;
@@ -120,5 +120,5 @@ bool:UTIL_IsModOff(const iMod)
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], iMod, aMods);
 
-	return aMods[Enabled];
+	return bool:unlikely(aMods[Enabled] == true);
 }

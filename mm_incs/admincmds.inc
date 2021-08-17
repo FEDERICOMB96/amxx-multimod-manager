@@ -323,6 +323,15 @@ public menu_ManageMods(const id, const menuid, const item)
 		return PLUGIN_HANDLED;
 	}
 
+	if(likely(g_iCurrentMod == iModId))
+	{
+		menu_destroy(menuid);
+
+		client_print_color(id, print_team_blue, "%s^1 El modo actual no se puede desactivar en este momento!", g_GlobalConfigs[ChatPrefix]);
+		ShowMenu_ManageMods(id, iMenuPage);
+		return PLUGIN_HANDLED;
+	}
+
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
 
