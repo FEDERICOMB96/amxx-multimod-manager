@@ -93,7 +93,7 @@ UTIL_MenuDisplayAll(menu, page=0, time=-1)
 
 UTIL_GetOffModsCount()
 {
-	new i = 0;
+	new i = 1;
 	new j = 0;
 	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
 	new aMods[ArrayMods_e];

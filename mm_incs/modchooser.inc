@@ -70,6 +70,7 @@ public OnTask_VoteNextMod()
 	}
 
 	new iMaxMods = min(g_GlobalConfigs[ModsInMenu], (iArraySizeMods - 1 - iOffMods));
+	new bool:bAvailableExtendMap = IsAvailableExtendMap();
 
 	new iMenu = menu_create("\yElige el próximo modo: ¡VOTÁ AHORA!", "menu__CountVoteMod");
 
@@ -90,16 +91,16 @@ public OnTask_VoteNextMod()
 		g_iSVM_ModInMenu[g_iModVoteNum] = iModId;
 
 		ArrayGetArray(g_GlobalConfigs[Mods], g_iSVM_ModInMenu[g_iModVoteNum], aMods);
-		menu_additem(iMenu, fmt("\w%s%s", aMods[ModName], likely(g_iMapVoteNum == (iMaxMods-1)) ? "^n" : ""));
+		menu_additem(iMenu, fmt("\w%s%s", aMods[ModName], likely(g_iMapVoteNum == (iMaxMods-(likely(bAvailableExtendMap == true) ? 2 : 1))) ? "^n" : ""), fmt("%d", g_iModVoteNum));
 	}
 
-	if(IsAvailableExtendMap())
+	if(bAvailableExtendMap)
 	{
-		menu_additem(iMenu, fmt("\wExtender\y %s\w %dm^n", g_szCurrentMod, g_bCvar_amx_extendmap_step));
+		menu_additem(iMenu, fmt("\wExtender\y %s\w %dm^n", g_szCurrentMod, g_bCvar_amx_extendmap_step), fmt("%d", OPTION_EXTEND_MOD));
 		g_iSVM_ModInMenu[g_iModVoteNum] = OPTION_EXTEND_MOD;
 	}
 
-	menu_additem(iMenu, "\ySeleccionar al azar");
+	menu_additem(iMenu, "\ySeleccionar al azar", "Seleccionar al azar");
 
 	menu_setprop(iMenu, MPROP_PERPAGE, 0);
 	menu_setprop(iMenu, MPROP_EXIT, MEXIT_NEVER);
@@ -127,8 +128,11 @@ public menu__CountVoteMod(const id, const menuid, const item)
 	CHECK_TIMEOUT_NEWMENU(id, menuid, item)
 
 	new iModId = item;
-	
-	if(g_iSVM_ModInMenu[iModId] == OPTION_EXTEND_MOD)
+
+	new access, szInfo[64];
+	menu_item_getinfo(menuid, item, access, szInfo, charsmax(szInfo));
+
+	if(str_to_num(szInfo) == OPTION_EXTEND_MOD)
 	{
 		client_print_color(id, print_team_blue, "%s^1 Has elegido extender el modo^4 %s^3 %d minutos más", g_GlobalConfigs[ChatPrefix], g_szCurrentMod, g_bCvar_amx_extendmap_step);
 		
@@ -282,7 +286,7 @@ public OnTaskCheckVoteMod()
 
 		do {
 			iWinner = random(g_iModVoteNum);
-		} while(iWinner == g_iModVoteNum);
+		} while(iWinner >= g_iModVoteNum);
 
 		g_iNextSelectMod = g_iSVM_ModInMenu[iWinner];
 		MultiMod_SetNextMod(g_iNextSelectMod);

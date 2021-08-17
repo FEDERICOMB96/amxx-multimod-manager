@@ -160,8 +160,8 @@ ShowMenu_SelectMod(const id)
 	{
 		ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
 
-		if(unlikely(UTIL_IsModOff(iModId) == true))
-			menu_additem(iMenu, fmt("%s\r (DESACTIVADO)", aMods[ModName]), .callback=menu_makecallback("UTIL_DisableItem"));
+		if(UTIL_IsModOff(iModId))
+			menu_additem(iMenu, fmt("%s\r (BLOQUEADO)", aMods[ModName]), .callback=menu_makecallback("UTIL_DisableItem"));
 		else
 			menu_additem(iMenu, fmt("%s%s", aMods[ModName], likely(g_Admin_SelectedMod[id] == iModId) ? "\y (SELECCIONADO)" : (likely(g_iCurrentMod == iModId) ? "\y (ACTUAL)" : "")));
 	}
@@ -289,7 +289,7 @@ ShowMenu_ManageMods(const id, menupage=0)
 	for(new iModId = 0; iModId < iArraySizeMods; ++iModId)
 	{
 		ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
-		menu_additem(iMenu, fmt("%s%s", aMods[ModName], likely(aMods[Enabled] == true) ? "" : "\r (DESACTIVADO)"));
+		menu_additem(iMenu, fmt("%s%s", aMods[ModName], likely(aMods[Enabled] == true) ? "" : "\r (BLOQUEADO)"));
 	}
 
 	menu_setprop(iMenu, MPROP_NEXTNAME, "Siguiente");
@@ -342,7 +342,7 @@ public menu_ManageMods(const id, const menuid, const item)
 	#emit LIDX
 	#emit NOT
 	#emit STOR.S.pri aMods
-	client_print_color(id, print_team_blue, "%s^1 Has^3 %s^1 el modo^4 %s^1!", g_GlobalConfigs[ChatPrefix], likely(aMods[Enabled] == true) ? "ACTIVADO" : "DESACTIVADO", aMods[ModName]);
+	client_print_color(id, print_team_blue, "%s^1 Has^3 %s^1 el modo^4 %s^1!", g_GlobalConfigs[ChatPrefix], likely(aMods[Enabled] == true) ? "ACTIVADO" : "BLOQUEADO", aMods[ModName]);
 
 	ArraySetArray(g_GlobalConfigs[Mods], iModId, aMods);
 	MultiMod_SaveOffMods();
@@ -386,7 +386,7 @@ ShowMenu_Votemod(const id)
 			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^t^t\r%d.\d %s%s\y [ X ]^n", ++j, aMods[ModName], (g_iCurrentMod == i) ? " (ACTUAL)" : "");
 		}
 		else if(IsFullSelected(id) || unlikely((bEnabled = UTIL_IsModOff(i)) == true))
-			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\d%d. %s%s%s^n", ++j, aMods[ModName], (g_iCurrentMod == i) ? " (ACTUAL)" : "", likely(bEnabled == false) ? "\r (DESACTIVADO)" : "");
+			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\d%d. %s%s%s^n", ++j, aMods[ModName], (g_iCurrentMod == i) ? " (ACTUAL)" : "", unlikely(bEnabled == true) ? "\r (BLOQUEADO)" : "");
 		else
 		{
 			iKeys |= (1<<j);
