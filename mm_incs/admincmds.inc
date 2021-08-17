@@ -159,7 +159,11 @@ ShowMenu_SelectMod(const id)
 	for(new iModId = 0; iModId < iArraySizeMods; ++iModId)
 	{
 		ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
-		menu_additem(iMenu, fmt("%s%s", aMods[ModName], likely(g_Admin_SelectedMod[id] == iModId) ? "\y (SELECCIONADO)" : (likely(g_iCurrentMod == iModId) ? "\y (ACTUAL)" : "")));
+
+		if(unlikely(UTIL_IsModOff(iModId) == true))
+			menu_additem(iMenu, fmt("%s\r (DESACTIVADO)", aMods[ModName]), .callback=menu_makecallback("UTIL_DisableItem"));
+		else
+			menu_additem(iMenu, fmt("%s%s", aMods[ModName], likely(g_Admin_SelectedMod[id] == iModId) ? "\y (SELECCIONADO)" : (likely(g_iCurrentMod == iModId) ? "\y (ACTUAL)" : "")));
 	}
 
 	menu_setprop(iMenu, MPROP_NEXTNAME, "Siguiente");
@@ -372,7 +376,7 @@ ShowMenu_Votemod(const id)
 			iKeys |= (1<<j);
 			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^t^t\r%d.\d %s%s\y [ X ]^n", ++j, aMods[ModName], (g_iCurrentMod == i) ? " (ACTUAL)" : "");
 		}
-		else if(IsFullSelected(id) || likely((bEnabled = UTIL_IsModOff(i)) == false))
+		else if(IsFullSelected(id) || unlikely((bEnabled = UTIL_IsModOff(i)) == true))
 			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\d%d. %s%s%s^n", ++j, aMods[ModName], (g_iCurrentMod == i) ? " (ACTUAL)" : "", likely(bEnabled == false) ? "\r (DESACTIVADO)" : "");
 		else
 		{
