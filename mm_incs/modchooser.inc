@@ -70,7 +70,6 @@ public OnTask_VoteNextMod()
 	}
 
 	new iMaxMods = min(g_GlobalConfigs[ModsInMenu], (iArraySizeMods - 1 - iOffMods));
-	new bool:bAvailableExtendMap = IsAvailableExtendMap();
 
 	new iMenu = menu_create("\yElige el próximo modo: ¡VOTÁ AHORA!", "menu__CountVoteMod");
 
@@ -91,10 +90,10 @@ public OnTask_VoteNextMod()
 		g_iSVM_ModInMenu[g_iModVoteNum] = iModId;
 
 		ArrayGetArray(g_GlobalConfigs[Mods], g_iSVM_ModInMenu[g_iModVoteNum], aMods);
-		menu_additem(iMenu, fmt("\w%s%s", aMods[ModName], likely(g_iMapVoteNum == (iMaxMods-(likely(bAvailableExtendMap == true) ? 2 : 1))) ? "^n" : ""), fmt("%d", g_iModVoteNum));
+		menu_additem(iMenu, fmt("\w%s%s", aMods[ModName], likely(g_iModVoteNum == (iMaxMods-1)) ? "^n" : ""), fmt("%d", g_iModVoteNum));
 	}
 
-	if(bAvailableExtendMap)
+	if(IsAvailableExtendMap())
 	{
 		menu_additem(iMenu, fmt("\wExtender\y %s\w %dm^n", g_szCurrentMod, g_bCvar_amx_extendmap_step), fmt("%d", OPTION_EXTEND_MOD));
 		g_iSVM_ModInMenu[g_iModVoteNum] = OPTION_EXTEND_MOD;
@@ -132,24 +131,7 @@ public menu__CountVoteMod(const id, const menuid, const item)
 	new access, szInfo[64];
 	menu_item_getinfo(menuid, item, access, szInfo, charsmax(szInfo));
 
-	if(str_to_num(szInfo) == OPTION_EXTEND_MOD)
-	{
-		client_print_color(id, print_team_blue, "%s^1 Has elegido extender el modo^4 %s^3 %d minutos más", g_GlobalConfigs[ChatPrefix], g_szCurrentMod, g_bCvar_amx_extendmap_step);
-		
-		if(g_bCvar_amx_vote_answers)
-			client_print(0, print_console, "%n ha votado por: extender el modo %s %d minutos más", id, g_szCurrentMod, g_bCvar_amx_extendmap_step);
-	}
-	else if(iModId < g_iModVoteNum)
-	{
-		new aData[ArrayMods_e];
-		ArrayGetArray(g_GlobalConfigs[Mods], g_iSVM_ModInMenu[iModId], aData);
-		
-		client_print_color(id, print_team_blue, "%s^1 Has elegido el modo^3 %s", g_GlobalConfigs[ChatPrefix], aData[ModName]);
-		
-		if(g_bCvar_amx_vote_answers)
-			client_print(0, print_console, "%n ha votado por el modo: %s", id, aData[ModName]);
-	}
-	else
+	if(equali(szInfo, "Seleccionar al azar"))
 	{
 		iModId = random_num(0, IsAvailableExtendMap() ? g_iModVoteNum : (g_iModVoteNum - 1));
 
@@ -172,7 +154,24 @@ public menu__CountVoteMod(const id, const menuid, const item)
 				client_print(0, print_console, "%n ha votado por el modo: %s [ELECCIÓN ALEATORIA]", id, aData[ModName]);
 		}
 	}
-	
+	else if(str_to_num(szInfo) == OPTION_EXTEND_MOD)
+	{
+		client_print_color(id, print_team_blue, "%s^1 Has elegido extender el modo^4 %s^3 %d minutos más", g_GlobalConfigs[ChatPrefix], g_szCurrentMod, g_bCvar_amx_extendmap_step);
+		
+		if(g_bCvar_amx_vote_answers)
+			client_print(0, print_console, "%n ha votado por: extender el modo %s %d minutos más", id, g_szCurrentMod, g_bCvar_amx_extendmap_step);
+	}
+	else //if(iModId < g_iModVoteNum)
+	{
+		new aData[ArrayMods_e];
+		ArrayGetArray(g_GlobalConfigs[Mods], g_iSVM_ModInMenu[iModId], aData);
+		
+		client_print_color(id, print_team_blue, "%s^1 Has elegido el modo^3 %s", g_GlobalConfigs[ChatPrefix], aData[ModName]);
+		
+		if(g_bCvar_amx_vote_answers)
+			client_print(0, print_console, "%n ha votado por el modo: %s", id, aData[ModName]);
+	}
+
 	++g_iVoteModCountGlobal[iModId];
 	++g_iVoteModCount;
 
@@ -286,7 +285,7 @@ public OnTaskCheckVoteMod()
 
 		do {
 			iWinner = random(g_iModVoteNum);
-		} while(iWinner >= g_iModVoteNum);
+		} while(iWinner == g_iModVoteNum);
 
 		g_iNextSelectMod = g_iSVM_ModInMenu[iWinner];
 		MultiMod_SetNextMod(g_iNextSelectMod);
