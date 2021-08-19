@@ -25,8 +25,9 @@ public plugin_natives()
 	Cvars_Init();
 	MultiMod_Init();
 
-	register_native("mm_get_mod_name", "_mm_get_mod_name");
 	register_native("mm_get_mod_id", "_mm_get_mod_id");
+	register_native("mm_get_mod_name", "_mm_get_mod_name");
+	register_native("mm_get_mod_tag", "_mm_get_mod_tag");
 }
 
 public plugin_init()

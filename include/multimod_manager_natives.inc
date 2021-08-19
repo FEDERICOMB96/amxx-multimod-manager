@@ -27,3 +27,17 @@ native mm_get_mod_id();
  * @return (int)		Number of cells written.
  */
 native mm_get_mod_name(const iModId, szOutput[], const iLen);
+
+/**
+ * Retrieves mod tag.
+ *
+ * @note If the destination buffer is too small to hold the source string, the 
+ *       destination will be truncated.
+ *
+ * @param iModId        Mod index.
+ * @param szOutput      Buffer to copy mod tag to.
+ * @param iLen          Buffer size.
+ *
+ * @return (int)        Number of cells written.
+ */
+native mm_get_mod_tag(const iModId, szOutput[], const iLen);
