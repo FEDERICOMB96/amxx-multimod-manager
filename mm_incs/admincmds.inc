@@ -253,7 +253,7 @@ OnFunc_ChangeModAndMap(const id)
 		message_begin(MSG_ALL, SVC_INTERMISSION);
 		message_end();
 		
-		set_task(2.0, "taskChangeMap", _, szNextMap, sizeof(szNextMap));
+		set_task(2.0, "OnTask_ChangeMap", _, szNextMap, sizeof(szNextMap));
 		
 		client_print_color(0, print_team_blue, "%s^3 %n^1 cambió el modo a^4 %s^1 y el mapa a^4 %s", g_GlobalConfigs[ChatPrefix], id, aMods[ModName], szNextMap);
 	}

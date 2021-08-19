@@ -329,7 +329,7 @@ public OnTask_VoteNextMod__FIX()
 
 	UTIL_MenuDisplayAll(g_Menu_ModChooser, _, 15);
 
-	set_task(15.1, "OnTaskCheckVoteModFIX");
+	set_task(15.1, "OnTask_CheckVoteModFIX");
 	
 	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
 	client_print_color(0, print_team_grey, "%s^1 Es momento de elegir el próximo modo!^3 (SEGUNDA VOTACIÓN)", g_GlobalConfigs[ChatPrefix]);
@@ -371,7 +371,7 @@ public menu__CountVoteModFIX(const id, const menuid, const item)
 	return PLUGIN_HANDLED;
 }
 
-public OnTaskCheckVoteModFIX()
+public OnTask_CheckVoteModFIX()
 {
 	new aData[ArrayMods_e];
 	new iWinner = 0;

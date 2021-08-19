@@ -266,7 +266,7 @@ public OnEvent_HLTV()
 	{
 		g_iNoMoreTime = 2;
 		
-		set_task(2.0, "taskChangeMap", _, g_bCvar_amx_nextmap, sizeof(g_bCvar_amx_nextmap));
+		set_task(2.0, "OnTask_ChangeMap", _, g_bCvar_amx_nextmap, sizeof(g_bCvar_amx_nextmap));
 		
 		message_begin(MSG_ALL, SVC_INTERMISSION);
 		message_end();

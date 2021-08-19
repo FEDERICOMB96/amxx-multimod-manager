@@ -85,7 +85,7 @@ public OnTask_VoteNextMap()
 			g_bVoteRtvResult = true;
 			
 			remove_task(TASK_TIMELEFT);
-			set_task(1.0, "OnTaskChangeTimeLeft", TASK_TIMELEFT);
+			set_task(1.0, "OnTask_ChangeTimeLeft", TASK_TIMELEFT);
 			
 			return;
 		}
@@ -130,7 +130,7 @@ public OnTask_VoteNextMap()
 	g_bVoteMapHasStarted = true;
 	g_bSVM_MapSecondRound = false;
 
-	set_task(15.1, "OnTaskCheckVotesMap");
+	set_task(15.1, "OnTask_CheckVoteMap");
 	
 	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
 	client_print_color(0, print_team_default, "%s^1 Es momento de elegir el próximo mapa!", g_GlobalConfigs[ChatPrefix]);
@@ -178,7 +178,7 @@ public menu__CountVoteMap(const id, const menuid, const item)
 	return PLUGIN_HANDLED;
 }
 
-public OnTaskCheckVotesMap()
+public OnTask_CheckVoteMap()
 {
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMods);
@@ -252,7 +252,7 @@ public OnTaskCheckVotesMap()
 			g_bVoteRtvResult = true;
 			
 			remove_task(TASK_TIMELEFT);
-			set_task(1.0, "OnTaskChangeTimeLeft", TASK_TIMELEFT);
+			set_task(1.0, "OnTask_ChangeTimeLeft", TASK_TIMELEFT);
 			
 			return;
 		}
@@ -303,7 +303,7 @@ public OnTask_VoteNextMap__FIX()
 	g_bVoteMapHasStarted = true;
 	g_bSVM_MapSecondRound = true;
 
-	set_task(15.1, "OnTaskCheckVotesMapFIX");
+	set_task(15.1, "OnTask_CheckVoteMapFIX");
 	
 	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
 	client_print_color(0, print_team_grey, "%s^1 Es momento de elegir el próximo mapa!^3 (SEGUNDA VOTACIÓN)", g_GlobalConfigs[ChatPrefix]);
@@ -338,7 +338,7 @@ public menu__CountVoteMapFIX(const id, const menuid, const item)
 	return PLUGIN_HANDLED;
 }
 
-public OnTaskCheckVotesMapFIX()
+public OnTask_CheckVoteMapFIX()
 {
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMods);
@@ -404,7 +404,7 @@ public OnTaskCheckVotesMapFIX()
 			g_bVoteRtvResult = true;
 			
 			remove_task(TASK_TIMELEFT);
-			set_task(1.0, "OnTaskChangeTimeLeft", TASK_TIMELEFT);
+			set_task(1.0, "OnTask_ChangeTimeLeft", TASK_TIMELEFT);
 			
 			return;
 		}
@@ -505,7 +505,7 @@ public OnTask_MapChooserHudVote()
 	ShowSyncHudMsg(0, g_Hud_Vote, sHud);
 }
 
-public OnTaskChangeTimeLeft()
+public OnTask_ChangeTimeLeft()
 {
 	g_iNoMoreTime = 1;
 	g_RestoreTimelimit = get_pcvar_float(g_pCvar_mp_timelimit);
@@ -522,10 +522,23 @@ public OnTaskChangeTimeLeft()
 		{
 			g_bChangeMapOneMoreRound = true;
 		}
+		default: return;
 	}
+
+	if(get_playersnum() > 1)
+		return;
+
+	g_iNoMoreTime = 2;
+
+	message_begin(MSG_ALL, SVC_INTERMISSION);
+	message_end();
+	
+	set_task(2.0, "OnTask_ChangeMap", _, g_bCvar_amx_nextmap, sizeof(g_bCvar_amx_nextmap));
+	
+	client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será:^3 %s", g_GlobalConfigs[ChatPrefix], g_bCvar_amx_nextmap);
 }
 
-public OnTaskAlertChangeMap()
+public OnTask_AlertChangeMap()
 {
 	if(!g_iChangeMapTime)
 	{
@@ -534,7 +547,7 @@ public OnTaskAlertChangeMap()
 		message_begin(MSG_ALL, SVC_INTERMISSION);
 		message_end();
 		
-		set_task(2.0, "taskChangeMap", _, g_bCvar_amx_nextmap, sizeof(g_bCvar_amx_nextmap));
+		set_task(2.0, "OnTask_ChangeMap", _, g_bCvar_amx_nextmap, sizeof(g_bCvar_amx_nextmap));
 		
 		client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será:^3 %s", g_GlobalConfigs[ChatPrefix], g_bCvar_amx_nextmap);
 		return;
@@ -548,10 +561,10 @@ public OnTaskAlertChangeMap()
 	--g_iChangeMapTime;
 	
 	remove_task(TASK_TIMELEFT);
-	set_task(1.0, "OnTaskAlertChangeMap", TASK_TIMELEFT);
+	set_task(1.0, "OnTask_AlertChangeMap", TASK_TIMELEFT);
 }
 
-public taskChangeMap(sMap[])
+public OnTask_ChangeMap(sMap[])
 {
 	engine_changelevel(sMap);
 }
@@ -561,8 +574,8 @@ ExecChangeTimeleft()
 	remove_task(TASK_TIMELEFT);
 
 	(UTIL_GetChangeMapType(g_iCurrentMod) == CHANGEMAP_TIMELEFT)
-		? set_task((float(get_timeleft()) - 10.1), "OnTaskAlertChangeMap", TASK_TIMELEFT)
-		: set_task((float(get_timeleft()) - 1.1), "OnTaskChangeTimeLeft", TASK_TIMELEFT);
+		? set_task((float(get_timeleft()) - 10.1), "OnTask_AlertChangeMap", TASK_TIMELEFT)
+		: set_task((float(get_timeleft()) - 1.1), "OnTask_ChangeTimeLeft", TASK_TIMELEFT);
 }
 
 MapChooser_LoadMaps(&Array:aMyArray, const szFileName[])
