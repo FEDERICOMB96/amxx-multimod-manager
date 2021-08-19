@@ -1,36 +1,74 @@
 {
 	"global_chat_prefix": "!g[MULTIMOD]",
+		// !g = ^4 (Color verde)
+		// !t = ^3 (Color de equipo)
+		// !y = ^1 (Color con_color)
+
 	"adminflags":
 	{
-		"menu": "u",
-		"managemods": "a",
-		"selectmenu": "f",
-		"votemenu": "j"
+		"menu": "u",        // menu access
+		"managemods": "a",  // immunity 
+		"selectmenu": "f",  // amx_map command
+		"votemenu": "j"     // amx_vote and other vote commands
 	},
-	"rtv_enable": true,
-	"rtv_cooldown": 120,
-	"rtv_minplayers": 3,
-	"rtv_percentage": 75,
-	"admin_max_options_in_menu": 9,
-	"mods_in_menu": 9,
-	"maps_in_menu": 9,
+
+	"rtv_enable": true,     // true / false
+	"rtv_cooldown": 120,    // min = 0 (desactivado)
+	"rtv_minplayers": 3,    // min = 0 (desactivado) | max = 32
+	"rtv_percentage": 75,   // min = 0 (desactivado) | max = 100
+
+	"admin_max_options_in_menu": 9,   // min = 2 | max = 9
+	"mods_in_menu": 9,                // min = 2 | max = 9
+	"maps_in_menu": 9,                // min = 2 | max = 9
+
 	"mods":
 	[
+		// Primer modo sera el modo por defecto, no se podrá bloquear
 		{
-			"modname":"GunGame",
-			"mapsfile":"gungame_maps.ini",
-			"change_map_type": 1,
+			"modname": "GunGame",
+				// Nombre de tu modo.
+				// Ej.: "GunGame"
+
+
+			"mod_tag": "gg",
+				// Tag de tu modo
+				// Ej.: "gg"
+
+
+			"mapsfile": "gungame_maps.ini",
+				// Solo el nombre del archivo junto con la extensión.
+				// El mismo debe estar ubicado en "addons/amxmodx/configs/multimod_manager/mapsfiles/"
+				// Ej.: "gungame_maps.ini"
+
+
+			"change_map_type": 0,
+				// "change_map_type": 0 (Cambia el mapa al terminar el tiempo del mismo)
+				// "change_map_type": 1 (Cambia el mapa al finalizar la ronda)
+				// "change_map_type": 2 (Permite jugar 1 ronda más y luego cambia el mapa)
+
+
 			"cvars":
 			[
 				"sv_gravity 900", "sv_alltalk 1"
 			],
+				// Cvars que se ejecutan al iniciar el modo, todas las que quieras.
+				// Cada cvar entre comillas y se paradas por comas.
+				// Ej.: "cvars": [ "sv_gravity 900", "sv_alltalk 1", "hostname Mi Server de CS", "mp_roundtime 6" ]
+				// Dejar "cvars": [ ] // Para no cargar cvars
+
+
 			"plugins":
 			[
 				"plugin10.amxx", "plugin20.amxx"
 			]
+				// Plugins que se necesitan para este modo, todos los que quieras
+				// Cada plugin entre comillas, se parados por comas y con su extensión correspondiente.
+				// Ej.: "plugins": [ "gungame.amxx", "ultimate_sounds.amxx", "csstats.amxx" ]
+				// Dejar "plugins": [ ] // Para no cargar plugins
 		},
 		{
 			"modname":"DeathMatch",
+			"mod_tag": "dm",
 			"mapsfile":"deathmatch_maps.ini",
 			"change_map_type": 1,
 			"cvars":
@@ -44,6 +82,7 @@
 		},
 		{
 			"modname":"Fruta",
+			"mod_tag": "fr",
 			"mapsfile":"fruta_maps.ini",
 			"change_map_type": 1,
 			"cvars":
@@ -57,6 +96,7 @@
 		},
 		{
 			"modname":"Zombie Plague",
+			"mod_tag": "zp",
 			"mapsfile":"zp_maps.ini",
 			"change_map_type": 1,
 			"cvars":
@@ -70,6 +110,7 @@
 		},
 		{
 			"modname":"PaintBall",
+			"mod_tag": "pb",
 			"mapsfile":"paintball_maps.ini",
 			"change_map_type": 1,
 			"cvars":
@@ -83,6 +124,7 @@
 		},
 		{
 			"modname":"HNS",
+			"mod_tag": "hns",
 			"mapsfile":"hns_maps.ini",
 			"change_map_type": 1,
 			"cvars":
@@ -96,6 +138,7 @@
 		},
 		{
 			"modname":"Surf",
+			"mod_tag": "sf",
 			"mapsfile":"surf_maps.ini",
 			"change_map_type": 1,
 			"cvars":
