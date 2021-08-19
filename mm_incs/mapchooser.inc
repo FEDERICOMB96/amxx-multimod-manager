@@ -97,7 +97,7 @@ public OnTask_VoteNextMap()
 
 	new iMaxMaps = min(g_GlobalConfigs[MapsInMenu], iArraySizeMaps);
 
-	new iMenu = menu_create("\yElige el próximo mapa: ¡VOTÁ AHORA!", "menu__CountVoteMap");
+	g_Menu_MapChooser = menu_create("\yElige el próximo mapa: ¡VOTÁ AHORA!", "menu__CountVoteMap");
 
 	g_iMapVoteNum = 0;
 	for(new iRandom, iMapId, iArraySizeNoms; g_iMapVoteNum < iMaxMaps; ++g_iMapVoteNum)
@@ -114,15 +114,15 @@ public OnTask_VoteNextMap()
 		} while(IsMapInMenu(iMapId)); // La opcion está en el menú
 
 		g_iSVM_MapInMenu[g_iMapVoteNum] = iMapId;
-		menu_additem(iMenu, fmt("\w%a%s", ArrayGetStringHandle(aMods[Maps], g_iSVM_MapInMenu[g_iMapVoteNum]), likely(g_iMapVoteNum == (iMaxMaps-1)) ? "^n" : ""));
+		menu_additem(g_Menu_MapChooser, fmt("\w%a%s", ArrayGetStringHandle(aMods[Maps], g_iSVM_MapInMenu[g_iMapVoteNum]), likely(g_iMapVoteNum == (iMaxMaps-1)) ? "^n" : ""));
 	}
 
-	menu_additem(iMenu, "\ySeleccionar al azar");
+	menu_additem(g_Menu_MapChooser, "\ySeleccionar al azar");
 
-	menu_setprop(iMenu, MPROP_PERPAGE, 0);
-	menu_setprop(iMenu, MPROP_EXIT, MEXIT_NEVER);
+	menu_setprop(g_Menu_MapChooser, MPROP_PERPAGE, 0);
+	menu_setprop(g_Menu_MapChooser, MPROP_EXIT, MEXIT_NEVER);
 
-	UTIL_MenuDisplayAll(iMenu, _, 15);
+	UTIL_MenuDisplayAll(g_Menu_MapChooser, _, 15);
 
 	arrayset(g_VoteMapId, -1, MAX_USERS);
 	arrayset(g_iVoteMapCountGlobal, 0, MAX_SELECTMAPS);
@@ -141,8 +141,9 @@ public OnTask_VoteNextMap()
 
 public menu__CountVoteMap(const id, const menuid, const item)
 {
-	CHECK_CONNECTED_NEWMENU(id, menuid)
-	CHECK_TIMEOUT_NEWMENU(id, menuid, item)
+	CHECK_CONNECTED(id)
+	CHECK_MENU_EXIT(item)
+	CHECK_MENU_TIMEOUT(item)
 
 	new szMap[MAX_MAPNAME_LENGTH];
 	new iMapId = item;
@@ -174,8 +175,6 @@ public menu__CountVoteMap(const id, const menuid, const item)
 	++g_iVoteMapCount;
 
 	g_VoteMapId[id] = iMapId+1;
-
-	menu_destroy(menuid);
 	return PLUGIN_HANDLED;
 }
 
@@ -188,6 +187,7 @@ public OnTaskCheckVotesMap()
 	new iResult = -1;
 
 	ResetMapMenuAll();
+	menu_destroy(g_Menu_MapChooser);
 
 	client_print(0, print_console, "Resultados de la votacion:");
 
@@ -287,15 +287,15 @@ public OnTask_VoteNextMap__FIX()
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMods);
 
-	new iMenu = menu_create("\yElige el próximo mapa: ¡VOTÁ AHORA!", "menu__CountVoteMapFIX");
+	g_Menu_MapChooser = menu_create("\yElige el próximo mapa: ¡VOTÁ AHORA!", "menu__CountVoteMapFIX");
 
 	for(new i = 0; i < g_iMapVoteNum; ++i)
-		menu_additem(iMenu, fmt("\w%a%s", ArrayGetStringHandle(aMods[Maps], g_iSVM_MapInMenu_SecondRound[i]), likely(i == (g_iMapVoteNum-1)) ? "^n^n\d(SEGUNDA VOTACIÓN)" : ""));
+		menu_additem(g_Menu_MapChooser, fmt("\w%a%s", ArrayGetStringHandle(aMods[Maps], g_iSVM_MapInMenu_SecondRound[i]), likely(i == (g_iMapVoteNum-1)) ? "^n^n\d(SEGUNDA VOTACIÓN)" : ""));
 
-	menu_setprop(iMenu, MPROP_PERPAGE, 0);
-	menu_setprop(iMenu, MPROP_EXIT, MEXIT_NEVER);
+	menu_setprop(g_Menu_MapChooser, MPROP_PERPAGE, 0);
+	menu_setprop(g_Menu_MapChooser, MPROP_EXIT, MEXIT_NEVER);
 
-	UTIL_MenuDisplayAll(iMenu, _, 15);
+	UTIL_MenuDisplayAll(g_Menu_MapChooser, _, 15);
 
 	arrayset(g_VoteMapId, -1, MAX_USERS);
 	arrayset(g_iVoteMapCountGlobal, 0, MAX_SELECTMAPS);
@@ -314,8 +314,9 @@ public OnTask_VoteNextMap__FIX()
 
 public menu__CountVoteMapFIX(const id, const menuid, const item)
 {
-	CHECK_CONNECTED_NEWMENU(id, menuid)
-	CHECK_TIMEOUT_NEWMENU(id, menuid, item)
+	CHECK_CONNECTED(id)
+	CHECK_MENU_EXIT(item)
+	CHECK_MENU_TIMEOUT(item)
 
 	new szMap[MAX_MAPNAME_LENGTH];
 	new iMapId = item;
@@ -334,8 +335,6 @@ public menu__CountVoteMapFIX(const id, const menuid, const item)
 	++g_iVoteMapCount;
 
 	g_VoteMapId[id] = iMapId+1;
-
-	menu_destroy(menuid);
 	return PLUGIN_HANDLED;
 }
 
@@ -348,6 +347,7 @@ public OnTaskCheckVotesMapFIX()
 	new iResult = -1;
 
 	ResetMapMenuAll();
+	menu_destroy(g_Menu_MapChooser);
 
 	client_print(0, print_console, "Resultados de la votacion:");
 

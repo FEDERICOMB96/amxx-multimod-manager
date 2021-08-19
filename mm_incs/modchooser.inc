@@ -71,7 +71,7 @@ public OnTask_VoteNextMod()
 
 	new iMaxMods = min(g_GlobalConfigs[ModsInMenu], (iArraySizeMods - 1 - iOffMods));
 
-	new iMenu = menu_create("\yElige el próximo modo: ¡VOTÁ AHORA!", "menu__CountVoteMod");
+	g_Menu_ModChooser = menu_create("\yElige el próximo modo: ¡VOTÁ AHORA!", "menu__CountVoteMod");
 
 	g_iModVoteNum = 0;
 	for(new iRandom, iModId, iArraySizeNoms; g_iModVoteNum < iMaxMods; ++g_iModVoteNum)
@@ -90,21 +90,21 @@ public OnTask_VoteNextMod()
 		g_iSVM_ModInMenu[g_iModVoteNum] = iModId;
 
 		ArrayGetArray(g_GlobalConfigs[Mods], g_iSVM_ModInMenu[g_iModVoteNum], aMods);
-		menu_additem(iMenu, fmt("\w%s%s", aMods[ModName], likely(g_iModVoteNum == (iMaxMods-1)) ? "^n" : ""), fmt("%d", g_iModVoteNum));
+		menu_additem(g_Menu_ModChooser, fmt("\w%s%s", aMods[ModName], likely(g_iModVoteNum == (iMaxMods-1)) ? "^n" : ""), fmt("%d", g_iModVoteNum));
 	}
 
 	if(IsAvailableExtendMap())
 	{
-		menu_additem(iMenu, fmt("\wExtender\y %s\w %dm^n", g_szCurrentMod, g_bCvar_amx_extendmap_step), fmt("%d", OPTION_EXTEND_MOD));
+		menu_additem(g_Menu_ModChooser, fmt("\wExtender\y %s\w %dm^n", g_szCurrentMod, g_bCvar_amx_extendmap_step), fmt("%d", OPTION_EXTEND_MOD));
 		g_iSVM_ModInMenu[g_iModVoteNum] = OPTION_EXTEND_MOD;
 	}
 
-	menu_additem(iMenu, "\ySeleccionar al azar", "Seleccionar al azar");
+	menu_additem(g_Menu_ModChooser, "\ySeleccionar al azar", "Seleccionar al azar");
 
-	menu_setprop(iMenu, MPROP_PERPAGE, 0);
-	menu_setprop(iMenu, MPROP_EXIT, MEXIT_NEVER);
+	menu_setprop(g_Menu_ModChooser, MPROP_PERPAGE, 0);
+	menu_setprop(g_Menu_ModChooser, MPROP_EXIT, MEXIT_NEVER);
 
-	UTIL_MenuDisplayAll(iMenu, _, 15);
+	UTIL_MenuDisplayAll(g_Menu_ModChooser, _, 15);
 
 	arrayset(g_VoteModId, -1, MAX_USERS);
 	arrayset(g_iVoteModCountGlobal, 0, MAX_SELECTMODS);
@@ -123,8 +123,9 @@ public OnTask_VoteNextMod()
 
 public menu__CountVoteMod(const id, const menuid, const item)
 {
-	CHECK_CONNECTED_NEWMENU(id, menuid)
-	CHECK_TIMEOUT_NEWMENU(id, menuid, item)
+	CHECK_CONNECTED(id)
+	CHECK_MENU_EXIT(item)
+	CHECK_MENU_TIMEOUT(item)
 
 	new iModId = item;
 
@@ -176,8 +177,6 @@ public menu__CountVoteMod(const id, const menuid, const item)
 	++g_iVoteModCount;
 
 	g_VoteModId[id] = iModId+1;
-
-	menu_destroy(menuid);
 	return PLUGIN_HANDLED;
 }
 
@@ -188,6 +187,7 @@ public OnTaskCheckVoteMod()
 	new iResult = -1;
 
 	ResetModMenuAll();
+	menu_destroy(g_Menu_ModChooser);
 
 	client_print(0, print_console, "Resultados de la votacion:");
 
@@ -304,18 +304,18 @@ public OnTaskCheckVoteMod()
 
 public OnTask_VoteNextMod__FIX()
 {
-	new iMenu = menu_create("\yElige el próximo modo: ¡VOTÁ AHORA!", "menu__CountVoteModFIX");
+	g_Menu_ModChooser = menu_create("\yElige el próximo modo: ¡VOTÁ AHORA!", "menu__CountVoteModFIX");
 
 	for(new i = 0, aData[ArrayMods_e]; i < g_iModVoteNum; ++i)
 	{
 		if(g_iSVM_ModInMenu_SecondRound[i] == OPTION_EXTEND_MOD)
 		{
-			menu_additem(iMenu, fmt("\wExtender\y %s\w %dm%s", g_szCurrentMod, g_bCvar_amx_extendmap_step, likely(i == (g_iModVoteNum-1)) ? "^n^n\d(SEGUNDA VOTACIÓN)" : ""));
+			menu_additem(g_Menu_ModChooser, fmt("\wExtender\y %s\w %dm%s", g_szCurrentMod, g_bCvar_amx_extendmap_step, likely(i == (g_iModVoteNum-1)) ? "^n^n\d(SEGUNDA VOTACIÓN)" : ""));
 			continue;
 		}
 
 		ArrayGetArray(g_GlobalConfigs[Mods], g_iSVM_ModInMenu_SecondRound[i], aData);
-		menu_additem(iMenu, fmt("\w%s%s", aData[ModName], likely(i == (g_iModVoteNum-1)) ? "^n^n\d(SEGUNDA VOTACIÓN)" : ""));
+		menu_additem(g_Menu_ModChooser, fmt("\w%s%s", aData[ModName], likely(i == (g_iModVoteNum-1)) ? "^n^n\d(SEGUNDA VOTACIÓN)" : ""));
 	}
 
 	arrayset(g_VoteModId, -1, MAX_USERS);
@@ -324,10 +324,10 @@ public OnTask_VoteNextMod__FIX()
 	g_bVoteModHasStarted = true;
 	g_bSVM_ModSecondRound = true;
 
-	menu_setprop(iMenu, MPROP_PERPAGE, 0);
-	menu_setprop(iMenu, MPROP_EXIT, MEXIT_NEVER);
+	menu_setprop(g_Menu_ModChooser, MPROP_PERPAGE, 0);
+	menu_setprop(g_Menu_ModChooser, MPROP_EXIT, MEXIT_NEVER);
 
-	UTIL_MenuDisplayAll(iMenu, _, 15);
+	UTIL_MenuDisplayAll(g_Menu_ModChooser, _, 15);
 
 	set_task(15.1, "OnTaskCheckVoteModFIX");
 	
@@ -340,8 +340,9 @@ public OnTask_VoteNextMod__FIX()
 
 public menu__CountVoteModFIX(const id, const menuid, const item)
 {
-	CHECK_CONNECTED_NEWMENU(id, menuid)
-	CHECK_TIMEOUT_NEWMENU(id, menuid, item)
+	CHECK_CONNECTED(id)
+	CHECK_MENU_EXIT(item)
+	CHECK_MENU_TIMEOUT(item)
 
 	new iModId = item;
 	
@@ -367,8 +368,6 @@ public menu__CountVoteModFIX(const id, const menuid, const item)
 	++g_iVoteModCount;
 
 	g_VoteModId[id] = iModId+1;
-
-	menu_destroy(menuid);
 	return PLUGIN_HANDLED;
 }
 
@@ -379,6 +378,7 @@ public OnTaskCheckVoteModFIX()
 	new iResult = -1;
 
 	ResetModMenuAll();
+	menu_destroy(g_Menu_ModChooser);
 
 	client_print(0, print_console, "Resultados de la votacion:");
 

@@ -81,12 +81,7 @@ ShowMenu_NominateMod(const id, menupage=0)
 public menu_NominateMod(const id, const menuid, const item)
 {
 	CHECK_CONNECTED_NEWMENU(id, menuid)
-
-	if(item == MENU_EXIT)
-	{
-		menu_destroy(menuid);
-		return PLUGIN_HANDLED;
-	}
+	CHECK_EXIT_NEWMENU(id, menuid, item)
 
 	new iModId = item;
 	new aData[ArrayMods_e];
@@ -152,12 +147,7 @@ ShowMenu_NominateMap(const id, menupage=0)
 public menu_NominateMap(const id, const menuid, const item)
 {
 	CHECK_CONNECTED_NEWMENU(id, menuid)
-
-	if(item == MENU_EXIT)
-	{
-		menu_destroy(menuid);
-		return PLUGIN_HANDLED;
-	}
+	CHECK_EXIT_NEWMENU(id, menuid, item)
 
 	new iMapId = item;
 

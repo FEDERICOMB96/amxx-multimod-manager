@@ -115,12 +115,7 @@ ShowMenu_AdminMultimod(const id)
 public menu_AdminMultimod(const id, const menuid, const item)
 {
 	CHECK_CONNECTED_NEWMENU(id, menuid)
-
-	if(item == MENU_EXIT)
-	{
-		menu_destroy(menuid);
-		return PLUGIN_HANDLED;
-	}
+	CHECK_EXIT_NEWMENU(id, menuid, item)
 
 	switch(item)
 	{
@@ -177,12 +172,7 @@ ShowMenu_SelectMod(const id)
 public menu_SelectMod(const id, const menuid, const item)
 {
 	CHECK_CONNECTED_NEWMENU(id, menuid)
-
-	if(item == MENU_EXIT)
-	{
-		menu_destroy(menuid);
-		return PLUGIN_HANDLED;
-	}
+	CHECK_EXIT_NEWMENU(id, menuid, item)
 
 	new iModId = item;
 	new aMods[ArrayMods_e];
@@ -230,12 +220,7 @@ ShowMenu_SelectMap(const id)
 public menu_SelectMap(const id, const menuid, const item)
 {
 	CHECK_CONNECTED_NEWMENU(id, menuid)
-
-	if(item == MENU_EXIT)
-	{
-		menu_destroy(menuid);
-		return PLUGIN_HANDLED;
-	}
+	CHECK_EXIT_NEWMENU(id, menuid, item)
 
 	new iMapId = item;
 	new aMods[ArrayMods_e];
@@ -303,12 +288,7 @@ ShowMenu_ManageMods(const id, menupage=0)
 public menu_ManageMods(const id, const menuid, const item)
 {
 	CHECK_CONNECTED_NEWMENU(id, menuid)
-
-	if(item == MENU_EXIT)
-	{
-		menu_destroy(menuid);
-		return PLUGIN_HANDLED;
-	}
+	CHECK_EXIT_NEWMENU(id, menuid, item)
 
 	new iNothing, iMenuPage;
 	player_menu_info(id, iNothing, iNothing, iMenuPage);
@@ -462,20 +442,20 @@ public menu_SelectVoteMod(const id, const key)
 
 ShowMenu_StartCustomVotemod()
 {
-	new iMenu = menu_create(fmt("\yVotación de\w %n^n^n\yAhora elige el próximo modo\r:\y ¡VOTÁ AHORA!", g_Admin_VoteUserId), "menu_StartCustomVotemod");
+	g_Menu_AdminCmd = menu_create(fmt("\yVotación de\w %n^n^n\yAhora elige el próximo modo\r:\y ¡VOTÁ AHORA!", g_Admin_VoteUserId), "menu_StartCustomVotemod");
 
 	for(new i = 0, aMods[ArrayMods_e]; i < g_Admin_VoteSelectedOptions[g_Admin_VoteUserId]; ++i)
 	{
 		ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_VoteOptions[g_Admin_VoteUserId][i], aMods);
-		menu_additem(iMenu, fmt("\w%s%s", aMods[ModName], likely(i == (g_Admin_VoteSelectedOptions[g_Admin_VoteUserId]-1)) ? "^n" : ""));
+		menu_additem(g_Menu_AdminCmd, fmt("\w%s%s", aMods[ModName], likely(i == (g_Admin_VoteSelectedOptions[g_Admin_VoteUserId]-1)) ? "^n" : ""));
 	}
 
-	menu_additem(iMenu, "\ySeleccionar al azar");
+	menu_additem(g_Menu_AdminCmd, "\ySeleccionar al azar");
 
-	menu_setprop(iMenu, MPROP_PERPAGE, 0);
-	menu_setprop(iMenu, MPROP_EXIT, MEXIT_NEVER);
+	menu_setprop(g_Menu_AdminCmd, MPROP_PERPAGE, 0);
+	menu_setprop(g_Menu_AdminCmd, MPROP_EXIT, MEXIT_NEVER);
 
-	UTIL_MenuDisplayAll(iMenu, _, 15);
+	UTIL_MenuDisplayAll(g_Menu_AdminCmd, _, 15);
 
 	remove_task(g_Admin_VoteUserId + TASK_VOTE_ADMIN);
 	set_task(15.1, "OnTask_CountVotes_Mod", g_Admin_VoteUserId + TASK_VOTE_ADMIN);
@@ -486,8 +466,9 @@ ShowMenu_StartCustomVotemod()
 
 public menu_StartCustomVotemod(const id, const menuid, const item)
 {
-	CHECK_CONNECTED_NEWMENU(id, menuid)
-	CHECK_TIMEOUT_NEWMENU(id, menuid, item)
+	CHECK_CONNECTED(id)
+	CHECK_MENU_EXIT(item)
+	CHECK_MENU_TIMEOUT(item)
 
 	if(IsPlayer(g_Admin_VoteUserId) && task_exists(g_Admin_VoteUserId + TASK_VOTE_ADMIN))
 	{
@@ -518,7 +499,6 @@ public menu_StartCustomVotemod(const id, const menuid, const item)
 			client_print(0, print_console, "%n ha votado por la opcion #%d (%s)%s", id, (iModId + 1), aMods[ModName], (bRandom) ? " [ELECCIÓN ALEATORIA]" : "");
 	}
 
-	menu_destroy(menuid);
 	return PLUGIN_HANDLED;
 }
 
@@ -533,6 +513,7 @@ public OnTask_CountVotes_Mod(const taskid)
 	new iResult = -1;
 
 	ResetAdminVoteMenuAll();
+	menu_destroy(g_Menu_AdminCmd);
 
 	client_print(0, print_console, "Resultados de la votacion:");
 
@@ -718,20 +699,20 @@ ShowMenu_StartCustomVotemap()
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_SelectedMod[g_Admin_VoteUserId], aMods);
 
-	new iMenu = menu_create(fmt("\yVotación de\w %n^n\yModo\r:\w %s^n^n\yAhora elige el próximo mapa\r:\y ¡VOTÁ AHORA!", g_Admin_VoteUserId, aMods[ModName]), "menu_StartCustomVotemap");
+	g_Menu_AdminCmd = menu_create(fmt("\yVotación de\w %n^n\yModo\r:\w %s^n^n\yAhora elige el próximo mapa\r:\y ¡VOTÁ AHORA!", g_Admin_VoteUserId, aMods[ModName]), "menu_StartCustomVotemap");
 
 	for(new i = 0; i < g_Admin_VoteSelectedOptions[g_Admin_VoteUserId]; ++i)
 	{
-		menu_additem(iMenu, fmt("\w%a%s", 
+		menu_additem(g_Menu_AdminCmd, fmt("\w%a%s", 
 			ArrayGetStringHandle(aMods[Maps], g_Admin_VoteOptions[g_Admin_VoteUserId][i]), likely(i == (g_Admin_VoteSelectedOptions[g_Admin_VoteUserId]-1)) ? "^n" : ""));
 	}
 
-	menu_additem(iMenu, "\ySeleccionar al azar");
+	menu_additem(g_Menu_AdminCmd, "\ySeleccionar al azar");
 
-	menu_setprop(iMenu, MPROP_PERPAGE, 0);
-	menu_setprop(iMenu, MPROP_EXIT, MEXIT_NEVER);
+	menu_setprop(g_Menu_AdminCmd, MPROP_PERPAGE, 0);
+	menu_setprop(g_Menu_AdminCmd, MPROP_EXIT, MEXIT_NEVER);
 
-	UTIL_MenuDisplayAll(iMenu, _, 15);
+	UTIL_MenuDisplayAll(g_Menu_AdminCmd, _, 15);
 
 	remove_task(g_Admin_VoteUserId + TASK_VOTE_ADMIN);
 	set_task(15.1, "OnTask_AdminCountVotes_Map", g_Admin_VoteUserId + TASK_VOTE_ADMIN);
@@ -742,8 +723,9 @@ ShowMenu_StartCustomVotemap()
 
 public menu_StartCustomVotemap(const id, const menuid, const item)
 {
-	CHECK_CONNECTED_NEWMENU(id, menuid)
-	CHECK_TIMEOUT_NEWMENU(id, menuid, item)
+	CHECK_CONNECTED(id)
+	CHECK_MENU_EXIT(item)
+	CHECK_MENU_TIMEOUT(item)
 
 	if(IsPlayer(g_Admin_VoteUserId) && task_exists(g_Admin_VoteUserId + TASK_VOTE_ADMIN))
 	{
@@ -777,7 +759,6 @@ public menu_StartCustomVotemap(const id, const menuid, const item)
 			client_print(0, print_console, "%n ha votado por la opcion #%d (%s)%s", id, (iMapId + 1), szMap, (bRandom) ? " [ELECCIÓN ALEATORIA]" : "");
 	}
 
-	menu_destroy(menuid);
 	return PLUGIN_HANDLED;
 }
 
@@ -794,6 +775,7 @@ public OnTask_AdminCountVotes_Map(const taskid)
 	new iResult = -1;
 
 	ResetAdminVoteMenuAll();
+	menu_destroy(g_Menu_AdminCmd);
 
 	client_print(0, print_console, "Resultados de la votacion:");
 
@@ -863,6 +845,7 @@ ShowMenu_VoteAdminConfirm(const id, const szMod[], const szMap[], const bool:bMo
 public menu_VoteAdminConfirm(const id, const menuid, const item)
 {
 	CHECK_CONNECTED_NEWMENU(id, menuid)
+	CHECK_EXIT_NEWMENU(id, menuid, item)
 
 	switch(item)
 	{

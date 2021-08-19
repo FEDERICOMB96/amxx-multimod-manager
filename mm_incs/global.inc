@@ -51,6 +51,8 @@ new g_bCvar_amx_vote_delay_mm;
 *                 [ ADMIN COMMANDS ]
 * ============================================================================ */
 
+new g_Menu_AdminCmd;
+
 new g_Admin_VoteUserId;
 new g_Admin_VoteCountTotal;
 
@@ -71,6 +73,8 @@ new bool:g_Admin_VoteStartInMod[MAX_USERS];
 *                 [ MOD CHOOSER ]
 * ============================================================================ */
 
+new g_Menu_ModChooser;
+
 new g_iModVoteNum;
 new g_iVoteModCount;
 new g_iVoteModCountGlobal[MAX_SELECTMODS];
@@ -87,6 +91,8 @@ new g_VoteModId[MAX_USERS];
 /* ===========================================================================
 *                 [ MAP CHOOSER ]
 * ============================================================================ */
+
+new g_Menu_MapChooser;
 
 new g_iMapVoteNum;
 new g_iChangeMapTime;
