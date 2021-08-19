@@ -163,7 +163,7 @@ ShowMenu_SelectMod(const id)
 
 	menu_setprop(iMenu, MPROP_NEXTNAME, "Siguiente");
 	menu_setprop(iMenu, MPROP_BACKNAME, "Atrás");
-	menu_setprop(iMenu, MPROP_EXITNAME, "Salir");
+	menu_setprop(iMenu, MPROP_EXITNAME, "Menú principal");
 
 	menu_display(id, iMenu, 0);
 	return PLUGIN_HANDLED;
@@ -172,7 +172,14 @@ ShowMenu_SelectMod(const id)
 public menu_SelectMod(const id, const menuid, const item)
 {
 	CHECK_CONNECTED_NEWMENU(id, menuid)
-	CHECK_EXIT_NEWMENU(id, menuid, item)
+
+	if(likely(item == MENU_EXIT))
+	{
+		menu_destroy(menuid);
+
+		ShowMenu_AdminMultimod(id);
+		return PLUGIN_HANDLED;
+	}
 
 	new iModId = item;
 	new aMods[ArrayMods_e];
@@ -211,7 +218,7 @@ ShowMenu_SelectMap(const id)
 
 	menu_setprop(iMenu, MPROP_NEXTNAME, "Siguiente");
 	menu_setprop(iMenu, MPROP_BACKNAME, "Atrás");
-	menu_setprop(iMenu, MPROP_EXITNAME, "Salir");
+	menu_setprop(iMenu, MPROP_EXITNAME, "Menú principal");
 
 	menu_display(id, iMenu, 0);
 	return PLUGIN_HANDLED;
@@ -220,7 +227,14 @@ ShowMenu_SelectMap(const id)
 public menu_SelectMap(const id, const menuid, const item)
 {
 	CHECK_CONNECTED_NEWMENU(id, menuid)
-	CHECK_EXIT_NEWMENU(id, menuid, item)
+
+	if(likely(item == MENU_EXIT))
+	{
+		menu_destroy(menuid);
+
+		ShowMenu_AdminMultimod(id);
+		return PLUGIN_HANDLED;
+	}
 
 	new iMapId = item;
 	new aMods[ArrayMods_e];
@@ -279,7 +293,7 @@ ShowMenu_ManageMods(const id, menupage=0)
 
 	menu_setprop(iMenu, MPROP_NEXTNAME, "Siguiente");
 	menu_setprop(iMenu, MPROP_BACKNAME, "Atrás");
-	menu_setprop(iMenu, MPROP_EXITNAME, "Salir");
+	menu_setprop(iMenu, MPROP_EXITNAME, "Menú principal");
 
 	menu_display(id, iMenu, min(menupage, menu_pages(iMenu) - 1));
 	return PLUGIN_HANDLED;
@@ -288,7 +302,14 @@ ShowMenu_ManageMods(const id, menupage=0)
 public menu_ManageMods(const id, const menuid, const item)
 {
 	CHECK_CONNECTED_NEWMENU(id, menuid)
-	CHECK_EXIT_NEWMENU(id, menuid, item)
+
+	if(likely(item == MENU_EXIT))
+	{
+		menu_destroy(menuid);
+
+		ShowMenu_AdminMultimod(id);
+		return PLUGIN_HANDLED;
+	}
 
 	new iNothing, iMenuPage;
 	player_menu_info(id, iNothing, iNothing, iMenuPage);
@@ -387,10 +408,10 @@ ShowMenu_Votemod(const id)
 	if(iEndLoop != iArraySize)
 	{
 		iKeys |= MENU_KEY_9;
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r9.\w Siguiente^n\r0.\w %s^n", iStartLoop ? "Volver" : "Salir");
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r9.\w Siguiente^n\r0.\w %s^n", iStartLoop ? "Volver" : "Menú principal");
 	}
 	else
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r0.\w %s", iStartLoop ? "Volver" : "Salir");
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r0.\w %s", iStartLoop ? "Volver" : "Menú principal");
 	
 	if(g_Admin_VoteSelectedOptions[id])
 	{
@@ -428,7 +449,14 @@ public menu_SelectVoteMod(const id, const key)
 			return PLUGIN_HANDLED;
 		}
 		case 8: ++g_Admin_VoteCurrentPage[id];
-		case 9: --g_Admin_VoteCurrentPage[id];
+		case 9:
+		{
+			if(--g_Admin_VoteCurrentPage[id] < 0)
+			{
+				ShowMenu_AdminMultimod(id);
+				return PLUGIN_HANDLED;
+			}
+		}
 		default:
 		{
 			new iValue = ((g_Admin_VoteCurrentPage[id] * 7) + key);
@@ -644,10 +672,10 @@ ShowMenu_Votemap(const id)
 	if(iEndLoop != iArraySize)
 	{
 		iKeys |= MENU_KEY_9;
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r9.\w Siguiente^n\r0.\w %s^n", iStartLoop ? "Volver" : "Salir");
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r9.\w Siguiente^n\r0.\w %s^n", iStartLoop ? "Volver" : "Menú principal");
 	}
 	else
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r0.\w %s", iStartLoop ? "Volver" : "Salir");
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r0.\w %s", iStartLoop ? "Volver" : "Menú principal");
 	
 	if(g_Admin_VoteSelectedOptions[id])
 	{
@@ -682,7 +710,14 @@ public menu_SelectVoteMap(const id, const key)
 			return PLUGIN_HANDLED;
 		}
 		case 8: ++g_Admin_VoteCurrentPage[id];
-		case 9: --g_Admin_VoteCurrentPage[id];
+		case 9:
+		{
+			if(--g_Admin_VoteCurrentPage[id] < 0)
+			{
+				ShowMenu_AdminMultimod(id);
+				return PLUGIN_HANDLED;
+			}
+		}
 		default:
 		{
 			new iValue = ((g_Admin_VoteCurrentPage[id] * 7) + key);
