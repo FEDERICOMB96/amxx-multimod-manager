@@ -22,6 +22,9 @@ new const PLUGINS_FILENAME[] = "plugins-multimodmanager.ini";
 
 public plugin_natives()
 {
+	Cvars_Init();
+	MultiMod_Init();
+
 	register_native("mm_get_mod_name", "_mm_get_mod_name");
 	register_native("mm_get_mod_id", "_mm_get_mod_id");
 }
@@ -42,19 +45,17 @@ public plugin_init()
 
 	g_GlobalConfigs[Mods] = ArrayCreate(ArrayMods_e);
 	g_Array_Nominations = ArrayCreate(1);
-}
 
-public OnConfigsExecuted()
-{
-	server_cmd("amx_pausecfg add ^"%s^"", PLUGIN_NAME);
-
-	Cvars_Init();
-	MultiMod_Init();
 	AdminCmd_Init();
 	ModChooser_Init();
 	MapChooser_Init();
 	RockTheVote_Init();
 	Nominations_Init();
+}
+
+public OnConfigsExecuted()
+{
+	server_cmd("amx_pausecfg add ^"%s^"", PLUGIN_NAME);
 }
 
 public plugin_end()
@@ -124,7 +125,7 @@ MultiMod_Init()
 		return;
 	}
 
-	new JSON:jsonConfigsFile = json_parse(szFileName, true);
+	new JSON:jsonConfigsFile = json_parse(szFileName, true, true);
 
 	if(jsonConfigsFile == Invalid_JSON)
 	{
@@ -156,8 +157,8 @@ MultiMod_Init()
 	g_GlobalConfigs[RTV_MinPlayers] = clamp(json_object_get_number(jsonConfigsFile, "rtv_minplayers"), 0, MAX_CLIENTS);
 	g_GlobalConfigs[RTV_Percentage] = clamp(json_object_get_number(jsonConfigsFile, "rtv_percentage"), 0, 100);
 	g_GlobalConfigs[AdminMaxOptionsInMenu] = clamp(json_object_get_number(jsonConfigsFile, "admin_max_options_in_menu"), 2, MAX_ADMIN_VOTEOPTIONS);
-	g_GlobalConfigs[ModsInMenu] = clamp(json_object_get_number(jsonConfigsFile, "mods_in_menu"), 1, (MAX_SELECTMODS - 1)); // La ultima opción se reserva para extender unicamente.
-	g_GlobalConfigs[MapsInMenu] = clamp(json_object_get_number(jsonConfigsFile, "maps_in_menu"), 1, MAX_SELECTMAPS);
+	g_GlobalConfigs[ModsInMenu] = clamp(json_object_get_number(jsonConfigsFile, "mods_in_menu"), 2, (MAX_SELECTMODS - 1)); // La ultima opción se reserva para extender unicamente.
+	g_GlobalConfigs[MapsInMenu] = clamp(json_object_get_number(jsonConfigsFile, "maps_in_menu"), 2, MAX_SELECTMAPS);
 
 	new JSON:jsonObjectMods = json_object_get_value(jsonConfigsFile, "mods");
 	new iCount = json_array_get_count(jsonObjectMods);
@@ -171,6 +172,7 @@ MultiMod_Init()
 			aMod[Enabled] = true;
 
 			json_object_get_string(jsonArrayValue, "modname", aMod[ModName], charsmax(aMod));
+			json_object_get_string(jsonArrayValue, "mod_tag", aMod[ModTag], charsmax(aMod));
 
 			aMod[ChangeMapType] = ChangeMap_e:json_object_get_number(jsonArrayValue, "change_map_type");
 

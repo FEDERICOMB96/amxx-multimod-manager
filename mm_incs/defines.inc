@@ -63,6 +63,7 @@ enum _:ArrayMods_e
 {
 	bool:Enabled,
 	ModName[64],
+	ModTag[32],
 	ChangeMap_e:ChangeMapType,
 	Array:Maps,
 	Array:Cvars,
