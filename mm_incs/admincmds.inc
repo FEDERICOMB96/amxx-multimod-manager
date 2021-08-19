@@ -735,13 +735,13 @@ public menu_StartCustomVotemap(const id, const menuid, const item)
 		new szMap[MAX_MAPNAME_LENGTH];
 
 		new aMods[ArrayMods_e];
-		ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_SelectedMod[id], aMods);
+		ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_SelectedMod[g_Admin_VoteUserId], aMods);
 
-		if(iMapId < g_Admin_VoteSelectedOptions[id])
+		if(iMapId < g_Admin_VoteSelectedOptions[g_Admin_VoteUserId])
 			ArrayGetString(aMods[Maps], g_Admin_VoteOptions[g_Admin_VoteUserId][iMapId], szMap, MAX_MAPNAME_LENGTH-1);
 		else
 		{
-			iMapId = random(g_Admin_VoteSelectedOptions[id]);
+			iMapId = random(g_Admin_VoteSelectedOptions[g_Admin_VoteUserId]);
 			ArrayGetString(aMods[Maps], g_Admin_VoteOptions[g_Admin_VoteUserId][iMapId], szMap, MAX_MAPNAME_LENGTH-1);
 
 			bRandom = true;
