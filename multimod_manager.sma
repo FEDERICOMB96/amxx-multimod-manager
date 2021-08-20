@@ -22,12 +22,21 @@ new const PLUGINS_FILENAME[] = "plugins-multimodmanager.ini";
 
 public plugin_natives()
 {
-	Cvars_Init();
-	MultiMod_Init();
-
 	register_native("mm_get_mod_id", "_mm_get_mod_id");
 	register_native("mm_get_mod_name", "_mm_get_mod_name");
 	register_native("mm_get_mod_tag", "_mm_get_mod_tag");
+}
+
+public plugin_precache()
+{
+	get_mapname(g_szCurrentMap, charsmax(g_szCurrentMap));
+	mb_strtolower(g_szCurrentMap);
+
+	g_GlobalConfigs[Mods] = ArrayCreate(ArrayMods_e);
+	g_Array_Nominations = ArrayCreate(1);
+
+	Cvars_Init();
+	MultiMod_Init();
 }
 
 public plugin_init()
@@ -38,14 +47,8 @@ public plugin_init()
 	register_event_ex("TextMsg", "OnEvent_GameRestart", RegisterEvent_Global, "2&#Game_will_restart_in");
 	register_event_ex("HLTV", "OnEvent_HLTV", RegisterEvent_Global, "1=0", "2=0");
 
-	get_mapname(g_szCurrentMap, charsmax(g_szCurrentMap));
-	mb_strtolower(g_szCurrentMap);
-
 	g_Hud_Vote = CreateHudSyncObj();
 	g_Hud_Alert = CreateHudSyncObj();
-
-	g_GlobalConfigs[Mods] = ArrayCreate(ArrayMods_e);
-	g_Array_Nominations = ArrayCreate(1);
 
 	AdminCmd_Init();
 	ModChooser_Init();
@@ -57,6 +60,8 @@ public plugin_init()
 public OnConfigsExecuted()
 {
 	server_cmd("amx_pausecfg add ^"%s^"", PLUGIN_NAME);
+
+	MultiMod_ExecCvars(g_iCurrentMod);
 }
 
 public plugin_end()
@@ -217,12 +222,6 @@ MultiMod_Init()
 			{
 				bReloadMod = false;
 				g_iCurrentMod = i;
-
-				new iCvars = ArraySize(aMod[Cvars]);
-				for(new i = 0; i < iCvars; ++i)
-				{
-					server_cmd("%a", ArrayGetStringHandle(aMod[Cvars], i));
-				}
 			}
 		}
 		json_free(jsonArrayValue);
@@ -237,10 +236,10 @@ MultiMod_Init()
 		return;
 	}
 
+	MultiMod_SetNextMod(0); // First mod as default
+
 	if(bReloadMod)
 	{
-		MultiMod_SetNextMod(0); // First mod as default
-
 		engine_changelevel(g_szCurrentMap);
 		return;
 	}
@@ -469,4 +468,22 @@ bool:MultiMod_SaveOffMods()
 	}
 
 	return false;
+}
+
+MultiMod_ExecCvars(const iMod)
+{
+	if(iMod < 0 || iMod > ArraySize(g_GlobalConfigs[Mods]))
+		return 0;
+
+	new aMod[ArrayMods_e];
+	ArrayGetArray(g_GlobalConfigs[Mods], iMod, aMod);
+
+	new iCvars = ArraySize(aMod[Cvars]);
+	for(new i = 0; i < iCvars; ++i)
+	{
+		server_cmd("%a", ArrayGetStringHandle(aMod[Cvars], i));
+	}
+
+	server_print("[MultiMod] Executing Cvars from Mod: %s (Count: %d)", aMod[ModName], iCvars);
+	return iCvars;
 }
