@@ -589,19 +589,16 @@ MapChooser_LoadMaps(&Array:aMyArray, const szFileName[])
 		if(iFile)
 		{
 			new szLine[PLATFORM_MAX_PATH];
-			new szMap[64];
+			new szMap[MAX_MAPNAME_LENGTH];
 
-			while(!feof(iFile))
+			while(fgets(iFile, szLine, charsmax(szLine)))
 			{
-				fgets(iFile, szLine, charsmax(szLine));
 				parse(szLine, szMap, charsmax(szMap));
 
 				mb_strtolower(szMap);
 				
 				if(szMap[0] != ';' && IsValidMap(szMap))
-				{
 					ArrayPushString(aMyArray, szMap);
-				}
 			}
 			
 			fclose(iFile);
