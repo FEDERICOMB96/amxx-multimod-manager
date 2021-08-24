@@ -53,12 +53,17 @@ ShowMenu_NominateMod(const id, menupage=0)
 {
 	CHECK_CONNECTED(id)
 
+	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
+
+	if(iArraySizeMods <= g_GlobalConfigs[ModsInMenu])
+	{
+		client_print_color(id, print_team_default, "%s^1 No hay suficientes modos para nominar en este momento!", g_GlobalConfigs[ChatPrefix]);
+		return PLUGIN_HANDLED;
+	}
+
 	new iMenu = menu_create("\yNominar próximo modo:\R", "menu_NominateMod");
 
-	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
-	new aData[ArrayMods_e];
-
-	for(new iModId = 0; iModId < iArraySizeMods; ++iModId)
+	for(new iModId = 0, aData[ArrayMods_e]; iModId < iArraySizeMods; ++iModId)
 	{
 		ArrayGetArray(g_GlobalConfigs[Mods], iModId, aData);
 
@@ -126,12 +131,18 @@ ShowMenu_NominateMap(const id, menupage=0)
 {
 	CHECK_CONNECTED(id)
 
-	new iMenu = menu_create("\yNominar próximo mapa:\R", "menu_NominateMap");
-
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMods);
 
 	new iArraySizeMaps = ArraySize(aMods[Maps]);
+
+	if(iArraySizeMaps <= g_GlobalConfigs[MapsInMenu])
+	{
+		client_print_color(id, print_team_default, "%s^1 No hay suficientes mapas para nominar en este momento!", g_GlobalConfigs[ChatPrefix]);
+		return PLUGIN_HANDLED;
+	}
+
+	new iMenu = menu_create("\yNominar próximo mapa:\R", "menu_NominateMap");
 
 	for(new iMapId = 0, szMapName[MAX_MAPNAME_LENGTH]; iMapId < iArraySizeMaps; ++iMapId)
 	{
