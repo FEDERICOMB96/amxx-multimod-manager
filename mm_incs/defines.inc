@@ -15,6 +15,7 @@
 #define likely(%0) 						((%0))
 #define unlikely(%0) 					(!(%0))
 
+#define MAX_MODNAME_LENGTH 				64
 #define MAX_MAPNAME_LENGTH 				64
 
 #define MAX_ADMIN_VOTEOPTIONS			9
@@ -56,18 +57,25 @@ enum ChangeMap_e
 {
 	CHANGEMAP_TIMELEFT,
 	CHANGEMAP_END_OF_ROUND,
-	CHANGEMAP_ONE_MORE_ROUND
+	CHANGEMAP_ONE_MORE_ROUND,
 };
 
 enum _:ArrayMods_e 
 {
 	bool:Enabled,
-	ModName[64],
-	ModTag[32],
+	ModName[MAX_MODNAME_LENGTH],
+	ModTag[MAX_MODNAME_LENGTH],
 	ChangeMap_e:ChangeMapType,
 	Array:Maps,
 	Array:Cvars,
-	Array:Plugins
+	Array:Plugins,
+};
+
+enum _:ArrayRecentMaps_e
+{
+	RECENT_MOD_NAME[MAX_MODNAME_LENGTH],
+	RECENT_MAP_NAME[MAX_MAPNAME_LENGTH],
+	RECENT_MAP_COUNT,
 };
 
 enum GlobalConfigs_e
@@ -94,6 +102,16 @@ enum GlobalConfigs_e
 	ModsInMenu,
 	MapsInMenu,
 
+	// Max recent Mods/Maps
+	MaxRecentMods,
+	MaxRecentMaps,
+
 	// Mods
 	Array:Mods,
+
+	// Recent Mods
+	Array:RecentMods,
+
+	// Recent Maps
+	Array:RecentMaps,
 };

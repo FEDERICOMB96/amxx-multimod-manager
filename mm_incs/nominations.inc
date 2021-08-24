@@ -63,9 +63,11 @@ ShowMenu_NominateMod(const id, menupage=0)
 		ArrayGetArray(g_GlobalConfigs[Mods], iModId, aData);
 
 		if(g_iCurrentMod == iModId)
-			menu_additem(iMenu, fmt("%s \y(ACTUAL)", aData[ModName]), .callback=menu_makecallback("UTIL_DisableItem"));
+			menu_additem(iMenu, fmt("%s\y (ACTUAL)", aData[ModName]), .callback=menu_makecallback("UTIL_DisableItem"));
 		else if(UTIL_IsModOff(iModId))
-			menu_additem(iMenu, fmt("%s \r(BLOQUEADO)", aData[ModName]), .callback=menu_makecallback("UTIL_DisableItem"));
+			menu_additem(iMenu, fmt("%s\r (BLOQUEADO)", aData[ModName]), .callback=menu_makecallback("UTIL_DisableItem"));
+		else if(Recent_IsRecentMod(aData[ModName]))
+			menu_additem(iMenu, fmt("%s\r (RECIENTE)", aData[ModName]), .callback=menu_makecallback("UTIL_DisableItem"));
 		else
 			menu_additem(iMenu, fmt("%s%s", aData[ModName], IsNominated(iModId) ? ((iModId == (g_SVM_MyNominate[id]-1)) ? "\y [TU NOMINASTE]" : "\y [NOMINADO]"): ""));
 	}
@@ -131,9 +133,14 @@ ShowMenu_NominateMap(const id, menupage=0)
 
 	new iArraySizeMaps = ArraySize(aMods[Maps]);
 
-	for(new iMapId = 0; iMapId < iArraySizeMaps; ++iMapId)
+	for(new iMapId = 0, szMapName[MAX_MAPNAME_LENGTH]; iMapId < iArraySizeMaps; ++iMapId)
 	{
-		menu_additem(iMenu, fmt("%a%s", ArrayGetStringHandle(aMods[Maps], iMapId), IsNominated(iMapId) ? ((iMapId == (g_SVM_MyNominate[id]-1)) ? "\y [TU NOMINASTE]" : "\y (NOMINADO)"): ""));
+		ArrayGetString(aMods[Maps], iMapId, szMapName, MAX_MAPNAME_LENGTH-1);
+
+		if(Recent_IsRecentMap(g_iNextSelectMod, szMapName))
+			menu_additem(iMenu, fmt("%s\r (RECIENTE)", szMapName), .callback=menu_makecallback("UTIL_DisableItem"));
+		else
+			menu_additem(iMenu, fmt("%s%s", szMapName, IsNominated(iMapId) ? ((iMapId == (g_SVM_MyNominate[id]-1)) ? "\y [TU NOMINASTE]" : "\y (NOMINADO)"): ""));
 	}
 
 	menu_setprop(iMenu, MPROP_NEXTNAME, "Siguiente");

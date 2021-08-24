@@ -122,3 +122,17 @@ bool:UTIL_IsModOff(const iMod)
 
 	return bool:unlikely(aMods[Enabled] == true);
 }
+
+UTIL_GetModId(const szModName[])
+{
+	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
+	for(new i = 0, aMods[ArrayMods_e]; i < iArraySizeMods; ++i)
+	{
+		ArrayGetArray(g_GlobalConfigs[Mods], i, aMods);
+
+		if(equali(aMods[ModName], szModName))
+			return i;
+	}
+
+	return -1;
+}

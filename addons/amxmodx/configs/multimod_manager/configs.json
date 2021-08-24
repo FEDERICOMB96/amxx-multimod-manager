@@ -21,6 +21,9 @@
 	"mods_in_menu": 9,                // min = 2 | max = 9
 	"maps_in_menu": 9,                // min = 2 | max = 9
 
+	"max_recent_mods": 5,   // min = 0
+	"max_recent_maps": 5,   // min = 0
+
 	"mods":
 	[
 		// Primer modo sera el modo por defecto, no se podrá bloquear

@@ -66,8 +66,10 @@ public OnTask_VoteNextMap()
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMods);
 
+	new iRecentMaps = Recent_CountRecentMaps(g_iNextSelectMod);
+
 	new iArraySizeMaps = ArraySize(aMods[Maps]);
-	if(iArraySizeMaps < 2)
+	if(likely(iArraySizeMaps < 2) || likely((iArraySizeMaps - iRecentMaps) <= 0))
 	{
 		new szMap[MAX_MAPNAME_LENGTH];
 		ArrayGetString(aMods[Maps], 0, szMap, MAX_MAPNAME_LENGTH-1);
@@ -95,12 +97,12 @@ public OnTask_VoteNextMap()
 		ExecChangeTimeleft();
 	}
 
-	new iMaxMaps = min(g_GlobalConfigs[MapsInMenu], iArraySizeMaps);
+	new iMaxMaps = min(g_GlobalConfigs[MapsInMenu], (iArraySizeMaps - iRecentMaps));
 
 	g_Menu_MapChooser = menu_create("\yElige el próximo mapa: ¡VOTÁ AHORA!", "menu__CountVoteMap");
 
 	g_iMapVoteNum = 0;
-	for(new iRandom, iMapId, iArraySizeNoms; g_iMapVoteNum < iMaxMaps; ++g_iMapVoteNum)
+	for(new iRandom, iMapId, iArraySizeNoms, szMapName[MAX_MAPNAME_LENGTH]; g_iMapVoteNum < iMaxMaps; ++g_iMapVoteNum)
 	{
 		do {
 			if((iArraySizeNoms = ArraySize(g_Array_Nominations)))
@@ -111,10 +113,12 @@ public OnTask_VoteNextMap()
 			}
 			else
 				iMapId = random(iArraySizeMaps);
-		} while(IsMapInMenu(iMapId)); // La opcion está en el menú
+
+			ArrayGetString(aMods[Maps], iMapId, szMapName, charsmax(szMapName));
+		} while(IsMapInMenu(iMapId) || (iRecentMaps && Recent_IsRecentMap(g_iNextSelectMod, szMapName))); // La opcion está en el menú
 
 		g_iSVM_MapInMenu[g_iMapVoteNum] = iMapId;
-		menu_additem(g_Menu_MapChooser, fmt("\w%a%s", ArrayGetStringHandle(aMods[Maps], g_iSVM_MapInMenu[g_iMapVoteNum]), likely(g_iMapVoteNum == (iMaxMaps-1)) ? "^n" : ""));
+		menu_additem(g_Menu_MapChooser, fmt("\w%s%s", szMapName, likely(g_iMapVoteNum == (iMaxMaps-1)) ? "^n" : ""));
 	}
 
 	menu_additem(g_Menu_MapChooser, "\ySeleccionar al azar");
