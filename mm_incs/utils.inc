@@ -3,7 +3,7 @@
 #endif
 #define _mm_utils_included_
 
-stock UTIL_GetCurrentMod(const szFilePath[PLATFORM_MAX_PATH], szOut[], const iLen)
+stock UTIL_GetCurrentMod(const szFilePath[PLATFORM_MAX_PATH], szMod[], const iModLen, szMap[], const iMapLen)
 {
 	if(file_exists(szFilePath))
 	{
@@ -12,22 +12,28 @@ stock UTIL_GetCurrentMod(const szFilePath[PLATFORM_MAX_PATH], szOut[], const iLe
 		if(iFile)
 		{
 			new szLine[PLATFORM_MAX_PATH];
-			new iRetLen = 0;
 
+			// Mod name
 			if(fgets(iFile, szLine, charsmax(szLine)))
 			{
 				trim(szLine);
 				replace_string(szLine, charsmax(szLine), ";Mod:", "");
 				
-				iRetLen = copy(szOut, iLen, szLine);
+				copy(szMod, iModLen, szLine);
+
+				// Default Map
+				if(fgets(iFile, szLine, charsmax(szLine)))
+				{
+					trim(szLine);
+					replace_string(szLine, charsmax(szLine), ";Map:", "");
+					
+					copy(szMap, iMapLen, szLine);
+				}
 			}
 
 			fclose(iFile);
-			return iRetLen;
 		}
 	}
-
-	return 0;
 }
 
 stock ChangeMap_e:UTIL_GetChangeMapType(const iMod)
@@ -80,7 +86,7 @@ public UTIL_DisableItem(const id, const menuid, const item)
 	return ITEM_DISABLED;
 }
 
-UTIL_MenuDisplayAll(menu, page=0, time=-1)
+stock UTIL_MenuDisplayAll(menu, page=0, time=-1)
 {
 	for(new i = 1; i < MAX_USERS; ++i)
 	{
@@ -91,7 +97,7 @@ UTIL_MenuDisplayAll(menu, page=0, time=-1)
 	return 1;
 }
 
-UTIL_GetOffModsCount()
+stock UTIL_GetOffModsCount()
 {
 	new i = 1;
 	new j = 0;
@@ -111,7 +117,7 @@ UTIL_GetOffModsCount()
 	return j;
 }
 
-bool:UTIL_IsModOff(const iMod)
+stock bool:UTIL_IsModOff(const iMod)
 {
 	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
 	if(likely(iMod < 0) || likely(iMod >= iArraySizeMods))
@@ -123,7 +129,7 @@ bool:UTIL_IsModOff(const iMod)
 	return bool:unlikely(aMods[Enabled] == true);
 }
 
-UTIL_GetModId(const szModName[])
+stock UTIL_GetModId(const szModName[])
 {
 	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
 	for(new i = 0, aMods[ArrayMods_e]; i < iArraySizeMods; ++i)

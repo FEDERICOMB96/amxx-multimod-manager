@@ -131,8 +131,10 @@ MultiMod_Init()
 	new szConfigDir[PLATFORM_MAX_PATH], szFileName[PLATFORM_MAX_PATH], szPluginsFile[PLATFORM_MAX_PATH], szMapsFile[PLATFORM_MAX_PATH];
 	get_configsdir(szConfigDir, charsmax(szConfigDir));
 
+	new szDefaultCurrentMap[MAX_MAPNAME_LENGTH];
+
 	formatex(szPluginsFile, charsmax(szPluginsFile), "%s/%s", szConfigDir, PLUGINS_FILENAME);
-	UTIL_GetCurrentMod(szPluginsFile, g_szCurrentMod, charsmax(g_szCurrentMod));
+	UTIL_GetCurrentMod(szPluginsFile, g_szCurrentMod, MAX_MODNAME_LENGTH-1, szDefaultCurrentMap, MAX_MAPNAME_LENGTH-1);
 
 	formatex(szFileName, charsmax(szFileName), "%s/multimod_manager/configs.json", szConfigDir);
 
@@ -253,7 +255,7 @@ MultiMod_Init()
 
 	if(bReloadMod)
 	{
-		engine_changelevel(g_szCurrentMap);
+		engine_changelevel(IsValidMap(szDefaultCurrentMap) ? szDefaultCurrentMap : g_szCurrentMap);
 		return;
 	}
 
