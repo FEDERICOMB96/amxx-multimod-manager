@@ -98,7 +98,7 @@ Recent_SaveRecentModsMaps(const iMod, const szMapName[MAX_MAPNAME_LENGTH])
 		new JSON:array = json_init_array();
 		json_array_append_string(array, aMods[ModName]);
 
-		new iMaxLoop = min(g_GlobalConfigs[MaxRecentMods], ArraySize(g_GlobalConfigs[RecentMods])) - 1;
+		new iMaxLoop = min(g_GlobalConfigs[MaxRecentMods], ArraySize(g_GlobalConfigs[RecentMods]));
 		for(new i = 0, szModName[MAX_MODNAME_LENGTH]; i < iMaxLoop; ++i)
 		{
 			ArrayGetString(g_GlobalConfigs[RecentMods], i, szModName, MAX_MODNAME_LENGTH-1);
