@@ -55,7 +55,7 @@ ShowMenu_NominateMod(const id, menupage=0)
 
 	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
 
-	if(iArraySizeMods <= g_GlobalConfigs[ModsInMenu])
+	if(likely((iArraySizeMods - 1 - UTIL_GetOffModsCount() - Recent_CountRecentMods()) <= g_GlobalConfigs[ModsInMenu]))
 	{
 		client_print_color(id, print_team_default, "%s^1 No hay suficientes modos para nominar en este momento!", g_GlobalConfigs[ChatPrefix]);
 		return PLUGIN_HANDLED;
@@ -136,7 +136,7 @@ ShowMenu_NominateMap(const id, menupage=0)
 
 	new iArraySizeMaps = ArraySize(aMods[Maps]);
 
-	if(iArraySizeMaps <= g_GlobalConfigs[MapsInMenu])
+	if(likely((iArraySizeMaps - Recent_CountRecentMaps(g_iNextSelectMod)) <= g_GlobalConfigs[MapsInMenu]))
 	{
 		client_print_color(id, print_team_default, "%s^1 No hay suficientes mapas para nominar en este momento!", g_GlobalConfigs[ChatPrefix]);
 		return PLUGIN_HANDLED;
