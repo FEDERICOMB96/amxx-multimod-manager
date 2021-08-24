@@ -69,7 +69,7 @@ public OnTask_VoteNextMap()
 	new iRecentMaps = Recent_CountRecentMaps(g_iNextSelectMod);
 
 	new iArraySizeMaps = ArraySize(aMods[Maps]);
-	if(likely(iArraySizeMaps < 2) || likely((iArraySizeMaps - iRecentMaps) <= 0))
+	if(likely(iArraySizeMaps < 2))
 	{
 		new szMap[MAX_MAPNAME_LENGTH];
 		ArrayGetString(aMods[Maps], 0, szMap, MAX_MAPNAME_LENGTH-1);
@@ -95,7 +95,10 @@ public OnTask_VoteNextMap()
 		g_iChangeMapTime = 10;
 
 		ExecChangeTimeleft();
+		return;
 	}
+	else if(likely(iArraySizeMaps <= iRecentMaps))
+		iRecentMaps = 0;
 
 	new iMaxMaps = min(g_GlobalConfigs[MapsInMenu], (iArraySizeMaps - iRecentMaps));
 

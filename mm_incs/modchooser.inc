@@ -54,7 +54,7 @@ public OnTask_VoteNextMod()
 	new aMods[ArrayMods_e];
 	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
 
-	if(likely((iArraySizeMods - 1 - iOffMods) < 2) || likely((iArraySizeMods - 1 - iOffMods - iRecentMods) <= 0)) // No cuento el modo actual (-1) y los modos desactivados (UTIL_GetOffModsCount)
+	if(likely((iArraySizeMods - 1 - iOffMods) < 2)) // No cuento el modo actual (-1) y los modos desactivados (UTIL_GetOffModsCount)
 	{
 		g_iNextSelectMod = 0;
 		MultiMod_SetNextMod(g_iNextSelectMod);
@@ -68,7 +68,10 @@ public OnTask_VoteNextMod()
 		g_bSelectedNextMod = true;
 
 		MapChooser_InitNextVoteMap(40);
+		return;
 	}
+	else if(likely((iArraySizeMods - 1 - iOffMods) <= iRecentMods))
+		iRecentMods = 0;
 
 	new iMaxMods = min(g_GlobalConfigs[ModsInMenu], (iArraySizeMods - 1 - iOffMods - iRecentMods));
 
