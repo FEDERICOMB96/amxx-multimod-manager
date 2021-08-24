@@ -1,7 +1,7 @@
 #pragma semicolon 1
 
 new const PLUGIN_NAME[] = "MultiMod Manager";
-new const PLUGIN_VERSION[] = "v2021.08.08";
+new const PLUGIN_VERSION[] = "v2021.08.24";
 
 new const PLUGINS_FILENAME[] = "plugins-multimodmanager.ini";
 
