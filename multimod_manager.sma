@@ -40,8 +40,6 @@ public plugin_precache()
 
 	Cvars_Init();
 	MultiMod_Init();
-	Recent_LoadRecentModsMaps();
-	Recent_SaveRecentModsMaps(g_iCurrentMod, g_szCurrentMap);
 }
 
 public plugin_init()
@@ -128,122 +126,117 @@ public client_disconnected(id, bool:drop, message[], maxlen)
 
 MultiMod_Init()
 {
-	new szConfigDir[PLATFORM_MAX_PATH], szFileName[PLATFORM_MAX_PATH], szPluginsFile[PLATFORM_MAX_PATH], szMapsFile[PLATFORM_MAX_PATH];
-	get_configsdir(szConfigDir, charsmax(szConfigDir));
-
 	new szDefaultCurrentMap[MAX_MAPNAME_LENGTH];
 
-	formatex(szPluginsFile, charsmax(szPluginsFile), "%s/%s", szConfigDir, PLUGINS_FILENAME);
+	new szConfigDir[PLATFORM_MAX_PATH], szFileName[PLATFORM_MAX_PATH], szPluginsFile[PLATFORM_MAX_PATH];
+	get_configsdir(szConfigDir, PLATFORM_MAX_PATH-1);
+
+	formatex(szPluginsFile, PLATFORM_MAX_PATH-1, "%s/%s", szConfigDir, PLUGINS_FILENAME);
 	UTIL_GetCurrentMod(szPluginsFile, g_szCurrentMod, MAX_MODNAME_LENGTH-1, szDefaultCurrentMap, MAX_MAPNAME_LENGTH-1);
 
-	formatex(szFileName, charsmax(szFileName), "%s/multimod_manager/configs.json", szConfigDir);
+	formatex(szFileName, PLATFORM_MAX_PATH-1, "%s/multimod_manager/configs.json", szConfigDir);
 
 	if(!file_exists(szFileName))
 	{
-		set_fail_state("[MULTIMOD] Archivo '%s' no se encuentra!", szFileName);
+		set_fail_state("Error al encontrar el archivo [%s]", szFileName);
 		return;
 	}
 
-	new JSON:jsonConfigsFile = json_parse(szFileName, true, true);
+	new JSON:jConfigsFile = json_parse(szFileName, true, true);
 
-	if(jsonConfigsFile == Invalid_JSON)
+	if(jConfigsFile == Invalid_JSON || !json_is_object(jConfigsFile))
 	{
-		set_fail_state("[MULTIMOD] Archivo JSON invalido '%s'", szFileName);
+		set_fail_state("Error al analizar el archivo [%s]", szFileName);
 		return;
 	}
 
-	json_object_get_string(jsonConfigsFile, "global_chat_prefix", g_GlobalConfigs[ChatPrefix], charsmax(g_GlobalConfigs[ChatPrefix]));
+	json_object_get_string(jConfigsFile, "global_chat_prefix", g_GlobalConfigs[ChatPrefix], charsmax(g_GlobalConfigs[ChatPrefix]));
 
 	replace_string(g_GlobalConfigs[ChatPrefix], charsmax(g_GlobalConfigs[ChatPrefix]), "!y" , "^1");
 	replace_string(g_GlobalConfigs[ChatPrefix], charsmax(g_GlobalConfigs[ChatPrefix]), "!t" , "^3");
 	replace_string(g_GlobalConfigs[ChatPrefix], charsmax(g_GlobalConfigs[ChatPrefix]), "!g" , "^4");
 
 	new szReadFlags[30];
-	json_object_get_string(jsonConfigsFile, "adminflags.menu", szReadFlags, charsmax(szReadFlags), true);
+	json_object_get_string(jConfigsFile, "adminflags.menu", szReadFlags, charsmax(szReadFlags), true);
 	g_GlobalConfigs[AdminFlags_Menu] = read_flags(szReadFlags);
 
-	json_object_get_string(jsonConfigsFile, "adminflags.managemods", szReadFlags, charsmax(szReadFlags), true);
+	json_object_get_string(jConfigsFile, "adminflags.managemods", szReadFlags, charsmax(szReadFlags), true);
 	g_GlobalConfigs[AdminFlags_ManageMods] = read_flags(szReadFlags);
 
-	json_object_get_string(jsonConfigsFile, "adminflags.selectmenu", szReadFlags, charsmax(szReadFlags), true);
+	json_object_get_string(jConfigsFile, "adminflags.selectmenu", szReadFlags, charsmax(szReadFlags), true);
 	g_GlobalConfigs[AdminFlags_SelectMenu] = read_flags(szReadFlags);
 
-	json_object_get_string(jsonConfigsFile, "adminflags.votemenu", szReadFlags, charsmax(szReadFlags), true);
+	json_object_get_string(jConfigsFile, "adminflags.votemenu", szReadFlags, charsmax(szReadFlags), true);
 	g_GlobalConfigs[AdminFlags_VoteMenu] = read_flags(szReadFlags);
 
-	g_GlobalConfigs[RTV_Enabled] = json_object_get_bool(jsonConfigsFile, "rtv_enable");
-	g_GlobalConfigs[RTV_Cooldown] = max(0, json_object_get_number(jsonConfigsFile, "rtv_cooldown"));
-	g_GlobalConfigs[RTV_MinPlayers] = clamp(json_object_get_number(jsonConfigsFile, "rtv_minplayers"), 0, MAX_CLIENTS);
-	g_GlobalConfigs[RTV_Percentage] = clamp(json_object_get_number(jsonConfigsFile, "rtv_percentage"), 0, 100);
-	g_GlobalConfigs[AdminMaxOptionsInMenu] = clamp(json_object_get_number(jsonConfigsFile, "admin_max_options_in_menu"), 2, MAX_ADMIN_VOTEOPTIONS);
-	g_GlobalConfigs[ModsInMenu] = clamp(json_object_get_number(jsonConfigsFile, "mods_in_menu"), 2, (MAX_SELECTMODS - 1)); // La ultima opción se reserva para extender unicamente.
-	g_GlobalConfigs[MapsInMenu] = clamp(json_object_get_number(jsonConfigsFile, "maps_in_menu"), 2, MAX_SELECTMAPS);
-	g_GlobalConfigs[MaxRecentMods] = max(0, json_object_get_number(jsonConfigsFile, "max_recent_mods"));
-	g_GlobalConfigs[MaxRecentMaps] = max(0, json_object_get_number(jsonConfigsFile, "max_recent_maps"));
+	g_GlobalConfigs[RTV_Enabled] = json_object_get_bool(jConfigsFile, "rtv_enable");
+	g_GlobalConfigs[RTV_Cooldown] = max(0, json_object_get_number(jConfigsFile, "rtv_cooldown"));
+	g_GlobalConfigs[RTV_MinPlayers] = clamp(json_object_get_number(jConfigsFile, "rtv_minplayers"), 0, MAX_CLIENTS);
+	g_GlobalConfigs[RTV_Percentage] = clamp(json_object_get_number(jConfigsFile, "rtv_percentage"), 0, 100);
+	g_GlobalConfigs[AdminMaxOptionsInMenu] = clamp(json_object_get_number(jConfigsFile, "admin_max_options_in_menu"), 2, MAX_ADMIN_VOTEOPTIONS);
+	g_GlobalConfigs[ModsInMenu] = clamp(json_object_get_number(jConfigsFile, "mods_in_menu"), 2, (MAX_SELECTMODS - 1)); // La ultima opción se reserva para extender unicamente.
+	g_GlobalConfigs[MapsInMenu] = clamp(json_object_get_number(jConfigsFile, "maps_in_menu"), 2, MAX_SELECTMAPS);
+	g_GlobalConfigs[MaxRecentMods] = max(0, json_object_get_number(jConfigsFile, "max_recent_mods"));
+	g_GlobalConfigs[MaxRecentMaps] = max(0, json_object_get_number(jConfigsFile, "max_recent_maps"));
 
-	new JSON:jsonObjectMods = json_object_get_value(jsonConfigsFile, "mods");
-	new iCount = json_array_get_count(jsonObjectMods);
+	new JSON:jArrayMods = json_object_get_value(jConfigsFile, "mods");
+	new iCount = json_array_get_count(jArrayMods);
 
 	new bool:bReloadMod = true;
 
-	for(new i = 0, j, aMod[ArrayMods_e], JSON:jsonArrayValue, JSON:jsonObject, iJsonObjetCount; i < iCount; ++i)
+	for(new i = 0, j,
+		szCvarName[128], szPluginName[64],
+		szMapFile[PLATFORM_MAX_PATH],
+		aMod[ArrayMods_e], 
+		JSON:jArrayValue, 
+		JSON:jObjectMod, iObjetCount; i < iCount; ++i)
 	{
-		jsonArrayValue = json_array_get_value(jsonObjectMods, i);
+		jArrayValue = json_array_get_value(jArrayMods, i);
+
+		aMod[Enabled] = true;
+
+		json_object_get_string(jArrayValue, "modname", aMod[ModName], MAX_MODNAME_LENGTH-1);
+		json_object_get_string(jArrayValue, "mod_tag", aMod[ModTag], MAX_MODNAME_LENGTH-1);
+
+		aMod[ChangeMapType] = ChangeMap_e:json_object_get_number(jArrayValue, "change_map_type");
+
+		aMod[Maps] = ArrayCreate(MAX_MAPNAME_LENGTH);
+		json_object_get_string(jArrayValue, "mapsfile", szMapFile, charsmax(szMapFile));
+		format(szMapFile, PLATFORM_MAX_PATH-1, "%s/multimod_manager/mapsfiles/%s", szConfigDir, szMapFile);
+		MapChooser_LoadMaps(aMod[Maps], szMapFile);
+
+		aMod[Cvars] = ArrayCreate(128);
+		jObjectMod = json_object_get_value(jArrayValue, "cvars");
+		for(j = 0, iObjetCount = json_array_get_count(jObjectMod); j < iObjetCount; ++j)
 		{
-			aMod[Enabled] = true;
-
-			json_object_get_string(jsonArrayValue, "modname", aMod[ModName], MAX_MODNAME_LENGTH-1);
-			json_object_get_string(jsonArrayValue, "mod_tag", aMod[ModTag], MAX_MODNAME_LENGTH-1);
-
-			aMod[ChangeMapType] = ChangeMap_e:json_object_get_number(jsonArrayValue, "change_map_type");
-
-			aMod[Maps] = ArrayCreate(MAX_MAPNAME_LENGTH);
-			json_object_get_string(jsonArrayValue, "mapsfile", szMapsFile, charsmax(szMapsFile));
-			format(szMapsFile, charsmax(szMapsFile), "%s/multimod_manager/mapsfiles/%s", szConfigDir, szMapsFile);
-			MapChooser_LoadMaps(aMod[Maps], szMapsFile);
-
-			aMod[Cvars] = ArrayCreate(128);
-			jsonObject = json_object_get_value(jsonArrayValue, "cvars");
-			{
-				iJsonObjetCount = json_array_get_count(jsonObject);
-
-				j = 0;
-				for(new szCvarName[128]; j < iJsonObjetCount; ++j)
-				{
-					json_array_get_string(jsonObject, j, szCvarName, charsmax(szCvarName));
-					ArrayPushString(aMod[Cvars], szCvarName);
-				}
-			}
-			json_free(jsonObject);
-
-			aMod[Plugins] = ArrayCreate(64);
-			jsonObject = json_object_get_value(jsonArrayValue, "plugins");
-			{
-				iJsonObjetCount = json_array_get_count(jsonObject);
-
-				j = 0;
-				for(new szPluginName[64]; j < iJsonObjetCount; ++j)
-				{
-					json_array_get_string(jsonObject, j, szPluginName, charsmax(szPluginName));
-					ArrayPushString(aMod[Plugins], szPluginName);
-				}
-			}
-			json_free(jsonObject);
-
-			ArrayPushArray(g_GlobalConfigs[Mods], aMod);
-
-			// Modo actual?
-			if(equali(g_szCurrentMod, aMod[ModName]))
-			{
-				bReloadMod = false;
-				g_iCurrentMod = i;
-			}
+			json_array_get_string(jObjectMod, j, szCvarName, charsmax(szCvarName));
+			ArrayPushString(aMod[Cvars], szCvarName);
 		}
-		json_free(jsonArrayValue);
+		json_free(jObjectMod);
+
+		aMod[Plugins] = ArrayCreate(64);
+		jObjectMod = json_object_get_value(jArrayValue, "plugins");
+		for(j = 0, iObjetCount = json_array_get_count(jObjectMod); j < iObjetCount; ++j)
+		{
+			json_array_get_string(jObjectMod, j, szPluginName, charsmax(szPluginName));
+			ArrayPushString(aMod[Plugins], szPluginName);
+		}
+		json_free(jObjectMod);
+
+		ArrayPushArray(g_GlobalConfigs[Mods], aMod);
+
+		// Modo actual?
+		if(equali(g_szCurrentMod, aMod[ModName]))
+		{
+			bReloadMod = false;
+			g_iCurrentMod = i;
+		}
+
+		json_free(jArrayValue);
 	}
 
-	json_free(jsonObjectMods);
-	json_free(jsonConfigsFile);
+	json_free(jArrayMods);
+	json_free(jConfigsFile);
 	
 	if(!iCount)
 	{
@@ -255,11 +248,15 @@ MultiMod_Init()
 
 	if(bReloadMod)
 	{
-		engine_changelevel(IsValidMap(szDefaultCurrentMap) ? szDefaultCurrentMap : g_szCurrentMap);
+		UTIL_GetCurrentMod(szPluginsFile, g_szCurrentMod, MAX_MODNAME_LENGTH-1, szDefaultCurrentMap, MAX_MAPNAME_LENGTH-1);
+
+		set_task(2.0, "OnTask_ChangeMap", _, IsValidMap(szDefaultCurrentMap) ? szDefaultCurrentMap : g_szCurrentMap, MAX_MAPNAME_LENGTH);
 		return;
 	}
 
 	MultiMod_GetOffMods();
+	Recent_LoadRecentModsMaps();
+	Recent_SaveRecentModsMaps(g_iCurrentMod, g_szCurrentMap);
 	OnEvent_GameRestart();
 }
 
@@ -380,10 +377,9 @@ MultiMod_SetNextMod(const iNextMod)
 	new aDataNextMod[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], iNextMod, aDataNextMod);
 
-	new szConfigDir[PLATFORM_MAX_PATH], szFileName[PLATFORM_MAX_PATH];
-	get_configsdir(szConfigDir, charsmax(szConfigDir));
-
-	formatex(szFileName, charsmax(szFileName), "%s/%s", szConfigDir, PLUGINS_FILENAME);
+	new szFileName[PLATFORM_MAX_PATH];
+	get_configsdir(szFileName, PLATFORM_MAX_PATH-1);
+	add(szFileName, PLATFORM_MAX_PATH-1, fmt("/%s", PLUGINS_FILENAME));
 
 	new pPluginsFile = fopen(szFileName, "w+");
 
@@ -401,32 +397,31 @@ MultiMod_SetNextMod(const iNextMod)
 
 MultiMod_GetOffMods()
 {
-	new szConfigDir[PLATFORM_MAX_PATH], szFileName[PLATFORM_MAX_PATH];
-	get_configsdir(szConfigDir, charsmax(szConfigDir));
-
-	formatex(szFileName, charsmax(szFileName), "%s/multimod_manager/off_mods.json", szConfigDir);
+	new szFileName[PLATFORM_MAX_PATH];
+	get_configsdir(szFileName, PLATFORM_MAX_PATH-1);
+	add(szFileName, PLATFORM_MAX_PATH-1, "/multimod_manager/off_mods.json");
 
 	if(!file_exists(szFileName))
 		return;
 
-	new JSON:jsonConfigsFile = json_parse(szFileName, true);
+	new JSON:jConfigsFile = json_parse(szFileName, true);
 
-	if(jsonConfigsFile == Invalid_JSON)
+	if(jConfigsFile == Invalid_JSON)
 	{
 		abort(AMX_ERR_GENERAL, "Archivo JSON invalido [%s]", szFileName);
 		return;
 	}
 
-	if(!json_is_object(jsonConfigsFile))
+	if(!json_is_object(jConfigsFile))
 		return;
 
-	new JSON:jsonObjectMods = json_object_get_value(jsonConfigsFile, "off_mods");
-	new iCount = json_array_get_count(jsonObjectMods);
+	new JSON:jArrayMods = json_object_get_value(jConfigsFile, "off_mods");
+	new iCount = json_array_get_count(jArrayMods);
 	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
 
 	for(new i = 0, j, aMods[ArrayMods_e], szModName[MAX_MODNAME_LENGTH], bool:bFoundIt; i < iCount; ++i)
 	{
-		json_array_get_string(jsonObjectMods, i, szModName, MAX_MODNAME_LENGTH-1);
+		json_array_get_string(jArrayMods, i, szModName, MAX_MODNAME_LENGTH-1);
 
 		j = 0;
 		bFoundIt = false;
@@ -445,8 +440,8 @@ MultiMod_GetOffMods()
 			++j;
 		}
 	}
-	json_free(jsonObjectMods);
-	json_free(jsonConfigsFile);
+	json_free(jArrayMods);
+	json_free(jConfigsFile);
 }
 
 bool:MultiMod_SaveOffMods()
