@@ -26,7 +26,7 @@ Recent_LoadRecentModsMaps()
 		return;
 	}
 
-	if(g_GlobalConfigs[MaxRecentMods] && json_object_has_value(jRecentModsMaps, "recent_mods", JSONArray))
+	if(g_GlobalConfigs[MaxRecentMods] && json_is_object(jRecentModsMaps) && json_object_has_value(jRecentModsMaps, "recent_mods", JSONArray))
 	{
 		new JSON:jRecentMods = json_object_get_value(jRecentModsMaps, "recent_mods");
 
@@ -41,7 +41,7 @@ Recent_LoadRecentModsMaps()
 		json_free(jRecentMods);
 	}
 
-	if(g_GlobalConfigs[MaxRecentMaps] && json_object_has_value(jRecentModsMaps, "recent_maps", JSONObject))
+	if(g_GlobalConfigs[MaxRecentMaps] && json_is_object(jRecentModsMaps) && json_object_has_value(jRecentModsMaps, "recent_maps", JSONObject))
 	{
 		new JSON:jRecentMaps = json_object_get_value(jRecentModsMaps, "recent_maps");
 
