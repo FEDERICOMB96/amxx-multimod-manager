@@ -49,31 +49,15 @@ stock ChangeMap_e:UTIL_GetChangeMapType(const iMod)
 
 stock UTIL_RegisterClientCommandAll(const command[], function[], flags = -1, const info[] = "", FlagManager = -1, bool:info_ml = false)
 {
-	new sFormatCommand[PLATFORM_MAX_PATH];
+	register_clcmd(fmt("say %s", command), function, flags, info, FlagManager, info_ml);
+	register_clcmd(fmt("say /%s", command), function, flags, info, FlagManager, info_ml);
+	register_clcmd(fmt("say !%s", command), function, flags, info, FlagManager, info_ml);
+	register_clcmd(fmt("say .%s", command), function, flags, info, FlagManager, info_ml);
 
-	formatex(sFormatCommand, charsmax(sFormatCommand), "say %s", command);
-	register_clcmd(sFormatCommand, function, flags, info, FlagManager, info_ml);
-	
-	formatex(sFormatCommand, charsmax(sFormatCommand), "say /%s", command);
-	register_clcmd(sFormatCommand, function, flags, info, FlagManager, info_ml);
-
-	formatex(sFormatCommand, charsmax(sFormatCommand), "say !%s", command);
-	register_clcmd(sFormatCommand, function, flags, info, FlagManager, info_ml);
-	
-	formatex(sFormatCommand, charsmax(sFormatCommand), "say .%s", command);
-	register_clcmd(sFormatCommand, function, flags, info, FlagManager, info_ml);
-
-	formatex(sFormatCommand, charsmax(sFormatCommand), "say_team %s", command);
-	register_clcmd(sFormatCommand, function, flags, info, FlagManager, info_ml);
-	
-	formatex(sFormatCommand, charsmax(sFormatCommand), "say_team /%s", command);
-	register_clcmd(sFormatCommand, function, flags, info, FlagManager, info_ml);
-
-	formatex(sFormatCommand, charsmax(sFormatCommand), "say_team !%s", command);
-	register_clcmd(sFormatCommand, function, flags, info, FlagManager, info_ml);
-	
-	formatex(sFormatCommand, charsmax(sFormatCommand), "say_team .%s", command);
-	register_clcmd(sFormatCommand, function, flags, info, FlagManager, info_ml);
+	register_clcmd(fmt("say_team %s", command), function, flags, info, FlagManager, info_ml);
+	register_clcmd(fmt("say_team /%s", command), function, flags, info, FlagManager, info_ml);
+	register_clcmd(fmt("say_team !%s", command), function, flags, info, FlagManager, info_ml);
+	register_clcmd(fmt("say_team .%s", command), function, flags, info, FlagManager, info_ml);
 }
 
 public UTIL_GetPercent(const iVotes, const iTotal)
