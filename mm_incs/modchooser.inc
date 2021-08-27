@@ -568,7 +568,7 @@ public OnTask_ModChooserHudVote()
 
 bool:IsAvailableExtendMap()
 {
-	return bool:((get_pcvar_float(g_pCvar_mp_timelimit) < float(g_bCvar_amx_extendmap_max)) && !g_bIsRockTheVote);
+	return bool:(likely((g_bCvar_mp_winlimit + g_bCvar_mp_maxrounds) == 0) && likely(get_pcvar_float(g_pCvar_mp_timelimit) < float(g_bCvar_amx_extendmap_max)) && !g_bIsRockTheVote);
 }
 
 ExtendTimeleft(const iTime)
