@@ -207,31 +207,40 @@ MultiMod_Init()
 			format(szMapFile, PLATFORM_MAX_PATH-1, "%s/multimod_manager/mapsfiles/%s", szConfigDir, szMapFile);
 			MapChooser_LoadMaps(aMod[Maps], szMapFile);
 
-			aMod[Cvars] = ArrayCreate(128);
-			jObjectMod = json_object_get_value(jArrayValue, "cvars");
-			for(j = 0, iObjetCount = json_array_get_count(jObjectMod); j < iObjetCount; ++j)
+			// El modo contiene mapas
+			if(ArraySize(aMod[Maps]))
 			{
-				json_array_get_string(jObjectMod, j, szCvarName, charsmax(szCvarName));
-				ArrayPushString(aMod[Cvars], szCvarName);
+				aMod[Cvars] = ArrayCreate(128);
+				jObjectMod = json_object_get_value(jArrayValue, "cvars");
+				for(j = 0, iObjetCount = json_array_get_count(jObjectMod); j < iObjetCount; ++j)
+				{
+					json_array_get_string(jObjectMod, j, szCvarName, charsmax(szCvarName));
+					ArrayPushString(aMod[Cvars], szCvarName);
+				}
+				json_free(jObjectMod);
+
+				aMod[Plugins] = ArrayCreate(64);
+				jObjectMod = json_object_get_value(jArrayValue, "plugins");
+				for(j = 0, iObjetCount = json_array_get_count(jObjectMod); j < iObjetCount; ++j)
+				{
+					json_array_get_string(jObjectMod, j, szPluginName, charsmax(szPluginName));
+					ArrayPushString(aMod[Plugins], szPluginName);
+				}
+				json_free(jObjectMod);
+
+				ArrayPushArray(g_GlobalConfigs[Mods], aMod);
+
+				// Modo actual?
+				if(equali(g_szCurrentMod, aMod[ModName]))
+				{
+					bReloadMod = false;
+					g_iCurrentMod = i;
+				}
 			}
-			json_free(jObjectMod);
-
-			aMod[Plugins] = ArrayCreate(64);
-			jObjectMod = json_object_get_value(jArrayValue, "plugins");
-			for(j = 0, iObjetCount = json_array_get_count(jObjectMod); j < iObjetCount; ++j)
+			else
 			{
-				json_array_get_string(jObjectMod, j, szPluginName, charsmax(szPluginName));
-				ArrayPushString(aMod[Plugins], szPluginName);
-			}
-			json_free(jObjectMod);
-
-			ArrayPushArray(g_GlobalConfigs[Mods], aMod);
-
-			// Modo actual?
-			if(equali(g_szCurrentMod, aMod[ModName]))
-			{
-				bReloadMod = false;
-				g_iCurrentMod = i;
+				ArrayDestroy(aMod[Maps]);
+				log_amx("Modo: '%s' lista de mapas inválida. Modo omitido", aMod[ModName]);
 			}
 
 			json_free(jArrayValue);
