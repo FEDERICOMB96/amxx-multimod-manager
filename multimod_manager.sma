@@ -373,7 +373,7 @@ public OnClientCommand_Timeleft(const id)
 		{
 			if(g_bCvar_mp_winlimit)
 			{
-				client_print_color(id, print_team_blue, "%s^1 El primer equipo en llegar a^3 %s ronda%c ganada%c^1 ganará la partida", 
+				client_print_color(id, print_team_blue, "%s^1 El primer equipo en llegar a^3 %d ronda%c ganada%c^1 ganará la partida!", 
 					g_GlobalConfigs[ChatPrefix], g_bCvar_mp_winlimit, likely(g_bCvar_mp_winlimit == 1) ? 0 : 115, likely(g_bCvar_mp_winlimit == 1) ? 0 : 115);
 
 				client_print_color(id, print_team_default, "%s^1 T:^4 %d^1 | CT:^4 %d", g_GlobalConfigs[ChatPrefix], get_member_game(m_iNumTerroristWins), get_member_game(m_iNumCTWins));
