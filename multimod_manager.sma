@@ -87,6 +87,9 @@ public plugin_end()
 
 			if(aData[Plugins] != Invalid_Array)
 				ArrayDestroy(aData[Plugins]);
+
+			if(aData[ReSemiclip] != Invalid_Array)
+				ArrayDestroy(aData[ReSemiclip]);
 		}
 
 		ArrayDestroy(g_GlobalConfigs[Mods]);
@@ -182,6 +185,8 @@ MultiMod_Init()
 		g_GlobalConfigs[MapsInMenu] = clamp(json_object_get_number(jConfigsFile, "maps_in_menu"), 2, MAX_SELECTMAPS);
 		g_GlobalConfigs[MaxRecentMods] = max(0, json_object_get_number(jConfigsFile, "max_recent_mods"));
 		g_GlobalConfigs[MaxRecentMaps] = max(0, json_object_get_number(jConfigsFile, "max_recent_maps"));
+		g_GlobalConfigs[OverwriteMapcycle] = json_object_get_bool(jConfigsFile, "overwrite_mapcycle");
+		json_object_get_string(jConfigsFile, "resemiclip_path", g_GlobalConfigs[ReSemiclipPath], PLATFORM_MAX_PATH-1);
 
 		new JSON:jArrayMods = json_object_get_value(jConfigsFile, "mods");
 		new iCount = json_array_get_count(jArrayMods);
@@ -189,7 +194,7 @@ MultiMod_Init()
 		for(new i = 0, j,
 			szCvarName[128], szPluginName[64],
 			szMapFile[PLATFORM_MAX_PATH],
-			aMod[ArrayMods_e], 
+			aMod[ArrayMods_e], aReSemiclip[ArrayReSemiclip_e],
 			JSON:jArrayValue, 
 			JSON:jObjectMod, iObjetCount; i < iCount; ++i)
 		{
@@ -210,6 +215,13 @@ MultiMod_Init()
 			// El modo contiene mapas
 			if(ArraySize(aMod[Maps]))
 			{
+				// Modo actual?
+				if(equali(g_szCurrentMod, aMod[ModName]))
+				{
+					bReloadMod = false;
+					g_iCurrentMod = i;
+				}
+
 				aMod[Cvars] = ArrayCreate(128);
 				jObjectMod = json_object_get_value(jArrayValue, "cvars");
 				for(j = 0, iObjetCount = json_array_get_count(jObjectMod); j < iObjetCount; ++j)
@@ -228,14 +240,18 @@ MultiMod_Init()
 				}
 				json_free(jObjectMod);
 
-				ArrayPushArray(g_GlobalConfigs[Mods], aMod);
-
-				// Modo actual?
-				if(equali(g_szCurrentMod, aMod[ModName]))
+				aMod[ReSemiclip] = ArrayCreate(ArrayReSemiclip_e);
+				jObjectMod = json_object_get_value(jArrayValue, "resemiclip_config");
+				for(j = 0, iObjetCount = json_object_get_count(jObjectMod); j < iObjetCount; ++j)
 				{
-					bReloadMod = false;
-					g_iCurrentMod = i;
+					json_object_get_name(jObjectMod, j, aReSemiclip[KEY_NAME], MAX_RESEMICLIP_LENGTH-1);
+					json_object_get_string(jArrayValue, fmt("resemiclip_config.%s", aReSemiclip[KEY_NAME]), aReSemiclip[KEY_VALUE], MAX_RESEMICLIP_LENGTH-1, true);
+
+					ArrayPushArray(aMod[ReSemiclip], aReSemiclip);
 				}
+				json_free(jObjectMod);
+
+				ArrayPushArray(g_GlobalConfigs[Mods], aMod);
 			}
 			else
 			{
@@ -400,11 +416,40 @@ MultiMod_SetNextMod(const iNextMod)
 	{
 		fprintf(pPluginsFile, ";Mod:%s^n;Map:%a^n^n", aDataNextMod[ModName], ArrayGetStringHandle(aDataNextMod[Maps], 0));
 
-		new iPlugins = ArraySize(aDataNextMod[Plugins]);
-		for(new i = 0; i < iPlugins; ++i)
+		for(new i = 0, iPlugins = ArraySize(aDataNextMod[Plugins]); i < iPlugins; ++i)
 			fprintf(pPluginsFile, "%a^n", ArrayGetStringHandle(aDataNextMod[Plugins], i));
 
 		fclose(pPluginsFile);
+	}
+
+	if(likely(g_GlobalConfigs[OverwriteMapcycle] == true))
+	{
+		new pMapCycle = fopen("mapcycle.txt", "w+");
+
+		if(pMapCycle)
+		{
+			for(new i = 0, iMaps = ArraySize(aDataNextMod[Maps]); i < iMaps; ++i)
+				fprintf(pMapCycle, "%a^n", ArrayGetStringHandle(aDataNextMod[Maps], i));
+
+			fclose(pMapCycle);
+		}
+	}
+
+	if(strlen(g_GlobalConfigs[ReSemiclipPath]) && dir_exists(g_GlobalConfigs[ReSemiclipPath]))
+	{
+		new pConfigSemiclip = fopen(fmt("%s/config.ini", g_GlobalConfigs[ReSemiclipPath]), "w+");
+
+		if(pConfigSemiclip)
+		{
+			for(new i = 0, aReSemiclip[ArrayReSemiclip_e], 
+				iConfigCount = ArraySize(aDataNextMod[ReSemiclip]); i < iConfigCount; ++i)
+			{
+				ArrayGetArray(aDataNextMod[ReSemiclip], i, aReSemiclip);
+				fprintf(pConfigSemiclip, "%s = %s;^n", aReSemiclip[KEY_NAME], aReSemiclip[KEY_VALUE]);
+			}
+
+			fclose(pConfigSemiclip);
+		}
 	}
 }
 

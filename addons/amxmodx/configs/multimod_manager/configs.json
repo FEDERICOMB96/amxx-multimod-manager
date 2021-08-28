@@ -24,6 +24,14 @@
 	"max_recent_mods": 5,   // min = 0
 	"max_recent_maps": 5,   // min = 0
 
+	"overwrite_mapcycle": true, // true / false (sobrescribe el mapcycle.txt con los mapas del modo seleccionado)
+
+	"resemiclip_path": "", 
+		// Ruta de donde se encuentra el complemento
+		// Dejar vacio para desactivar esta opción ("")
+		// Si la ruta no existe, se considerara como desactivado
+		// Ej.: "addons/resemiclip"
+
 	"mods":
 	[
 		// Primer modo sera el modo por defecto, no se podrá bloquear
@@ -63,11 +71,23 @@
 			"plugins":
 			[
 				"plugin10.amxx", "plugin20.amxx"
-			]
+			],
 				// Plugins que se necesitan para este modo, todos los que quieras
 				// Cada plugin entre comillas, se parados por comas y con su extensión correspondiente.
 				// Ej.: "plugins": [ "gungame.amxx", "ultimate_sounds.amxx", "csstats.amxx" ]
 				// Dejar "plugins": [ ] // Para no cargar plugins
+
+			"resemiclip_config":
+			{
+				"semiclip": "1",
+				"team": "3", // 0 = all | 1 = T | 2 = CT | 3 = Team
+				"time": "0",
+				"crouch": "0",
+				"effects": "0",
+				"distance": "250",
+				"transparency": "0",
+				"penetfire": "0"
+			}
 		},
 		{
 			"modname":"DeathMatch",
@@ -81,7 +101,18 @@
 			"plugins":
 			[
 				"plugin11.amxx", "plugin21.amxx", "plugin33.amxx", "plugin44.amxx", "plugin5.amxx"
-			]
+			],
+			"resemiclip_config":
+			{
+				"semiclip": "1",
+				"team": "3",
+				"time": "0",
+				"crouch": "0",
+				"effects": "0",
+				"distance": "250",
+				"transparency": "0",
+				"penetfire": "0"
+			}
 		},
 		{
 			"modname":"Fruta",
@@ -95,7 +126,18 @@
 			"plugins":
 			[
 				"plugin12.amxx", "plugin22.amxx", "plugin32.amxx", "plugin42.amxx"
-			]
+			],
+			"resemiclip_config":
+			{
+				"semiclip": "1",
+				"team": "3",
+				"time": "0",
+				"crouch": "0",
+				"effects": "0",
+				"distance": "250",
+				"transparency": "0",
+				"penetfire": "0"
+			}
 		},
 		{
 			"modname":"Zombie Plague",
@@ -109,7 +151,18 @@
 			"plugins":
 			[
 				"plugin13.amxx", "plugin23.amxx", "plugin33.amxx", "plugin43.amxx", "plugin53.amxx", "plugin63.amxx", "plugin73.amxx"
-			]
+			],
+			"resemiclip_config":
+			{
+				"semiclip": "1",
+				"team": "3",
+				"time": "0",
+				"crouch": "0",
+				"effects": "0",
+				"distance": "250",
+				"transparency": "0",
+				"penetfire": "0"
+			}
 		},
 		{
 			"modname":"PaintBall",
@@ -123,7 +176,18 @@
 			"plugins":
 			[
 				"plugin14.amxx", "plugin24.amxx", "plugin34.amxx", "plugin44.amxx"
-			]
+			],
+			"resemiclip_config":
+			{
+				"semiclip": "1",
+				"team": "3",
+				"time": "0",
+				"crouch": "0",
+				"effects": "0",
+				"distance": "250",
+				"transparency": "0",
+				"penetfire": "0"
+			}
 		},
 		{
 			"modname":"HNS",
@@ -137,7 +201,18 @@
 			"plugins":
 			[
 				"plugin15.amxx", "plugin25.amxx", "plugin35.amxx", "plugin45.amxx"
-			]
+			],
+			"resemiclip_config":
+			{
+				"semiclip": "1",
+				"team": "3",
+				"time": "0",
+				"crouch": "0",
+				"effects": "0",
+				"distance": "250",
+				"transparency": "0",
+				"penetfire": "0"
+			}
 		},
 		{
 			"modname":"Surf",
@@ -151,7 +226,18 @@
 			"plugins":
 			[
 				"plugin15.amxx", "plugin25.amxx", "plugin35.amxx"
-			]
+			],
+			"resemiclip_config":
+			{
+				"semiclip": "1",
+				"team": "3",
+				"time": "0",
+				"crouch": "0",
+				"effects": "0",
+				"distance": "250",
+				"transparency": "0",
+				"penetfire": "0"
+			}
 		}
 	]
 }

@@ -17,6 +17,7 @@
 
 #define MAX_MODNAME_LENGTH 				64
 #define MAX_MAPNAME_LENGTH 				64
+#define MAX_RESEMICLIP_LENGTH			64
 
 #define MAX_ADMIN_VOTEOPTIONS			9
 #define MAX_SELECTMODS					9
@@ -69,6 +70,7 @@ enum _:ArrayMods_e
 	Array:Maps,
 	Array:Cvars,
 	Array:Plugins,
+	Array:ReSemiclip,
 };
 
 enum _:ArrayRecentMaps_e
@@ -76,6 +78,12 @@ enum _:ArrayRecentMaps_e
 	RECENT_MOD_NAME[MAX_MODNAME_LENGTH],
 	RECENT_MAP_NAME[MAX_MAPNAME_LENGTH],
 	RECENT_MAP_COUNT,
+};
+
+enum _:ArrayReSemiclip_e
+{
+	KEY_NAME[MAX_RESEMICLIP_LENGTH],
+	KEY_VALUE[MAX_RESEMICLIP_LENGTH],
 };
 
 enum GlobalConfigs_e
@@ -105,6 +113,12 @@ enum GlobalConfigs_e
 	// Max recent Mods/Maps
 	MaxRecentMods,
 	MaxRecentMaps,
+
+	// Overwrite Mapcycle
+	bool:OverwriteMapcycle,
+
+	// resemiclip_path
+	ReSemiclipPath[PLATFORM_MAX_PATH],
 
 	// Mods
 	Array:Mods,
