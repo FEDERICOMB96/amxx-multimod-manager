@@ -50,6 +50,10 @@ public plugin_init()
 	register_event_ex("TextMsg", "OnEvent_GameRestart", RegisterEvent_Global, "2&#Game_will_restart_in");
 	register_event_ex("HLTV", "OnEvent_HLTV", RegisterEvent_Global, "1=0", "2=0");
 
+	UTIL_RegisterClientCommandAll("nextmod", "OnClientCommand_NextMod");
+	UTIL_RegisterClientCommandAll("nextmap", "OnClientCommand_NextMap");
+	UTIL_RegisterClientCommandAll("timeleft", "OnClientCommand_Timeleft");
+
 	g_Hud_Vote = CreateHudSyncObj();
 	g_Hud_Alert = CreateHudSyncObj();
 
@@ -324,6 +328,69 @@ public OnEvent_HLTV()
 		client_cmd(0, "spk ^"%s^"", g_SOUND_ExtendTime);
 		client_print_color(0, print_team_default, "%s^1 El mapa cambiará al finalizar la ronda!", g_GlobalConfigs[ChatPrefix]);
 	}
+}
+
+public OnClientCommand_NextMod(const id)
+{
+	CHECK_CONNECTED(id)
+
+	if(g_bSelectedNextMod)
+	{
+		new aMod[ArrayMods_e];
+		ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMod);
+
+		client_print_color(id, print_team_blue, "%s^1 El siguiente modo será:^3 %s", g_GlobalConfigs[ChatPrefix], aMod[ModName]);
+		return PLUGIN_HANDLED;
+	}
+
+	client_print_color(id, print_team_default, "%s^1 El siguiente modo todavía no ha sido elegido!", g_GlobalConfigs[ChatPrefix]);
+	return PLUGIN_HANDLED;
+}
+
+public OnClientCommand_NextMap(const id)
+{
+	CHECK_CONNECTED(id)
+
+	if(g_bSelectedNextMap)
+	{
+		client_print_color(id, print_team_blue, "%s^1 El siguiente mapa será:^3 %s", g_GlobalConfigs[ChatPrefix], g_bCvar_amx_nextmap);
+		return PLUGIN_HANDLED;
+	}
+
+	client_print_color(id, print_team_default, "%s^1 El siguiente mapa todavía no ha sido elegido!", g_GlobalConfigs[ChatPrefix]);
+	return PLUGIN_HANDLED;
+}
+
+public OnClientCommand_Timeleft(const id)
+{
+	CHECK_CONNECTED(id)
+
+	switch(g_iNoMoreTime)
+	{
+		case 1: client_print_color(id, print_team_default, "%s^1 Esperando a que finalice la ronda actual para cambiar de mapa!", g_GlobalConfigs[ChatPrefix]);
+		case 2: client_print_color(id, print_team_blue, "%s^1 El siguiente mapa será:^3 %s", g_GlobalConfigs[ChatPrefix], g_bCvar_amx_nextmap);
+		default:
+		{
+			if(g_bCvar_mp_winlimit)
+			{
+				client_print_color(id, print_team_blue, "%s^1 El primer equipo en llegar a^3 %s ronda%c ganada%c^1 ganará la partida", 
+					g_GlobalConfigs[ChatPrefix], g_bCvar_mp_winlimit, likely(g_bCvar_mp_winlimit == 1) ? 0 : 115, likely(g_bCvar_mp_winlimit == 1) ? 0 : 115);
+
+				client_print_color(id, print_team_default, "%s^1 T:^4 %d^1 | CT:^4 %d", g_GlobalConfigs[ChatPrefix], get_member_game(m_iNumTerroristWins), get_member_game(m_iNumCTWins));
+			}
+			else if(g_bCvar_mp_maxrounds)
+				client_print_color(id, print_team_blue, "%s^1 Rondas restantes:^3 %d", g_GlobalConfigs[ChatPrefix], (g_bCvar_mp_maxrounds - (get_member_game(m_iNumCTWins) + get_member_game(m_iNumTerroristWins))));
+			else if(!get_pcvar_float(g_pCvar_mp_timelimit))
+				client_print_color(id, print_team_blue, "%s^1 Tiempo restante:^3 Ilimitado", g_GlobalConfigs[ChatPrefix]);
+			else
+			{
+				new z = get_timeleft();
+				client_print_color(id, print_team_blue, "%s^1 Tiempo restante:^3 %d:%02d", g_GlobalConfigs[ChatPrefix], (z / 60), (z % 60));
+			}
+		}
+	}
+
+	return PLUGIN_HANDLED;
 }
 
 public OnTask_CheckVoteNextMod()

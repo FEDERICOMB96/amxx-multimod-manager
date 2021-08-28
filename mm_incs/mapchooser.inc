@@ -540,7 +540,7 @@ public OnTask_ChangeTimeLeft()
 	message_begin(MSG_ALL, SVC_INTERMISSION);
 	message_end();
 	
-	set_task(2.0, "OnTask_ChangeMap", _, g_bCvar_amx_nextmap, sizeof(g_bCvar_amx_nextmap));
+	set_task(2.0, "OnTask_ChangeMap", _, g_bCvar_amx_nextmap, MAX_MAPNAME_LENGTH);
 	
 	client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será:^3 %s", g_GlobalConfigs[ChatPrefix], g_bCvar_amx_nextmap);
 }
