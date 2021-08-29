@@ -8,6 +8,7 @@ new const PLUGINS_FILENAME[] = "plugins-multimodmanager.ini";
 #include <amxmodx>
 #include <amxmisc>
 #include <reapi>
+#include <fakemeta>
 #include <json>
 #include "mm_incs/defines"
 #include "mm_incs/global"
@@ -40,6 +41,7 @@ public plugin_precache()
 
 	Cvars_Init();
 	MultiMod_Init();
+	MultiMod_ExecCvars(g_iCurrentMod);
 }
 
 public plugin_init()
@@ -53,6 +55,8 @@ public plugin_init()
 	UTIL_RegisterClientCommandAll("nextmod", "OnClientCommand_NextMod");
 	UTIL_RegisterClientCommandAll("nextmap", "OnClientCommand_NextMap");
 	UTIL_RegisterClientCommandAll("timeleft", "OnClientCommand_Timeleft");
+
+	register_forward(FM_GetGameDescription, "OnGetGameDescription_Pre", 0);
 
 	g_Hud_Vote = CreateHudSyncObj();
 	g_Hud_Alert = CreateHudSyncObj();
@@ -191,6 +195,7 @@ MultiMod_Init()
 		g_GlobalConfigs[MaxRecentMaps] = max(0, json_object_get_number(jConfigsFile, "max_recent_maps"));
 		g_GlobalConfigs[OverwriteMapcycle] = json_object_get_bool(jConfigsFile, "overwrite_mapcycle");
 		json_object_get_string(jConfigsFile, "resemiclip_path", g_GlobalConfigs[ReSemiclipPath], PLATFORM_MAX_PATH-1);
+		g_GlobalConfigs[ChangeGameDescription] = json_object_get_bool(jConfigsFile, "change_game_description");
 
 		new JSON:jArrayMods = json_object_get_value(jConfigsFile, "mods");
 		new iCount = json_array_get_count(jArrayMods);
@@ -391,6 +396,20 @@ public OnClientCommand_Timeleft(const id)
 	}
 
 	return PLUGIN_HANDLED;
+}
+
+public OnGetGameDescription_Pre()
+{
+	if(likely(g_GlobalConfigs[ChangeGameDescription] == true))
+	{
+		new aMod[ArrayMods_e];
+		ArrayGetArray(g_GlobalConfigs[Mods], g_iCurrentMod, aMod);
+
+		forward_return(FMV_STRING, aMod[ModName]);
+		return FMRES_SUPERCEDE;
+	}
+
+	return FMRES_IGNORED;
 }
 
 public OnTask_CheckVoteNextMod()

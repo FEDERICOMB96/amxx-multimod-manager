@@ -32,6 +32,8 @@
 		// Si la ruta no existe, se considerara como desactivado
 		// Ej.: "addons/resemiclip"
 
+	"change_game_description": true, // true / false (Cambia la descripción de la partida con el nombre del modo)
+
 	"mods":
 	[
 		// Primer modo sera el modo por defecto, no se podrá bloquear
