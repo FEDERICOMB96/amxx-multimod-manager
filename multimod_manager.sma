@@ -284,16 +284,17 @@ MultiMod_Init()
 		return;
 	}
 
-	MultiMod_SetNextMod(0); // First mod as default
-
 	if(bReloadMod)
 	{
+		g_iNextSelectMod = 0;
+		MultiMod_SetNextMod(g_iNextSelectMod); // First mod as default
 		UTIL_GetCurrentMod(szPluginsFile, g_szCurrentMod, MAX_MODNAME_LENGTH-1, szDefaultCurrentMap, MAX_MAPNAME_LENGTH-1);
 
 		set_task(2.0, "OnTask_ChangeMap", _, IsValidMap(szDefaultCurrentMap) ? szDefaultCurrentMap : g_szCurrentMap, MAX_MAPNAME_LENGTH);
 		return;
 	}
 
+	MultiMod_ClearPluginsFile();
 	MultiMod_OverwriteMapCycle(g_iCurrentMod);
 	MultiMod_GetOffMods();
 	Recent_LoadRecentModsMaps();
@@ -527,6 +528,18 @@ MultiMod_SetNextMod(const iNextMod)
 			fclose(pConfigSemiclip);
 		}
 	}
+}
+
+MultiMod_ClearPluginsFile()
+{
+	new szFileName[PLATFORM_MAX_PATH];
+	get_configsdir(szFileName, PLATFORM_MAX_PATH-1);
+	add(szFileName, PLATFORM_MAX_PATH-1, fmt("/%s", PLUGINS_FILENAME));
+
+	new pPluginsFile = fopen(szFileName, "w+");
+
+	if(pPluginsFile)
+		fclose(pPluginsFile);
 }
 
 MultiMod_OverwriteMapCycle(const iMod)
