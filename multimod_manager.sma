@@ -186,10 +186,10 @@ MultiMod_Init()
 		json_object_get_string(jConfigsFile, "adminflags.votemenu", szReadFlags, charsmax(szReadFlags), true);
 		g_GlobalConfigs[AdminFlags_VoteMenu] = read_flags(szReadFlags);
 
-		g_GlobalConfigs[RTV_Enabled] = json_object_get_bool(jConfigsFile, "rtv_enable");
-		g_GlobalConfigs[RTV_Cooldown] = max(0, json_object_get_number(jConfigsFile, "rtv_cooldown"));
-		g_GlobalConfigs[RTV_MinPlayers] = clamp(json_object_get_number(jConfigsFile, "rtv_minplayers"), 0, MAX_CLIENTS);
-		g_GlobalConfigs[RTV_Percentage] = clamp(json_object_get_number(jConfigsFile, "rtv_percentage"), 0, 100);
+		g_GlobalConfigs[RTV_Enabled] = json_object_get_bool(jConfigsFile, "rockthevote.enable", true);
+		g_GlobalConfigs[RTV_Cooldown] = max(0, json_object_get_number(jConfigsFile, "rockthevote.cooldown", true));
+		g_GlobalConfigs[RTV_MinPlayers] = clamp(json_object_get_number(jConfigsFile, "rockthevote.minplayers", true), 0, MAX_CLIENTS);
+		g_GlobalConfigs[RTV_Percentage] = clamp(json_object_get_number(jConfigsFile, "rockthevote.percentage", true), 0, 100);
 		g_GlobalConfigs[AdminMaxOptionsInMenu] = clamp(json_object_get_number(jConfigsFile, "admin_max_options_in_menu"), 2, MAX_ADMIN_VOTEOPTIONS);
 		g_GlobalConfigs[ModsInMenu] = clamp(json_object_get_number(jConfigsFile, "mods_in_menu"), 2, (MAX_SELECTMODS - 1)); // La ultima opción se reserva para extender unicamente.
 		g_GlobalConfigs[MapsInMenu] = clamp(json_object_get_number(jConfigsFile, "maps_in_menu"), 2, MAX_SELECTMAPS);
