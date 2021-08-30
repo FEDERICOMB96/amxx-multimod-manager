@@ -80,6 +80,8 @@ public plugin_end()
 	if(g_RestoreTimelimit)
 		set_pcvar_float(g_pCvar_mp_timelimit, g_RestoreTimelimit);
 
+	MultiMod_OverwriteMapCycle(g_iNextSelectMod);
+
 	if(g_GlobalConfigs[Mods] != Invalid_Array)
 	{
 		new iSize = ArraySize(g_GlobalConfigs[Mods]);
@@ -231,7 +233,7 @@ MultiMod_Init()
 					g_iCurrentMod = i;
 				}
 
-				aMod[Cvars] = ArrayCreate(128);
+				aMod[Cvars] = ArrayCreate(PLATFORM_MAX_PATH);
 				jObjectMod = json_object_get_value(jArrayValue, "cvars");
 				for(j = 0, iObjetCount = json_array_get_count(jObjectMod); j < iObjetCount; ++j)
 				{
@@ -292,6 +294,7 @@ MultiMod_Init()
 		return;
 	}
 
+	MultiMod_OverwriteMapCycle(g_iCurrentMod);
 	MultiMod_GetOffMods();
 	Recent_LoadRecentModsMaps();
 	Recent_SaveRecentModsMaps(g_iCurrentMod, g_szCurrentMap);
@@ -508,19 +511,6 @@ MultiMod_SetNextMod(const iNextMod)
 		fclose(pPluginsFile);
 	}
 
-	if(likely(g_GlobalConfigs[OverwriteMapcycle] == true))
-	{
-		new pMapCycle = fopen("mapcycle.txt", "w+");
-
-		if(pMapCycle)
-		{
-			for(new i = 0, iMaps = ArraySize(aDataNextMod[Maps]); i < iMaps; ++i)
-				fprintf(pMapCycle, "%a^n", ArrayGetStringHandle(aDataNextMod[Maps], i));
-
-			fclose(pMapCycle);
-		}
-	}
-
 	if(strlen(g_GlobalConfigs[ReSemiclipPath]) && dir_exists(g_GlobalConfigs[ReSemiclipPath]))
 	{
 		new pConfigSemiclip = fopen(fmt("%s/config.ini", g_GlobalConfigs[ReSemiclipPath]), "w+");
@@ -535,6 +525,25 @@ MultiMod_SetNextMod(const iNextMod)
 			}
 
 			fclose(pConfigSemiclip);
+		}
+	}
+}
+
+MultiMod_OverwriteMapCycle(const iMod)
+{
+	if(likely(g_GlobalConfigs[OverwriteMapcycle] == true))
+	{
+		new aDataNextMod[ArrayMods_e];
+		ArrayGetArray(g_GlobalConfigs[Mods], iMod, aDataNextMod);
+
+		new pMapCycle = fopen("mapcycle.txt", "w+");
+
+		if(pMapCycle)
+		{
+			for(new i = 0, iMaps = ArraySize(aDataNextMod[Maps]); i < iMaps; ++i)
+				fprintf(pMapCycle, "%a^n", ArrayGetStringHandle(aDataNextMod[Maps], i));
+
+			fclose(pMapCycle);
 		}
 	}
 }
