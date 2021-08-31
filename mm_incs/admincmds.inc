@@ -89,7 +89,7 @@ ShowMenu_AdminMultimod(const id)
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], g_iCurrentMod, aMods);
 
-	new iMenu = menu_create(fmt("\yMULTIMOD MANAGER^n\dModo actual: [ %s ]\y\R", aMods[ModName]), "menu_AdminMultimod");
+	new iMenu = menu_create(fmt("\yMULTIMOD MANAGER^n\dModo actual: [ %s ]^nMapa actual: [ %s ]\y\R", aMods[ModName], g_szCurrentMap), "menu_AdminMultimod");
 
 	ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_SelectedMod[id], aMods);
 	menu_additem(iMenu, fmt("Elegir un\y siguiente modo\r [ %s ]", aMods[ModName]));
