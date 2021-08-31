@@ -34,6 +34,38 @@ MapChooser_ResetAllData()
 
 MapChooser_InitNextVoteMap(iStartVote)
 {
+	new aMods[ArrayMods_e];
+	ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMods);
+
+	if(likely(ArraySize(aMods[Maps]) < 2))
+	{
+		new szMap[MAX_MAPNAME_LENGTH];
+		ArrayGetString(aMods[Maps], 0, szMap, MAX_MAPNAME_LENGTH-1);
+		set_pcvar_string(g_pCvar_amx_nextmap, szMap);
+
+		client_print_color(0, print_team_blue, "%s^1 El próximo mapa será^3 %s^1!", g_GlobalConfigs[ChatPrefix], aMods[ModName]);
+		
+		MapChooser_ResetAllData();
+		Nominations_ResetAllData();
+
+		g_bSelectedNextMap = true;
+
+		if(g_bIsRockTheVote)
+		{
+			g_bVoteRtvResult = true;
+			
+			remove_task(TASK_TIMELEFT);
+			set_task(1.0, "OnTask_ChangeTimeLeft", TASK_TIMELEFT);
+			
+			return;
+		}
+
+		g_iChangeMapTime = 10;
+
+		ExecChangeTimeleft();
+		return;
+	}
+
 	new Float:flStartVote = float(max(10, iStartVote));
 
 	SetAlertStartNextVote(flStartVote - 10.0, 10);
@@ -67,37 +99,9 @@ public OnTask_VoteNextMap()
 	ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMods);
 
 	new iRecentMaps = Recent_CountRecentMaps(g_iNextSelectMod);
-
 	new iArraySizeMaps = ArraySize(aMods[Maps]);
-	if(likely(iArraySizeMaps < 2))
-	{
-		new szMap[MAX_MAPNAME_LENGTH];
-		ArrayGetString(aMods[Maps], 0, szMap, MAX_MAPNAME_LENGTH-1);
-		set_pcvar_string(g_pCvar_amx_nextmap, szMap);
-
-		client_print_color(0, print_team_blue, "%s^1 El próximo mapa será^3 %s^1!", g_GlobalConfigs[ChatPrefix], aMods[ModName]);
-		
-		MapChooser_ResetAllData();
-		Nominations_ResetAllData();
-
-		g_bSelectedNextMap = true;
-
-		if(g_bIsRockTheVote)
-		{
-			g_bVoteRtvResult = true;
-			
-			remove_task(TASK_TIMELEFT);
-			set_task(1.0, "OnTask_ChangeTimeLeft", TASK_TIMELEFT);
-			
-			return;
-		}
-
-		g_iChangeMapTime = 10;
-
-		ExecChangeTimeleft();
-		return;
-	}
-	else if(likely(iArraySizeMaps <= iRecentMaps))
+	
+	if(likely(iArraySizeMaps <= iRecentMaps))
 		iRecentMaps = 0;
 
 	new iMaxMaps = min(g_GlobalConfigs[MapsInMenu], (iArraySizeMaps - iRecentMaps));
