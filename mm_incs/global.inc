@@ -19,6 +19,7 @@ new g_iCountdownTime;
 
 new Float:g_RestoreTimelimit;
 
+new bool:g_bGameOver;
 new bool:g_bVoteInProgress;
 
 new g_Hud_Vote;
@@ -45,6 +46,8 @@ new g_bCvar_amx_extendmap_step;
 new g_bCvar_amx_vote_answers;
 new g_bCvar_amx_last_voting, g_pCvar_amx_last_voting;
 new g_bCvar_amx_vote_delay_mm;
+new Float:g_bCvar_mp_chattime, g_pCvar_mp_chattime;
+new g_bCvar_mp_timelimit;
 
 
 /* ===========================================================================

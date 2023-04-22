@@ -52,6 +52,8 @@ public plugin_init()
 	register_event_ex("TextMsg", "OnEvent_GameRestart", RegisterEvent_Global, "2&#Game_will_restart_in");
 	register_event_ex("HLTV", "OnEvent_HLTV", RegisterEvent_Global, "1=0", "2=0");
 
+	RegisterHookChain(RG_CSGameRules_GoToIntermission, "OnCSGameRules_GoToIntermission", 0);
+
 	UTIL_RegisterClientCommandAll("nextmod", "OnClientCommand_NextMod");
 	UTIL_RegisterClientCommandAll("nextmap", "OnClientCommand_NextMap");
 	UTIL_RegisterClientCommandAll("timeleft", "OnClientCommand_Timeleft");
@@ -66,6 +68,8 @@ public plugin_init()
 	MapChooser_Init();
 	RockTheVote_Init();
 	Nominations_Init();
+
+	g_bGameOver = false;
 }
 
 public OnConfigsExecuted()
@@ -290,7 +294,7 @@ MultiMod_Init()
 		MultiMod_SetNextMod(g_iNextSelectMod); // First mod as default
 		UTIL_GetCurrentMod(szPluginsFile, g_szCurrentMod, MAX_MODNAME_LENGTH-1, szDefaultCurrentMap, MAX_MAPNAME_LENGTH-1);
 
-		set_task(2.0, "OnTask_ChangeMap", _, IsValidMap(szDefaultCurrentMap) ? szDefaultCurrentMap : g_szCurrentMap, MAX_MAPNAME_LENGTH);
+		set_task(2.0, "OnTask_ChangeMap", 0, IsValidMap(szDefaultCurrentMap) ? szDefaultCurrentMap : g_szCurrentMap, MAX_MAPNAME_LENGTH);
 		return;
 	}
 
@@ -320,14 +324,8 @@ public OnEvent_HLTV()
 {
 	if((g_iNoMoreTime == 1 && !g_bChangeMapOneMoreRound) || (g_bVoteRtvResult && g_iNoMoreTime == 1))
 	{
-		g_iNoMoreTime = 2;
-		
-		set_task(2.0, "OnTask_ChangeMap", _, g_bCvar_amx_nextmap, sizeof(g_bCvar_amx_nextmap));
-		
-		message_begin(MSG_ALL, SVC_INTERMISSION);
-		message_end();
-		
-		client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será:^3 %s", g_GlobalConfigs[ChatPrefix], g_bCvar_amx_nextmap);
+		OnCSGameRules_GoToIntermission();
+		return;
 	}
 
 	if(g_bChangeMapOneMoreRound)
@@ -337,6 +335,32 @@ public OnEvent_HLTV()
 		client_cmd(0, "spk ^"%s^"", g_SOUND_ExtendTime);
 		client_print_color(0, print_team_default, "%s^1 El mapa cambiará al finalizar la ronda!", g_GlobalConfigs[ChatPrefix]);
 	}
+}
+
+public OnCSGameRules_GoToIntermission()
+{
+	if(g_bGameOver)
+		return HC_BREAK;
+
+	new Float:flChatTime = floatclamp(g_bCvar_mp_chattime, 0.1, 120.0);
+	set_pcvar_float(g_pCvar_mp_chattime, flChatTime + 2.0);
+	
+	set_task(flChatTime, "OnTask_ChangeMap", 1, g_bCvar_amx_nextmap, sizeof(g_bCvar_amx_nextmap));
+
+	g_iNoMoreTime = 2;
+
+	message_begin(MSG_ALL, SVC_INTERMISSION);
+	message_end();
+	
+	client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será:^3 %s", g_GlobalConfigs[ChatPrefix], g_bCvar_amx_nextmap);
+
+	g_bGameOver = true;
+	set_member_game(m_iEndIntermissionButtonHit, 0);
+	set_member_game(m_iSpawnPointCount_Terrorist, 0);
+	set_member_game(m_iSpawnPointCount_CT, 0);
+	set_member_game(m_bLevelInitialized, false);
+
+	return HC_BREAK;
 }
 
 public OnClientCommand_NextMod(const id)
@@ -380,16 +404,23 @@ public OnClientCommand_Timeleft(const id)
 		case 2: client_print_color(id, print_team_blue, "%s^1 El siguiente mapa será:^3 %s", g_GlobalConfigs[ChatPrefix], g_bCvar_amx_nextmap);
 		default:
 		{
-			if(g_bCvar_mp_winlimit)
+			if((g_bCvar_mp_maxrounds != 0) || (g_bCvar_mp_winlimit != 0))
 			{
-				client_print_color(id, print_team_blue, "%s^1 El primer equipo en llegar a^3 %d ronda%c ganada%c^1 ganará la partida!", 
-					g_GlobalConfigs[ChatPrefix], g_bCvar_mp_winlimit, likely(g_bCvar_mp_winlimit == 1) ? 0 : 115, likely(g_bCvar_mp_winlimit == 1) ? 0 : 115);
+				if(g_bCvar_mp_maxrounds != 0)
+				{
+					client_print_color(id, print_team_blue, "%s^1 Máximo de rondas:^3 %d^1 - Rondas restantes:^3 %d", g_GlobalConfigs[ChatPrefix], 
+						g_bCvar_mp_maxrounds, (g_bCvar_mp_maxrounds - (get_member_game(m_iTotalRoundsPlayed))));
+				}
 
-				client_print_color(id, print_team_default, "%s^1 T:^4 %d^1 | CT:^4 %d", g_GlobalConfigs[ChatPrefix], get_member_game(m_iNumTerroristWins), get_member_game(m_iNumCTWins));
+				if(g_bCvar_mp_winlimit != 0)
+				{
+					client_print_color(id, print_team_blue, "%s^1 El primer equipo en llegar a^3 %d ronda%c ganada%c^1 ganará la partida!", 
+						g_GlobalConfigs[ChatPrefix], g_bCvar_mp_winlimit, likely(g_bCvar_mp_winlimit == 1) ? 0 : 115, likely(g_bCvar_mp_winlimit == 1) ? 0 : 115);
+
+					client_print_color(id, print_team_default, "%s^1 T:^4 %d^1 | CT:^4 %d", g_GlobalConfigs[ChatPrefix], get_member_game(m_iNumTerroristWins), get_member_game(m_iNumCTWins));
+				}
 			}
-			else if(g_bCvar_mp_maxrounds)
-				client_print_color(id, print_team_blue, "%s^1 Rondas restantes:^3 %d", g_GlobalConfigs[ChatPrefix], (g_bCvar_mp_maxrounds - (get_member_game(m_iNumCTWins) + get_member_game(m_iNumTerroristWins))));
-			else if(!get_pcvar_float(g_pCvar_mp_timelimit))
+			else if(g_bCvar_mp_timelimit <= 0.0)
 				client_print_color(id, print_team_blue, "%s^1 Tiempo restante:^3 Ilimitado", g_GlobalConfigs[ChatPrefix]);
 			else
 			{
@@ -424,35 +455,32 @@ public OnTask_CheckVoteNextMod()
 		return;
 	}
 
-	if(g_bCvar_mp_winlimit)
+	if(CanStartVoteNextMod())
 	{
-		new a = g_bCvar_mp_winlimit - 3;
-		
-		if((a > get_member_game(m_iNumCTWins)) && (a > get_member_game(m_iNumTerroristWins)))
-			return;
+		g_bVoteInProgress = true;
+
+		SetAlertStartNextVote(0.0, 10);
+
+		remove_task(TASK_VOTEMOD);
+		set_task(10.1, "OnTask_VoteNextMod", TASK_VOTEMOD);
 	}
-	else if(g_bCvar_mp_maxrounds)
-	{
-		if((g_bCvar_mp_maxrounds - 3) > (get_member_game(m_iNumCTWins) + get_member_game(m_iNumTerroristWins)))
-			return;
-	}
-	else
-	{
-		new iTimeleft = get_timeleft();
-		
-		if(iTimeleft < 1 || iTimeleft > 180)
-			return;
-	}
-	
+}
+
+bool:CanStartVoteNextMod()
+{
 	if(g_bVoteModHasStarted || g_bSVM_ModSecondRound || g_bVoteMapHasStarted || g_bSVM_MapSecondRound || g_bIsVotingRtv || g_bVoteInProgress)
-		return;
+		return false;
 
-	g_bVoteInProgress = true;
+	if((g_bCvar_mp_maxrounds != 0) && (get_member_game(m_iTotalRoundsPlayed) >= (g_bCvar_mp_maxrounds - 3)))
+		return true;
 
-	SetAlertStartNextVote(0.0, 10);
+	if((g_bCvar_mp_winlimit != 0) && ((get_member_game(m_iNumCTWins) >= (g_bCvar_mp_winlimit - 3)) || (get_member_game(m_iNumTerroristWins) >= (g_bCvar_mp_winlimit - 3))))
+		return true;
 
-	remove_task(TASK_VOTEMOD);
-	set_task(10.1, "OnTask_VoteNextMod", TASK_VOTEMOD);
+	if((g_bCvar_mp_timelimit != 0.0) && (1 <= get_timeleft() <= 180))
+		return true;
+
+	return false;
 }
 
 SetAlertStartNextVote(const Float:flStart, const iCountdown)

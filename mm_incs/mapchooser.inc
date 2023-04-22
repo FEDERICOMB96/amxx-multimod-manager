@@ -52,11 +52,7 @@ MapChooser_InitNextVoteMap(iStartVote)
 
 		if(g_bIsRockTheVote)
 		{
-			g_bVoteRtvResult = true;
-			
-			remove_task(TASK_TIMELEFT);
-			set_task(1.0, "OnTask_ChangeTimeLeft", TASK_TIMELEFT);
-			
+			RockTheVoteSendIntermission();
 			return;
 		}
 
@@ -260,11 +256,7 @@ public OnTask_CheckVoteMap()
 
 		if(g_bIsRockTheVote)
 		{
-			g_bVoteRtvResult = true;
-			
-			remove_task(TASK_TIMELEFT);
-			set_task(1.0, "OnTask_ChangeTimeLeft", TASK_TIMELEFT);
-			
+			RockTheVoteSendIntermission();
 			return;
 		}
 
@@ -412,11 +404,7 @@ public OnTask_CheckVoteMapFIX()
 
 		if(g_bIsRockTheVote)
 		{
-			g_bVoteRtvResult = true;
-			
-			remove_task(TASK_TIMELEFT);
-			set_task(1.0, "OnTask_ChangeTimeLeft", TASK_TIMELEFT);
-			
+			RockTheVoteSendIntermission();
 			return;
 		}
 
@@ -539,28 +527,27 @@ public OnTask_ChangeTimeLeft()
 	if(get_playersnum() > 1)
 		return;
 
-	g_iNoMoreTime = 2;
+	OnCSGameRules_GoToIntermission();
+}
 
-	message_begin(MSG_ALL, SVC_INTERMISSION);
-	message_end();
-	
-	set_task(2.0, "OnTask_ChangeMap", _, g_bCvar_amx_nextmap, MAX_MAPNAME_LENGTH);
-	
-	client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será:^3 %s", g_GlobalConfigs[ChatPrefix], g_bCvar_amx_nextmap);
+RockTheVoteSendIntermission()
+{
+	g_bVoteRtvResult = true;
+
+	remove_task(TASK_TIMELEFT);
+	set_task(2.0, "OnTask_RockTheVoteSendIntermission", TASK_TIMELEFT);
+}
+
+public OnTask_RockTheVoteSendIntermission()
+{
+	OnCSGameRules_GoToIntermission();
 }
 
 public OnTask_AlertChangeMap()
 {
 	if(!g_iChangeMapTime)
 	{
-		g_iNoMoreTime = 2;
-		
-		message_begin(MSG_ALL, SVC_INTERMISSION);
-		message_end();
-		
-		set_task(2.0, "OnTask_ChangeMap", _, g_bCvar_amx_nextmap, sizeof(g_bCvar_amx_nextmap));
-		
-		client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será:^3 %s", g_GlobalConfigs[ChatPrefix], g_bCvar_amx_nextmap);
+		OnCSGameRules_GoToIntermission();
 		return;
 	}
 	
