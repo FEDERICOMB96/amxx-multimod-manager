@@ -18,6 +18,7 @@ new g_iNoMoreTime;
 new g_iCountdownTime;
 
 new Float:g_RestoreTimelimit;
+new Float:g_RestoreChattime;
 
 new bool:g_bGameOver;
 new bool:g_bVoteInProgress;

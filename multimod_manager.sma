@@ -83,6 +83,9 @@ public plugin_end()
 {
 	if(g_RestoreTimelimit)
 		set_pcvar_float(g_pCvar_mp_timelimit, g_RestoreTimelimit);
+	
+	if(g_RestoreChattime)
+		set_pcvar_float(g_pCvar_mp_chattime, g_RestoreChattime);
 
 	MultiMod_OverwriteMapCycle(g_iNextSelectMod);
 
@@ -294,7 +297,7 @@ MultiMod_Init()
 		MultiMod_SetNextMod(g_iNextSelectMod); // First mod as default
 		UTIL_GetCurrentMod(szPluginsFile, g_szCurrentMod, MAX_MODNAME_LENGTH-1, szDefaultCurrentMap, MAX_MAPNAME_LENGTH-1);
 
-		set_task(2.0, "OnTask_ChangeMap", 0, IsValidMap(szDefaultCurrentMap) ? szDefaultCurrentMap : g_szCurrentMap, MAX_MAPNAME_LENGTH);
+		set_task(2.0, "OnTask_ChangeMap", 0, IsValidMap(szDefaultCurrentMap) ? szDefaultCurrentMap : g_szCurrentMap, MAX_MAPNAME_LENGTH-1);
 		return;
 	}
 
@@ -342,10 +345,10 @@ public OnCSGameRules_GoToIntermission()
 	if(g_bGameOver)
 		return HC_BREAK;
 
-	new Float:flChatTime = floatclamp(g_bCvar_mp_chattime, 0.1, 120.0);
-	set_pcvar_float(g_pCvar_mp_chattime, flChatTime + 2.0);
+	g_RestoreChattime = floatclamp(g_bCvar_mp_chattime, 0.1, 120.0);
+	set_pcvar_float(g_pCvar_mp_chattime, g_RestoreChattime + 2.0);
 	
-	set_task(flChatTime, "OnTask_ChangeMap", 1, g_bCvar_amx_nextmap, sizeof(g_bCvar_amx_nextmap));
+	set_task(g_RestoreChattime, "OnTask_ChangeMap", 1, g_bCvar_amx_nextmap, charsmax(g_bCvar_amx_nextmap));
 
 	g_iNoMoreTime = 2;
 
