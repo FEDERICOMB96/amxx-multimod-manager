@@ -27,6 +27,8 @@ public plugin_natives()
 	register_native("mm_get_mod_id", "_mm_get_mod_id");
 	register_native("mm_get_mod_name", "_mm_get_mod_name");
 	register_native("mm_get_mod_tag", "_mm_get_mod_tag");
+	register_native("mm_get_nextmod_id", "_mm_get_nextmod_id");
+	register_native("mm_get_nextmod_name", "_mm_get_nextmod_name");
 }
 
 public plugin_precache()
