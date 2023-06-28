@@ -461,7 +461,7 @@ public OnTask_MapChooserHudVote()
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMods);
 
-	iLoop = (g_bSVM_MapSecondRound) ? g_iMapVoteNum : (g_iMapVoteNum + 1);
+	iLoop = g_iMapVoteNum;
 	
 	for(i = 0; i < iLoop; ++i)
 	{
