@@ -43,7 +43,7 @@ MapChooser_InitNextVoteMap(iStartVote)
 		ArrayGetString(aMods[Maps], 0, szMap, MAX_MAPNAME_LENGTH-1);
 		set_pcvar_string(g_pCvar_amx_nextmap, szMap);
 
-		client_print_color(0, print_team_blue, "%s^1 El próximo mapa será^3 %s^1!", g_GlobalConfigs[ChatPrefix], aMods[ModName]);
+		client_print_color(0, print_team_blue, "%s^1 El próximo mapa será^3 %s^1!", g_GlobalConfigs[ChatPrefix], szMap);
 		
 		MapChooser_ResetAllData();
 		Nominations_ResetAllData();
