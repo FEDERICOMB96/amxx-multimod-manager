@@ -510,7 +510,7 @@ bool:CanStartVoteNextMod()
 
 bool:CanForceVoteNextMod()
 {
-	if(g_bVoteModHasStarted || g_bSVM_ModSecondRound || g_bVoteMapHasStarted || g_bSVM_MapSecondRound || g_bIsVotingRtv || g_bVoteInProgress)
+	if(g_bVoteModHasStarted || g_bSVM_ModSecondRound || g_bVoteMapHasStarted || g_bSVM_MapSecondRound || g_bIsVotingRtv || g_bVoteInProgress || g_bSelectedNextMod || g_bSelectedNextMap)
 		return false;
 	
 	return true;
