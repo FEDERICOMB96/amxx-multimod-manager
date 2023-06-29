@@ -105,7 +105,7 @@ public _mm_get_mod_tag(plugin_id, argc)
  * @return (int)        -1 if nextmod is not chosen yet.
  *                      >= 0 Index of the next mod.
  *
- * native mm_get_next_mod_id();
+ * native mm_get_nextmod_id();
  */
 public _mm_get_nextmod_id(plugin_id, argc)
 {
@@ -127,7 +127,7 @@ public _mm_get_nextmod_id(plugin_id, argc)
  * @return (int)        -1 on error.
  *                      >= 0 Number of cells written.
  *
- * native mm_get_next_mod_name(szOutput[], const iLen);
+ * native mm_get_nextmod_name(szOutput[], const iLen);
  */
 public _mm_get_nextmod_name(plugin_id, argc)
 {
@@ -135,7 +135,7 @@ public _mm_get_nextmod_name(plugin_id, argc)
 
 	if(argc != (args_e-1))
 	{
-		abort(AMX_ERR_NATIVE, "'mm_get_next_mod_name' needs %d param(s) (count: %d)", (args_e-1), argc);
+		abort(AMX_ERR_NATIVE, "'mm_get_nextmod_name' needs %d param(s) (count: %d)", (args_e-1), argc);
 		return -1;
 	}
 	

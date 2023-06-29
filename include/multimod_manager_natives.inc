@@ -50,7 +50,7 @@ native mm_get_mod_tag(const iModId, szOutput[], const iLen);
  * @return (int)        -1 if nextmod is not chosen yet.
  *                      >= 0 Index of the next mod.
  */
-native mm_get_next_mod_id();
+native mm_get_nextmod_id();
 
 /**
  * Retrieves next mod name.
@@ -64,7 +64,7 @@ native mm_get_next_mod_id();
  * @return (int)        -1 on error.
  *                      >= 0 Number of cells written.
  */
-native mm_get_next_mod_name(szOutput[], const iLen);
+native mm_get_nextmod_name(szOutput[], const iLen);
 
 /**
  * Force a votemod.
