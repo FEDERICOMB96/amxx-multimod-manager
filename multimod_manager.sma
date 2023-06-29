@@ -303,13 +303,16 @@ MultiMod_Init()
 		return;
 	}
 
-	if(bReloadMod)
+	if(bReloadMod || !IsValidMapForMod(g_iCurrentMod))
 	{
-		g_iNextSelectMod = 0;
-		MultiMod_SetNextMod(g_iNextSelectMod); // First mod as default
+		g_iNextSelectMod = bReloadMod ? 0 : g_iCurrentMod; // 0 = First mod as default
+		MultiMod_SetNextMod(g_iNextSelectMod); 
 		UTIL_GetCurrentMod(szPluginsFile, g_szCurrentMod, MAX_MODNAME_LENGTH-1, szDefaultCurrentMap, MAX_MAPNAME_LENGTH-1);
 
-		set_task(2.0, "OnTask_ChangeMap", 0, IsValidMap(szDefaultCurrentMap) ? szDefaultCurrentMap : g_szCurrentMap, MAX_MAPNAME_LENGTH-1);
+		if(!GetRandomMapForMod(g_iNextSelectMod, szDefaultCurrentMap, MAX_MAPNAME_LENGTH-1))
+			copy(szDefaultCurrentMap, MAX_MAPNAME_LENGTH-1, g_szCurrentMap);
+
+		set_task(2.0, "OnTask_ChangeMap", 0, szDefaultCurrentMap, MAX_MAPNAME_LENGTH-1);
 		return;
 	}
 
@@ -728,4 +731,70 @@ MultiMod_ExecCvars(const iMod)
 
 	server_print("[MultiMod] Executing Cvars from Mod: %s (Count: %d)", aMod[ModName], iCvars);
 	return iCvars;
+}
+
+bool:IsValidMapForMod(const iModId)
+{
+	if(iModId < 0 || iModId > ArraySize(g_GlobalConfigs[Mods]))
+		return false;
+
+	new aMod[ArrayMods_e];
+	ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMod);
+
+	new iMaps = ArraySize(aMod[Maps]);
+	for(new i = 0, szMap[MAX_MAPNAME_LENGTH]; i < iMaps; ++i)
+	{
+		ArrayGetString(aMod[Maps], i, szMap, charsmax(szMap));
+
+		if(equali(g_szCurrentMap, szMap))
+			return true;
+	}
+
+	return false;
+}
+
+GetRandomMapForMod(const iModId, szMap[], const iLen)
+{
+	if(iModId < 0 || iModId > ArraySize(g_GlobalConfigs[Mods]))
+		return 0;
+
+	new aMod[ArrayMods_e];
+	ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMod);
+
+	new iMaps = ArraySize(aMod[Maps]);
+	if(iMaps)
+	{
+		new szBuff[MAX_MAPNAME_LENGTH];
+		new iMapId = random_num(0, iMaps - 1);
+		new iMapPass = 0;
+		new iFinal = -1;
+
+		while(iMapPass <= iMaps)
+		{
+			if(iMapPass == iMaps)
+				break;
+
+			if(++iMapId >= iMaps)
+				iMapId = 0;
+
+			++iMapPass;
+
+			iFinal = iMapId;
+			ArrayGetString(aMod[Maps], iMapId, szBuff, charsmax(szBuff));
+			
+			if(!IsValidMap(szBuff))
+				iFinal = -1;
+			
+			if(iFinal == -1)
+				continue;
+			
+			if(iFinal != -1)
+				break;
+		}
+		
+		if(iFinal != -1)
+			return copy(szMap, iLen, szBuff);
+	}
+	
+	return 0;
 }
