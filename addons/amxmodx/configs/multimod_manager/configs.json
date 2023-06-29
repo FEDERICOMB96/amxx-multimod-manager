@@ -21,6 +21,12 @@
 		"percentage": 75    // min = 0 (desactivado) | max = 100
 	},
 
+	"nomination":
+	{
+		"mods": true,       // true / false
+		"maps": true        // true / false
+	},
+
 	"admin_max_options_in_menu": 9,   // min = 2 | max = 9
 	"mods_in_menu": 9,                // min = 2 | max = 9
 	"maps_in_menu": 9,                // min = 2 | max = 9

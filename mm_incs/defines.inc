@@ -104,6 +104,10 @@ enum GlobalConfigs_e
 	RTV_MinPlayers,
 	RTV_Percentage,
 
+	// Nomination
+	bool:Nom_Mods_Enabled,
+	bool:Nom_Maps_Enabled,
+
 	// Admin options in menu
 	AdminMaxOptionsInMenu,
 

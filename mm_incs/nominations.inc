@@ -36,11 +36,23 @@ public ClientCommand_Nominate(const id)
 
 	if(!g_bSelectedNextMod && !g_bVoteModHasStarted && !g_bSVM_ModSecondRound)
 	{
+		if(!g_GlobalConfigs[Nom_Mods_Enabled])
+		{
+			client_print_color(id, print_team_default, "%s^1 La nominación de modos se encuentra deshabilitada!", g_GlobalConfigs[ChatPrefix]);
+			return PLUGIN_HANDLED;
+		}
+
 		ShowMenu_NominateMod(id);
 		return PLUGIN_HANDLED;
 	}
 	else if(!g_bSelectedNextMap && !g_bVoteMapHasStarted && !g_bSelectedNextMap)
 	{
+		if(!g_GlobalConfigs[Nom_Maps_Enabled])
+		{
+			client_print_color(id, print_team_default, "%s^1 La nominación de mapas se encuentra deshabilitada!", g_GlobalConfigs[ChatPrefix]);
+			return PLUGIN_HANDLED;
+		}
+
 		ShowMenu_NominateMap(id);
 		return PLUGIN_HANDLED;
 	}
