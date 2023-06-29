@@ -29,6 +29,7 @@ public plugin_natives()
 	register_native("mm_get_mod_tag", "_mm_get_mod_tag");
 	register_native("mm_get_nextmod_id", "_mm_get_nextmod_id");
 	register_native("mm_get_nextmod_name", "_mm_get_nextmod_name");
+	register_native("mm_force_votemod", "_mm_force_votemod");
 }
 
 public plugin_precache()
@@ -56,6 +57,8 @@ public plugin_init()
 
 	RegisterHookChain(RG_CSGameRules_GoToIntermission, "OnCSGameRules_GoToIntermission", 0);
 
+	register_concmd("mm_force_votemod", "OnConCommand_ForceVoteMod", g_GlobalConfigs[AdminFlags_ForceVoteMod]);
+
 	UTIL_RegisterClientCommandAll("nextmod", "OnClientCommand_NextMod");
 	UTIL_RegisterClientCommandAll("nextmap", "OnClientCommand_NextMap");
 	UTIL_RegisterClientCommandAll("timeleft", "OnClientCommand_Timeleft");
@@ -72,6 +75,8 @@ public plugin_init()
 	Nominations_Init();
 
 	g_bGameOver = false;
+
+	register_dictionary("common.txt");
 }
 
 public OnConfigsExecuted()
@@ -191,6 +196,9 @@ MultiMod_Init()
 
 		json_object_get_string(jConfigsFile, "adminflags.selectmenu", szReadFlags, charsmax(szReadFlags), true);
 		g_GlobalConfigs[AdminFlags_SelectMenu] = read_flags(szReadFlags);
+
+		json_object_get_string(jConfigsFile, "adminflags.forcevotemod", szReadFlags, charsmax(szReadFlags), true);
+		g_GlobalConfigs[AdminFlags_ForceVoteMod] = read_flags(szReadFlags);
 
 		json_object_get_string(jConfigsFile, "adminflags.votemenu", szReadFlags, charsmax(szReadFlags), true);
 		g_GlobalConfigs[AdminFlags_VoteMenu] = read_flags(szReadFlags);
@@ -368,6 +376,23 @@ public OnCSGameRules_GoToIntermission()
 	return HC_BREAK;
 }
 
+public OnConCommand_ForceVoteMod(const id, const level, const cid)
+{
+	if(!cmd_access(id, level, cid, false))
+		return PLUGIN_HANDLED;
+	
+	if(CanForceVoteNextMod())
+	{
+		StartVoteNextMod();
+
+		client_print_color(0, id, "%s^1 ADMIN:^3 %n^1 comenzó una votación para el próximo modo", g_GlobalConfigs[ChatPrefix], id);
+		return PLUGIN_HANDLED;
+	}
+	
+	console_print(id, "No se puede forzar a una votación de modo en este momento.");
+	return PLUGIN_HANDLED;
+}
+
 public OnClientCommand_NextMod(const id)
 {
 	CHECK_CONNECTED(id)
@@ -461,14 +486,7 @@ public OnTask_CheckVoteNextMod()
 	}
 
 	if(CanStartVoteNextMod())
-	{
-		g_bVoteInProgress = true;
-
-		SetAlertStartNextVote(0.0, 10);
-
-		remove_task(TASK_VOTEMOD);
-		set_task(10.1, "OnTask_VoteNextMod", TASK_VOTEMOD);
-	}
+		StartVoteNextMod();
 }
 
 bool:CanStartVoteNextMod()
@@ -486,6 +504,24 @@ bool:CanStartVoteNextMod()
 		return true;
 
 	return false;
+}
+
+bool:CanForceVoteNextMod()
+{
+	if(g_bVoteModHasStarted || g_bSVM_ModSecondRound || g_bVoteMapHasStarted || g_bSVM_MapSecondRound || g_bIsVotingRtv || g_bVoteInProgress)
+		return false;
+	
+	return true;
+}
+
+StartVoteNextMod()
+{
+	g_bVoteInProgress = true;
+
+	SetAlertStartNextVote(0.0, 10);
+
+	remove_task(TASK_VOTEMOD);
+	set_task(10.1, "OnTask_VoteNextMod", TASK_VOTEMOD);
 }
 
 SetAlertStartNextVote(const Float:flStart, const iCountdown)

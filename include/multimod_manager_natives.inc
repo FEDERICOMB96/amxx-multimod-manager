@@ -65,3 +65,10 @@ native mm_get_next_mod_id();
  *                      >= 0 Number of cells written.
  */
 native mm_get_next_mod_name(szOutput[], const iLen);
+
+/**
+ * Force a votemod.
+ *
+ * @return (int)        1 on success, 0 otherwise
+ */
+native mm_force_votemod();

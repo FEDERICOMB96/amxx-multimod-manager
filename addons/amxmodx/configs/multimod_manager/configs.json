@@ -9,6 +9,7 @@
 		"menu": "u",        // menu access
 		"managemods": "a",  // immunity 
 		"selectmenu": "f",  // amx_map command
+		"forcevotemod": "f",// amx_map command
 		"votemenu": "j"     // amx_vote and other vote commands
 	},
 

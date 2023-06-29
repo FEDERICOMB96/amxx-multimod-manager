@@ -147,3 +147,21 @@ public _mm_get_nextmod_name(plugin_id, argc)
 		
 	return set_string(arg_output, aMods[ModName], get_param(arg_len));
 }
+
+/**
+ * Force a votemod.
+ *
+ * @return (int)        1 on success, 0 otherwise
+ *
+ * native mm_force_votemod();
+ */
+public _mm_force_votemod(plugin_id, argc)
+{
+	if(CanForceVoteNextMod())
+	{
+		StartVoteNextMod();
+		return 1;
+	}
+	
+	return 0;
+}

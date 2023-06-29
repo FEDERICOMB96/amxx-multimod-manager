@@ -95,6 +95,7 @@ enum GlobalConfigs_e
 	AdminFlags_Menu,
 	AdminFlags_ManageMods,
 	AdminFlags_SelectMenu,
+	AdminFlags_ForceVoteMod,
 	AdminFlags_VoteMenu,
 
 	// Rock The Vote
