@@ -108,7 +108,7 @@ Recent_SaveRecentModsMaps(const iMod, const szMapName[MAX_MAPNAME_LENGTH])
 		{
 			ArrayGetArray(g_GlobalConfigs[RecentMods], i, aRecents);
 
-			if(unlikely(g_iCurrentMod == UTIL_GetModId(aRecents[RECENT_MOD_NAME])))
+			if(likely(g_iCurrentMod == UTIL_GetModId(aRecents[RECENT_MOD_NAME])))
 				continue;
 				
 			json_object_set_number(root_value, fmt("recent_mods.%s", aRecents[RECENT_MOD_NAME]), aRecents[RECENT_MOD_SYSTIME], true);
@@ -123,6 +123,10 @@ Recent_SaveRecentModsMaps(const iMod, const szMapName[MAX_MAPNAME_LENGTH])
 		for(new i = 0, aRecents[ArrayRecentMaps_e]; i < iMaxLoop; ++i)
 		{
 			ArrayGetArray(g_GlobalConfigs[RecentMaps], i, aRecents);
+
+			if(likely(g_iCurrentMod == UTIL_GetModId(aRecents[RECENT_MOD_NAME])) && equali(aRecents[RECENT_MAP_NAME], szMapName))
+				continue;
+
 			json_object_set_string(root_value, fmt("recent_maps.%s.%s", aRecents[RECENT_MOD_NAME], aRecents[RECENT_MAP_NAME]), fmt("%d|%d", aRecents[RECENT_MAP_COUNT], aRecents[RECENT_MAP_SYSTIME]), true);
 		}
 	}
