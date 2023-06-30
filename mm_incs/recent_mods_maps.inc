@@ -107,6 +107,10 @@ Recent_SaveRecentModsMaps(const iMod, const szMapName[MAX_MAPNAME_LENGTH])
 		for(new i = 0, aRecents[ArrayRecentMods_e]; i < iMaxLoop; ++i)
 		{
 			ArrayGetArray(g_GlobalConfigs[RecentMods], i, aRecents);
+
+			if(unlikely(g_iCurrentMod == UTIL_GetModId(aRecents[RECENT_MOD_NAME])))
+				continue;
+				
 			json_object_set_number(root_value, fmt("recent_mods.%s", aRecents[RECENT_MOD_NAME]), aRecents[RECENT_MOD_SYSTIME], true);
 		}
 	}
