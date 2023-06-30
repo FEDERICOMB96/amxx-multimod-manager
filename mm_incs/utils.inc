@@ -126,3 +126,22 @@ stock UTIL_GetModId(const szModName[])
 
 	return -1;
 }
+
+stock UTIL_GetTimeElapsed(const iSeconds, buffer[], const len)
+{
+	new const iSecondsMult[3] = {86400, 3600, 60};
+	new const sWord[3][] = {"d", "h", "m"};
+	
+	new iData[3] = {0, 0, 0};
+	new iRest = iSeconds;
+	
+	for(new i = 0; i < 3; ++i) {
+		iData[i] = iRest / iSecondsMult[i];
+		iRest = iRest % iSecondsMult[i];
+		
+		if(iData[i] > 0)
+			return formatex(buffer, len, "%d%s", iData[i], sWord[i]);
+	}
+	
+	return formatex(buffer, len, "0%s", sWord[2]);
+}

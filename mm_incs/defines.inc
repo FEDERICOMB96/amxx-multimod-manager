@@ -73,11 +73,18 @@ enum _:ArrayMods_e
 	Array:ReSemiclip,
 };
 
+enum _:ArrayRecentMods_e
+{
+	RECENT_MOD_NAME[MAX_MODNAME_LENGTH],
+	RECENT_MOD_SYSTIME,
+};
+
 enum _:ArrayRecentMaps_e
 {
 	RECENT_MOD_NAME[MAX_MODNAME_LENGTH],
 	RECENT_MAP_NAME[MAX_MAPNAME_LENGTH],
 	RECENT_MAP_COUNT,
+	RECENT_MAP_SYSTIME,
 };
 
 enum _:ArrayReSemiclip_e

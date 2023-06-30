@@ -38,7 +38,7 @@ public plugin_precache()
 	mb_strtolower(g_szCurrentMap);
 
 	g_GlobalConfigs[Mods] = ArrayCreate(ArrayMods_e);
-	g_GlobalConfigs[RecentMods] = ArrayCreate(MAX_MODNAME_LENGTH);
+	g_GlobalConfigs[RecentMods] = ArrayCreate(ArrayRecentMods_e);
 	g_GlobalConfigs[RecentMaps] = ArrayCreate(ArrayRecentMaps_e);
 	g_Array_Nominations = ArrayCreate(1);
 
@@ -59,6 +59,9 @@ public plugin_init()
 
 	register_concmd("mm_force_votemod", "OnConCommand_ForceVoteMod", g_GlobalConfigs[AdminFlags_ForceVoteMod]);
 
+	UTIL_RegisterClientCommandAll("recentmods", "OnClientCommand_RecentMods");
+	UTIL_RegisterClientCommandAll("recentmaps", "OnClientCommand_RecentMaps");
+	UTIL_RegisterClientCommandAll("currentmod", "OnClientCommand_CurrentMod");
 	UTIL_RegisterClientCommandAll("nextmod", "OnClientCommand_NextMod");
 	UTIL_RegisterClientCommandAll("nextmap", "OnClientCommand_NextMap");
 	UTIL_RegisterClientCommandAll("timeleft", "OnClientCommand_Timeleft");
@@ -395,6 +398,121 @@ public OnConCommand_ForceVoteMod(const id, const level, const cid)
 	}
 	
 	console_print(id, "No se puede forzar a una votación de modo en este momento.");
+	return PLUGIN_HANDLED;
+}
+
+public OnClientCommand_RecentMods(const id)
+{
+	CHECK_CONNECTED(id)
+
+	if(Recent_CountRecentMods() < 1)
+	{
+		client_print_color(id, id, "%s^1 No hay modos recientes jugados", g_GlobalConfigs[ChatPrefix]);
+		return PLUGIN_HANDLED;
+	}
+
+	ShowMenu_RecentMods(id);
+	return PLUGIN_HANDLED;
+}
+
+ShowMenu_RecentMods(const id, menupage=0)
+{
+	CHECK_CONNECTED(id)
+
+	new iMenu = menu_create("\yModos recientes:\R", "menu_RecentMods");
+
+	new iArraySizeMods = ArraySize(g_GlobalConfigs[RecentMods]);
+
+	for(new iModId = 0, aRecents[ArrayRecentMods_e], szTimeAgo[11]; iModId < iArraySizeMods; ++iModId)
+	{
+		ArrayGetArray(g_GlobalConfigs[RecentMods], iModId, aRecents);
+
+		UTIL_GetTimeElapsed((get_systime() - aRecents[RECENT_MOD_SYSTIME]), szTimeAgo, charsmax(szTimeAgo));
+
+		menu_additem(iMenu, fmt("%s\y (Hace %s)", aRecents[RECENT_MOD_NAME], szTimeAgo));
+	}
+	
+	menu_setprop(iMenu, MPROP_NEXTNAME, "Siguiente");
+	menu_setprop(iMenu, MPROP_BACKNAME, "Atrás");
+	menu_setprop(iMenu, MPROP_EXITNAME, "Salir");
+
+	menu_display(id, iMenu, min(menupage, menu_pages(iMenu) - 1));
+	return PLUGIN_HANDLED;
+}
+
+public menu_RecentMods(const id, const menuid, const item)
+{
+	CHECK_CONNECTED_NEWMENU(id, menuid)
+	CHECK_EXIT_NEWMENU(id, menuid, item)
+	
+	new iNothing, iMenuPage;
+	player_menu_info(id, iNothing, iNothing, iMenuPage);
+
+	menu_destroy(menuid);
+	ShowMenu_RecentMods(id, iMenuPage);
+	return PLUGIN_HANDLED;
+}
+
+public OnClientCommand_RecentMaps(const id)
+{
+	CHECK_CONNECTED(id)
+
+	if(Recent_CountRecentMaps(g_iCurrentMod) < 1)
+	{
+		client_print_color(id, id, "%s^1 No hay mapas recientes jugados", g_GlobalConfigs[ChatPrefix]);
+		return PLUGIN_HANDLED;
+	}
+
+	ShowMenu_RecentMaps(id);
+	return PLUGIN_HANDLED;
+}
+
+ShowMenu_RecentMaps(const id, menupage=0)
+{
+	CHECK_CONNECTED(id)
+
+	new iMenu = menu_create(fmt("\yMapas recientes\d [%s]\y:\R", g_szCurrentMod), "menu_RecentMaps");
+
+	new iArraySizeMaps = ArraySize(g_GlobalConfigs[RecentMaps]);
+
+	for(new iMapId = 0, aRecents[ArrayRecentMaps_e], szTimeAgo[11]; iMapId < iArraySizeMaps; ++iMapId)
+	{
+		ArrayGetArray(g_GlobalConfigs[RecentMaps], iMapId, aRecents);
+
+		if(unlikely(g_iCurrentMod == UTIL_GetModId(aRecents[RECENT_MOD_NAME])))
+			continue;
+
+		UTIL_GetTimeElapsed((get_systime() - aRecents[RECENT_MAP_SYSTIME]), szTimeAgo, charsmax(szTimeAgo));
+
+		menu_additem(iMenu, fmt("%s\y (Hace %s)", aRecents[RECENT_MAP_NAME], szTimeAgo));
+	}
+	
+	menu_setprop(iMenu, MPROP_NEXTNAME, "Siguiente");
+	menu_setprop(iMenu, MPROP_BACKNAME, "Atrás");
+	menu_setprop(iMenu, MPROP_EXITNAME, "Salir");
+
+	menu_display(id, iMenu, min(menupage, menu_pages(iMenu) - 1));
+	return PLUGIN_HANDLED;
+}
+
+public menu_RecentMaps(const id, const menuid, const item)
+{
+	CHECK_CONNECTED_NEWMENU(id, menuid)
+	CHECK_EXIT_NEWMENU(id, menuid, item)
+	
+	new iNothing, iMenuPage;
+	player_menu_info(id, iNothing, iNothing, iMenuPage);
+
+	menu_destroy(menuid);
+	ShowMenu_RecentMaps(id, iMenuPage);
+	return PLUGIN_HANDLED;
+}
+
+public OnClientCommand_CurrentMod(const id)
+{
+	CHECK_CONNECTED(id)
+
+	client_print_color(id, print_team_blue, "%s^1 El modo actual es:^3 %s", g_GlobalConfigs[ChatPrefix], g_szCurrentMod);
 	return PLUGIN_HANDLED;
 }
 

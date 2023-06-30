@@ -26,16 +26,17 @@ Recent_LoadRecentModsMaps()
 		return;
 	}
 
-	if(g_GlobalConfigs[MaxRecentMods] && json_is_object(jRecentModsMaps) && json_object_has_value(jRecentModsMaps, "recent_mods", JSONArray))
+	if(g_GlobalConfigs[MaxRecentMods] && json_is_object(jRecentModsMaps) && json_object_has_value(jRecentModsMaps, "recent_mods", JSONObject))
 	{
 		new JSON:jRecentMods = json_object_get_value(jRecentModsMaps, "recent_mods");
 
-		for(new i = 0, szModName[MAX_MODNAME_LENGTH], iMaxLoop = json_array_get_count(jRecentMods); i < iMaxLoop; ++i)
+		for(new i = 0, aRecents[ArrayRecentMods_e], iMaxLoop = json_object_get_count(jRecentMods); i < iMaxLoop; ++i)
 		{
-			json_array_get_string(jRecentMods, i, szModName, MAX_MODNAME_LENGTH-1);
+			json_object_get_name(jRecentMods, i, aRecents[RECENT_MOD_NAME], MAX_MODNAME_LENGTH-1);
+			aRecents[RECENT_MOD_SYSTIME] = json_object_get_number(jRecentMods, aRecents[RECENT_MOD_NAME]);
 
-			if(UTIL_GetModId(szModName) > -1)
-				ArrayPushString(g_GlobalConfigs[RecentMods], szModName);
+			if(UTIL_GetModId(aRecents[RECENT_MOD_NAME]) > -1)
+				ArrayPushArray(g_GlobalConfigs[RecentMods], aRecents);
 		}
 
 		json_free(jRecentMods);
@@ -50,6 +51,7 @@ Recent_LoadRecentModsMaps()
 			szMapName[MAX_MAPNAME_LENGTH],
 			JSON:jObject, iObjectCount,
 			aRecents[ArrayRecentMaps_e],
+			szValue[32], szCount[15], szSystime[15],
 			iMaxLoop = json_object_get_count(jRecentMaps); i < iMaxLoop; ++i)
 		{
 			json_object_get_name(jRecentMaps, i, szModName, MAX_MODNAME_LENGTH-1);
@@ -61,13 +63,17 @@ Recent_LoadRecentModsMaps()
 				for(j = 0, iObjectCount = json_object_get_count(jObject); j < iObjectCount; ++j)
 				{
 					json_object_get_name(jObject, j, szMapName, MAX_MAPNAME_LENGTH-1);
-					iMapNum = json_object_get_number(jObject, szMapName) - (likely(g_iCurrentMod == iModId) ? 1 : 0);
+					json_object_get_string(jObject, szMapName, szValue, charsmax(szValue));
+
+					strtok(szValue, szCount, charsmax(szCount), szSystime, charsmax(szSystime), '|');
+					iMapNum = str_to_num(szCount) - (likely(g_iCurrentMod == iModId) ? 1 : 0);
 
 					if(iMapNum > 0)
 					{
 						copy(aRecents[RECENT_MOD_NAME], MAX_MODNAME_LENGTH-1, szModName);
 						copy(aRecents[RECENT_MAP_NAME], MAX_MAPNAME_LENGTH-1, szMapName);
 						aRecents[RECENT_MAP_COUNT] = iMapNum;
+						aRecents[RECENT_MAP_SYSTIME] = str_to_num(szSystime);
 
 						ArrayPushArray(g_GlobalConfigs[RecentMaps], aRecents);
 					}
@@ -95,30 +101,26 @@ Recent_SaveRecentModsMaps(const iMod, const szMapName[MAX_MAPNAME_LENGTH])
 
 	if(g_GlobalConfigs[MaxRecentMods])
 	{
-		new JSON:array = json_init_array();
-		json_array_append_string(array, aMods[ModName]);
+		json_object_set_number(root_value, fmt("recent_mods.%s", aMods[ModName]), get_systime(), true);
 
 		new iMaxLoop = min(g_GlobalConfigs[MaxRecentMods], ArraySize(g_GlobalConfigs[RecentMods]));
-		for(new i = 0, szModName[MAX_MODNAME_LENGTH]; i < iMaxLoop; ++i)
+		for(new i = 0, aRecents[ArrayRecentMods_e]; i < iMaxLoop; ++i)
 		{
-			ArrayGetString(g_GlobalConfigs[RecentMods], i, szModName, MAX_MODNAME_LENGTH-1);
-			json_array_append_string(array, szModName);
+			ArrayGetArray(g_GlobalConfigs[RecentMods], i, aRecents);
+			json_object_set_number(root_value, fmt("recent_mods.%s", aRecents[RECENT_MOD_NAME]), aRecents[RECENT_MOD_SYSTIME], true);
 		}
-
-		json_object_set_value(root_value, "recent_mods", array);
-		json_free(array);
 	}
 
 	if(g_GlobalConfigs[MaxRecentMaps])
 	{
+		json_object_set_string(root_value, fmt("recent_maps.%s.%s", aMods[ModName], szMapName), fmt("%d|%d", g_GlobalConfigs[MaxRecentMods], get_systime()), true);
+
 		new iMaxLoop = ArraySize(g_GlobalConfigs[RecentMaps]);
 		for(new i = 0, aRecents[ArrayRecentMaps_e]; i < iMaxLoop; ++i)
 		{
 			ArrayGetArray(g_GlobalConfigs[RecentMaps], i, aRecents);
-			json_object_set_number(root_value, fmt("recent_maps.%s.%s", aRecents[RECENT_MOD_NAME], aRecents[RECENT_MAP_NAME]), aRecents[RECENT_MAP_COUNT], true);
+			json_object_set_string(root_value, fmt("recent_maps.%s.%s", aRecents[RECENT_MOD_NAME], aRecents[RECENT_MAP_NAME]), fmt("%d|%d", aRecents[RECENT_MAP_COUNT], aRecents[RECENT_MAP_SYSTIME]), true);
 		}
-
-		json_object_set_number(root_value, fmt("recent_maps.%s.%s", aMods[ModName], szMapName), g_GlobalConfigs[MaxRecentMods], true);
 	}
 
 	new szFileName[PLATFORM_MAX_PATH];
@@ -137,11 +139,11 @@ Recent_CountRecentMods()
 bool:Recent_IsRecentMod(const szModName[])
 {
 	new iMaxLoop = ArraySize(g_GlobalConfigs[RecentMods]);
-	for(new i = 0, szGetModName[MAX_MODNAME_LENGTH]; i < iMaxLoop; ++i)
+	for(new i = 0, aRecents[ArrayRecentMods_e]; i < iMaxLoop; ++i)
 	{
-		ArrayGetString(g_GlobalConfigs[RecentMods], i, szGetModName, MAX_MODNAME_LENGTH-1);
+		ArrayGetArray(g_GlobalConfigs[RecentMods], i, aRecents);
 		
-		if(equali(szModName, szGetModName))
+		if(equali(szModName, aRecents[RECENT_MOD_NAME]))
 			return true;
 	}
 
