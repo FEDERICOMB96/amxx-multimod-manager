@@ -587,13 +587,29 @@ public OnTask_CountVotes_Mod(const taskid)
 			new aMods[ArrayMods_e];
 			ArrayGetArray(g_GlobalConfigs[Mods], iWinner, aMods);
 
+			g_Admin_VoteSelectedOptions[admin] = 0;
+			arrayset(g_Admin_VoteOptions[admin], 0, MAX_ADMIN_VOTEOPTIONS);
+
 			new iArraySizeMaps = ArraySize(aMods[Maps]);
+
+			if(likely(ArraySize(aMods[Maps]) < 2))
+			{
+				new szMap[MAX_MAPNAME_LENGTH];
+				ArrayGetString(aMods[Maps], 0, szMap, MAX_MAPNAME_LENGTH-1);
+
+				AdminCmd_ResetGlobalData();
+				g_Admin_VoteUserId = admin;
+				
+				g_Admin_SelectedMap[admin] = 1;
+				ShowMenu_VoteAdminConfirm(admin, aMods[ModName], szMap, g_Admin_VoteStartInMod[admin]);
+
+				client_print_color(0, print_team_blue, "%s^1 El modo^3 %s^1 solo tiene el mapa^4 %s^1!", g_GlobalConfigs[ChatPrefix], aMods[ModName], szMap);
+				return PLUGIN_HANDLED;
+			}
+
 			new iMaxMaps = min(g_GlobalConfigs[MapsInMenu], iArraySizeMaps);
 
 			set_pcvar_float(g_pCvar_amx_last_voting, get_gametime() + 15.0 + 2.0 + float(g_bCvar_amx_vote_delay_mm));
-
-			g_Admin_VoteSelectedOptions[admin] = 0;
-			arrayset(g_Admin_VoteOptions[admin], 0, MAX_ADMIN_VOTEOPTIONS);
 
 			for(new iMapId; g_Admin_VoteSelectedOptions[admin] < iMaxMaps; ++g_Admin_VoteSelectedOptions[admin])
 			{
