@@ -62,6 +62,9 @@ MapChooser_InitNextVoteMap(iStartVote)
 		return;
 	}
 
+	if(!g_GlobalConfigs[Nom_Maps_Enabled])
+		iStartVote = 0;
+
 	new Float:flStartVote = float(max(10, iStartVote));
 
 	SetAlertStartNextVote(flStartVote - 10.0, 10);
@@ -69,7 +72,8 @@ MapChooser_InitNextVoteMap(iStartVote)
 	remove_task(TASK_VOTEMAP);
 	set_task(flStartVote, "OnTask_VoteNextMap", TASK_VOTEMAP);
 
-	client_print_color(0, print_team_default, "%s^1 Puedes nominar mapas para el próximo modo durante los proximos^4 %d segundos", g_GlobalConfigs[ChatPrefix], iStartVote);
+	if(g_GlobalConfigs[Nom_Maps_Enabled])
+		client_print_color(0, print_team_default, "%s^1 Puedes nominar mapas para el próximo modo durante los proximos^4 %d segundos", g_GlobalConfigs[ChatPrefix], iStartVote);
 }
 
 MapChooser_ClientPutInServer(const id)
