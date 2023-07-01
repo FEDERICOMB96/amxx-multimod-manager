@@ -541,7 +541,7 @@ public OnTask_CountVotes_Mod(const taskid)
 	
 	new aMods[ArrayMods_e];
 	new iWinner = 0;
-	new iResult = -1;
+	new iResult = 0;
 
 	ResetAdminVoteMenuAll();
 	menu_destroy(g_Menu_AdminCmd);
@@ -810,7 +810,7 @@ public OnTask_AdminCountVotes_Map(const taskid)
 	ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_SelectedMod[admin], aMods);
 
 	new iWinner = 0;
-	new iResult = -1;
+	new iResult = 0;
 
 	ResetAdminVoteMenuAll();
 	menu_destroy(g_Menu_AdminCmd);

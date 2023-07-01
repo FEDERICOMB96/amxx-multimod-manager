@@ -188,7 +188,7 @@ public OnTaskCheckVoteMod()
 {
 	new aData[ArrayMods_e];
 	new iWinner = 0;
-	new iResult = -1;
+	new iResult = 0;
 
 	ResetModMenuAll();
 	menu_destroy(g_Menu_ModChooser);
@@ -379,7 +379,7 @@ public OnTask_CheckVoteModFIX()
 {
 	new aData[ArrayMods_e];
 	new iWinner = 0;
-	new iResult = -1;
+	new iResult = 0;
 
 	ResetModMenuAll();
 	menu_destroy(g_Menu_ModChooser);
@@ -506,9 +506,7 @@ public OnTask_ModChooserHudVote()
 	}
 
 	new i;
-	new j;
 	new iLen = 0;
-	new iTemp = 0;
 	new iLoop = 0;
 	new iNoFirst = 0;
 	new iModId[MAX_SELECTMODS];
@@ -525,23 +523,7 @@ public OnTask_ModChooserHudVote()
 		iVoteMods[i] = g_iVoteModCountGlobal[i];
 	}
 
-	// Ordenamiento por seleccion
-	for(i = 0; i < (g_iModVoteNum - 1); ++i)
-	{
-		for(j = (i + 1); j < g_iModVoteNum; ++j)
-		{
-			if(iVoteMods[j] > iVoteMods[i])
-			{
-				iTemp = iVoteMods[j];
-				iVoteMods[j] = iVoteMods[i];
-				iVoteMods[i] = iTemp;
-
-				iTemp = iModId[j];
-				iModId[j] = iModId[i];
-				iModId[i] = iTemp;
-			}
-		}
-	}
+	UTIL_SimpleSortVotes(iVoteMods, iModId, g_iModVoteNum);
 
 	for(i = 0; i < iLoop; ++i)
 	{

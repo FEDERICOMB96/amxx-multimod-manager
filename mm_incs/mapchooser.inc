@@ -191,7 +191,7 @@ public OnTask_CheckVoteMap()
 	ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMods);
 
 	new iWinner = 0;
-	new iResult = -1;
+	new iResult = 0;
 
 	ResetMapMenuAll();
 	menu_destroy(g_Menu_MapChooser);
@@ -347,7 +347,7 @@ public OnTask_CheckVoteMapFIX()
 	ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMods);
 
 	new iWinner = 0;
-	new iResult = -1;
+	new iResult = 0;
 
 	ResetMapMenuAll();
 	menu_destroy(g_Menu_MapChooser);
@@ -448,9 +448,7 @@ public OnTask_MapChooserHudVote()
 	}
 
 	new i;
-	new j;
 	new iLen = 0;
-	new iTemp = 0;
 	new iLoop = 0;
 	new iNoFirst = 0;
 	new iMapId[MAX_SELECTMAPS];
@@ -469,23 +467,7 @@ public OnTask_MapChooserHudVote()
 		iVoteMaps[i] = g_iVoteMapCountGlobal[i];
 	}
 
-	// Ordenamiento por seleccion
-	for(i = 0; i < (g_iMapVoteNum - 1); ++i)
-	{
-		for(j = (i + 1); j < g_iMapVoteNum; ++j)
-		{
-			if(iVoteMaps[j] > iVoteMaps[i])
-			{
-				iTemp = iVoteMaps[j];
-				iVoteMaps[j] = iVoteMaps[i];
-				iVoteMaps[i] = iTemp;
-
-				iTemp = iMapId[j];
-				iMapId[j] = iMapId[i];
-				iMapId[i] = iTemp;
-			}
-		}
-	}
+	UTIL_SimpleSortVotes(iVoteMaps, iMapId, g_iMapVoteNum);
 
 	for(i = 0; i < iLoop; ++i)
 	{

@@ -145,3 +145,23 @@ stock UTIL_GetTimeElapsed(const iSeconds, buffer[], const len)
 	
 	return formatex(buffer, len, "0%s", sWord[2]);
 }
+
+stock UTIL_SimpleSortVotes(iPos[], iNum[], const iSize)
+{
+	for(new i = 0, j, iTemp; i < (iSize - 1); ++i)
+	{
+		for(j = (i + 1); j < iSize; ++j)
+		{
+			if(iNum[j] > iNum[i])
+			{
+				iTemp = iNum[j];
+				iNum[j] = iNum[i];
+				iNum[i] = iTemp;
+
+				iTemp = iPos[j];
+				iPos[j] = iPos[i];
+				iPos[i] = iTemp;
+			}
+		}
+	}
+}
