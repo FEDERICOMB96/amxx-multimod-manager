@@ -5,6 +5,8 @@
 
 AdminCmd_Init()
 {
+	register_concmd("mm_force_votemod", "ConsoleCommand_ForceVoteMod", g_GlobalConfigs[AdminFlags_ForceVoteMod]);
+
 	register_clcmd("amx_multimod", "ClientCommand__AdminMultimod", g_GlobalConfigs[AdminFlags_Menu]);
 
 	register_menu("SelectVoteMod_AdminMenu", KEYSMENU, "menu_SelectVoteMod");
@@ -65,6 +67,23 @@ AdminCmd_ClientDisconnected(const id)
 	}
 
 	AdminCmd_ResetUserData(id);
+}
+
+public ConsoleCommand_ForceVoteMod(const id, const level, const cid)
+{
+	if(!cmd_access(id, level, cid, false))
+		return PLUGIN_HANDLED;
+	
+	if(CanForceVoteNextMod())
+	{
+		StartVoteNextMod();
+
+		client_print_color(0, id, "%s^1 ADMIN:^3 %n^1 comenzó una votación para el próximo modo", g_GlobalConfigs[ChatPrefix], id);
+		return PLUGIN_HANDLED;
+	}
+	
+	console_print(id, "No se puede forzar a una votación de modo en este momento.");
+	return PLUGIN_HANDLED;
 }
 
 public ClientCommand__AdminMultimod(const id, const level, const cid)

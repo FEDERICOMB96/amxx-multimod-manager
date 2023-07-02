@@ -57,8 +57,6 @@ public plugin_init()
 
 	RegisterHookChain(RG_CSGameRules_GoToIntermission, "OnCSGameRules_GoToIntermission", 0);
 
-	register_concmd("mm_force_votemod", "OnConCommand_ForceVoteMod", g_GlobalConfigs[AdminFlags_ForceVoteMod]);
-
 	UTIL_RegisterClientCommandAll("recentmods", "OnClientCommand_RecentMods");
 	UTIL_RegisterClientCommandAll("recentmaps", "OnClientCommand_RecentMaps");
 	UTIL_RegisterClientCommandAll("currentmod", "OnClientCommand_CurrentMod");
@@ -382,23 +380,6 @@ public OnCSGameRules_GoToIntermission()
 	set_member_game(m_bLevelInitialized, false);
 
 	return HC_BREAK;
-}
-
-public OnConCommand_ForceVoteMod(const id, const level, const cid)
-{
-	if(!cmd_access(id, level, cid, false))
-		return PLUGIN_HANDLED;
-	
-	if(CanForceVoteNextMod())
-	{
-		StartVoteNextMod();
-
-		client_print_color(0, id, "%s^1 ADMIN:^3 %n^1 comenzó una votación para el próximo modo", g_GlobalConfigs[ChatPrefix], id);
-		return PLUGIN_HANDLED;
-	}
-	
-	console_print(id, "No se puede forzar a una votación de modo en este momento.");
-	return PLUGIN_HANDLED;
 }
 
 public OnClientCommand_RecentMods(const id)
