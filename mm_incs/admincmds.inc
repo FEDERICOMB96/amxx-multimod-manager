@@ -605,12 +605,12 @@ public OnTask_CountVotes_Mod(const taskid)
 		// Ganador, extender el modo
 		if(iWinner == g_iCurrentMod)
 		{
-			AdminCmd_ResetUserData(admin);
-			AdminCmd_ResetGlobalData();
-
 			ExtendTimeleft(g_bCvar_amx_extendmap_step);
 			client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el modo actual se extenderá^3 %d minutos más^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", g_GlobalConfigs[ChatPrefix], g_bCvar_amx_extendmap_step, iResult, g_Admin_VoteCountTotal, (g_Admin_VoteCountTotal != 1) ? "s" : "", UTIL_GetPercent(iResult, g_Admin_VoteCountTotal));
 			
+			AdminCmd_ResetUserData(admin);
+			AdminCmd_ResetGlobalData();
+
 			return PLUGIN_HANDLED;
 		}
 
