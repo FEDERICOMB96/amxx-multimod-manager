@@ -42,6 +42,9 @@ public plugin_precache()
 	g_GlobalConfigs[RecentMaps] = ArrayCreate(ArrayRecentMaps_e);
 	g_Array_Nominations = ArrayCreate(1);
 
+	register_dictionary("common.txt");
+	register_dictionary("multimod_manager.txt");
+
 	Cvars_Init();
 	MultiMod_Init();
 	MultiMod_ExecCvars(g_iCurrentMod);
@@ -60,6 +63,7 @@ public plugin_init()
 	UTIL_RegisterClientCommandAll("recentmods", "OnClientCommand_RecentMods");
 	UTIL_RegisterClientCommandAll("recentmaps", "OnClientCommand_RecentMaps");
 	UTIL_RegisterClientCommandAll("currentmod", "OnClientCommand_CurrentMod");
+	UTIL_RegisterClientCommandAll("currentmap", "OnClientCommand_CurrentMap");
 	UTIL_RegisterClientCommandAll("nextmod", "OnClientCommand_NextMod");
 	UTIL_RegisterClientCommandAll("nextmap", "OnClientCommand_NextMap");
 	UTIL_RegisterClientCommandAll("timeleft", "OnClientCommand_Timeleft");
@@ -76,8 +80,6 @@ public plugin_init()
 	Nominations_Init();
 
 	g_bGameOver = false;
-
-	register_dictionary("common.txt");
 }
 
 public OnConfigsExecuted()
@@ -166,7 +168,7 @@ MultiMod_Init()
 
 	if(!file_exists(szFileName))
 	{
-		set_fail_state("Error al encontrar el archivo [%s]", szFileName);
+		set_fail_state("[MULTIMOD] %L [%s]", LANG_SERVER, "MM_ERR_FIND_FILE", szFileName);
 		return;
 	}
 
@@ -174,7 +176,7 @@ MultiMod_Init()
 
 	if(jConfigsFile == Invalid_JSON)
 	{
-		set_fail_state("Error al analizar el archivo [%s]", szFileName);
+		set_fail_state("[MULTIMOD] %L [%s]", LANG_SERVER, "MM_ERR_PARSE_FILE", szFileName);
 		return;
 	}
 
@@ -287,7 +289,7 @@ MultiMod_Init()
 			else
 			{
 				ArrayDestroy(aMod[Maps]);
-				log_amx("Modo: '%s' lista de mapas inválida. Modo omitido", aMod[ModName]);
+				log_amx("%L", LANG_SERVER, "MM_ERR_INVALID_MAP_LIST", aMod[ModName]);
 			}
 
 			json_free(jArrayValue);
@@ -300,7 +302,7 @@ MultiMod_Init()
 	
 	if(ArraySize(g_GlobalConfigs[Mods]) < 1)
 	{
-		set_fail_state("[MULTIMOD] No se detectaron modos cargados!");
+		set_fail_state("[MULTIMOD] %L", LANG_SERVER, "MM_ERR_NO_LOADED_MODES");
 		return;
 	}
 
@@ -352,7 +354,7 @@ public OnEvent_HLTV()
 		g_bChangeMapOneMoreRound = false;
 
 		client_cmd(0, "spk ^"%s^"", g_SOUND_ExtendTime);
-		client_print_color(0, print_team_default, "%s^1 El mapa cambiará al finalizar la ronda!", g_GlobalConfigs[ChatPrefix]);
+		client_print_color(0, print_team_default, "%s^1 %L", LANG_PLAYER, "MM_MAP_CHANGE_END_ROUND", g_GlobalConfigs[ChatPrefix]);
 	}
 }
 
@@ -371,7 +373,7 @@ public OnCSGameRules_GoToIntermission()
 	message_begin(MSG_ALL, SVC_INTERMISSION);
 	message_end();
 	
-	client_print_color(0, print_team_blue, "%s^1 El siguiente mapa será:^3 %s", g_GlobalConfigs[ChatPrefix], g_bCvar_amx_nextmap);
+	client_print_color(0, print_team_blue, "%s^1 %L:^3 %s", LANG_PLAYER, "MM_NEXT_MAP", g_GlobalConfigs[ChatPrefix], g_bCvar_amx_nextmap);
 
 	g_bGameOver = true;
 	set_member_game(m_iEndIntermissionButtonHit, 0);
@@ -388,7 +390,7 @@ public OnClientCommand_RecentMods(const id)
 
 	if(Recent_CountRecentMods() < 1)
 	{
-		client_print_color(id, id, "%s^1 No hay modos recientes jugados", g_GlobalConfigs[ChatPrefix]);
+		client_print_color(id, id, "%s^1 %L", LANG_PLAYER, "MM_NO_RECENT_MODES_PLAYED", g_GlobalConfigs[ChatPrefix]);
 		return PLUGIN_HANDLED;
 	}
 
@@ -400,7 +402,7 @@ ShowMenu_RecentMods(const id, menupage=0)
 {
 	CHECK_CONNECTED(id)
 
-	new iMenu = menu_create("\yModos recientes:\R", "menu_RecentMods");
+	new iMenu = menu_create(fmt("\y%L:\R", LANG_PLAYER, "MM_RECENT_MODES"), "menu_RecentMods");
 
 	new iArraySizeMods = ArraySize(g_GlobalConfigs[RecentMods]);
 
@@ -410,12 +412,12 @@ ShowMenu_RecentMods(const id, menupage=0)
 
 		UTIL_GetTimeElapsed((get_systime() - aRecents[RECENT_MOD_SYSTIME]), szTimeAgo, charsmax(szTimeAgo));
 
-		menu_additem(iMenu, fmt("%s\y (Hace %s)", aRecents[RECENT_MOD_NAME], szTimeAgo));
+		menu_additem(iMenu, fmt("%s\y (%L)", aRecents[RECENT_MOD_NAME], LANG_PLAYER, "MM_AGO", szTimeAgo));
 	}
 	
-	menu_setprop(iMenu, MPROP_NEXTNAME, "Siguiente");
-	menu_setprop(iMenu, MPROP_BACKNAME, "Atrás");
-	menu_setprop(iMenu, MPROP_EXITNAME, "Salir");
+	menu_setprop(iMenu, MPROP_NEXTNAME, fmt("%L", LANG_PLAYER, "MM_MORE"));
+	menu_setprop(iMenu, MPROP_BACKNAME, fmt("%L", LANG_PLAYER, "MM_BACK"));
+	menu_setprop(iMenu, MPROP_EXITNAME, fmt("%L", LANG_PLAYER, "MM_EXIT"));
 
 	menu_display(id, iMenu, min(menupage, menu_pages(iMenu) - 1));
 	return PLUGIN_HANDLED;
@@ -440,7 +442,7 @@ public OnClientCommand_RecentMaps(const id)
 
 	if(Recent_CountRecentMaps(g_iCurrentMod) < 1)
 	{
-		client_print_color(id, id, "%s^1 No hay mapas recientes jugados", g_GlobalConfigs[ChatPrefix]);
+		client_print_color(id, id, "%s^1 %L", LANG_PLAYER, "MM_NO_RECENT_MAPS_PLAYED", g_GlobalConfigs[ChatPrefix]);
 		return PLUGIN_HANDLED;
 	}
 
@@ -452,7 +454,7 @@ ShowMenu_RecentMaps(const id, menupage=0)
 {
 	CHECK_CONNECTED(id)
 
-	new iMenu = menu_create(fmt("\yMapas recientes\d [%s]\y:\R", g_szCurrentMod), "menu_RecentMaps");
+	new iMenu = menu_create(fmt("\y%L\d [%s]\y:\R", LANG_PLAYER, "MM_RECENT_MAPS", g_szCurrentMod), "menu_RecentMaps");
 
 	new iArraySizeMaps = ArraySize(g_GlobalConfigs[RecentMaps]);
 
@@ -465,12 +467,12 @@ ShowMenu_RecentMaps(const id, menupage=0)
 
 		UTIL_GetTimeElapsed((get_systime() - aRecents[RECENT_MAP_SYSTIME]), szTimeAgo, charsmax(szTimeAgo));
 
-		menu_additem(iMenu, fmt("%s\y (Hace %s)", aRecents[RECENT_MAP_NAME], szTimeAgo));
+		menu_additem(iMenu, fmt("%s\y (%L)", aRecents[RECENT_MAP_NAME], LANG_PLAYER, "MM_AGO", szTimeAgo));
 	}
 	
-	menu_setprop(iMenu, MPROP_NEXTNAME, "Siguiente");
-	menu_setprop(iMenu, MPROP_BACKNAME, "Atrás");
-	menu_setprop(iMenu, MPROP_EXITNAME, "Salir");
+	menu_setprop(iMenu, MPROP_NEXTNAME, fmt("%L", LANG_PLAYER, "MM_MORE"));
+	menu_setprop(iMenu, MPROP_BACKNAME, fmt("%L", LANG_PLAYER, "MM_BACK"));
+	menu_setprop(iMenu, MPROP_EXITNAME, fmt("%L", LANG_PLAYER, "MM_EXIT"));
 
 	menu_display(id, iMenu, min(menupage, menu_pages(iMenu) - 1));
 	return PLUGIN_HANDLED;
@@ -493,7 +495,15 @@ public OnClientCommand_CurrentMod(const id)
 {
 	CHECK_CONNECTED(id)
 
-	client_print_color(id, print_team_blue, "%s^1 El modo actual es:^3 %s", g_GlobalConfigs[ChatPrefix], g_szCurrentMod);
+	client_print_color(id, print_team_blue, "%s^1 %L:^3 %s", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_CURRENT_MODE", g_szCurrentMod);
+	return PLUGIN_HANDLED;
+}
+
+public OnClientCommand_CurrentMap(const id)
+{
+	CHECK_CONNECTED(id)
+
+	client_print_color(id, print_team_blue, "%s^1 %L:^3 %s", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_CURRENT_MAP", g_szCurrentMap);
 	return PLUGIN_HANDLED;
 }
 
@@ -506,11 +516,11 @@ public OnClientCommand_NextMod(const id)
 		new aMod[ArrayMods_e];
 		ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMod);
 
-		client_print_color(id, print_team_blue, "%s^1 El siguiente modo será:^3 %s", g_GlobalConfigs[ChatPrefix], aMod[ModName]);
+		client_print_color(id, print_team_blue, "%s^1 %L:^3 %s", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NEXT_MODE", aMod[ModName]);
 		return PLUGIN_HANDLED;
 	}
 
-	client_print_color(id, print_team_default, "%s^1 El siguiente modo todavía no ha sido elegido!", g_GlobalConfigs[ChatPrefix]);
+	client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NEXT_MODE_HASNT_BEEN_CHOOSED");
 	return PLUGIN_HANDLED;
 }
 
@@ -520,11 +530,11 @@ public OnClientCommand_NextMap(const id)
 
 	if(g_bSelectedNextMap)
 	{
-		client_print_color(id, print_team_blue, "%s^1 El siguiente mapa será:^3 %s", g_GlobalConfigs[ChatPrefix], g_bCvar_amx_nextmap);
+		client_print_color(id, print_team_blue, "%s^1 %L:^3 %s", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NEXT_MAP", g_bCvar_amx_nextmap);
 		return PLUGIN_HANDLED;
 	}
 
-	client_print_color(id, print_team_default, "%s^1 El siguiente mapa todavía no ha sido elegido!", g_GlobalConfigs[ChatPrefix]);
+	client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NEXT_MAP_HASNT_BEEN_CHOOSED");
 	return PLUGIN_HANDLED;
 }
 
@@ -534,32 +544,30 @@ public OnClientCommand_Timeleft(const id)
 
 	switch(g_iNoMoreTime)
 	{
-		case 1: client_print_color(id, print_team_default, "%s^1 Esperando a que finalice la ronda actual para cambiar de mapa!", g_GlobalConfigs[ChatPrefix]);
-		case 2: client_print_color(id, print_team_blue, "%s^1 El siguiente mapa será:^3 %s", g_GlobalConfigs[ChatPrefix], g_bCvar_amx_nextmap);
+		case 1: client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MAP_CHANGE_END_ROUND");
+		case 2: client_print_color(id, print_team_blue, "%s^1 %L:^3 %s", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NEXT_MAP", g_bCvar_amx_nextmap);
 		default:
 		{
 			if((g_bCvar_mp_maxrounds != 0) || (g_bCvar_mp_winlimit != 0))
 			{
 				if(g_bCvar_mp_maxrounds != 0)
 				{
-					client_print_color(id, print_team_blue, "%s^1 Máximo de rondas:^3 %d^1 - Rondas restantes:^3 %d", g_GlobalConfigs[ChatPrefix], 
-						g_bCvar_mp_maxrounds, (g_bCvar_mp_maxrounds - (get_member_game(m_iTotalRoundsPlayed))));
+					client_print_color(id, print_team_blue, "%s^1 %L:^3 %d^1 - %L:^3 %d", g_GlobalConfigs[ChatPrefix], 
+						LANG_PLAYER, "MM_MAX_ROUNDS", g_bCvar_mp_maxrounds, LANG_PLAYER, "MM_ROUNDS_LEFT", (g_bCvar_mp_maxrounds - (get_member_game(m_iTotalRoundsPlayed))));
 				}
 
 				if(g_bCvar_mp_winlimit != 0)
 				{
-					client_print_color(id, print_team_blue, "%s^1 El primer equipo en llegar a^3 %d ronda%c ganada%c^1 ganará la partida!", 
-						g_GlobalConfigs[ChatPrefix], g_bCvar_mp_winlimit, likely(g_bCvar_mp_winlimit == 1) ? 0 : 115, likely(g_bCvar_mp_winlimit == 1) ? 0 : 115);
-
+					client_print_color(id, print_team_blue, "%s^1 %L!", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_WIN_LIMIT", g_bCvar_mp_winlimit);
 					client_print_color(id, print_team_default, "%s^1 T:^4 %d^1 | CT:^4 %d", g_GlobalConfigs[ChatPrefix], get_member_game(m_iNumTerroristWins), get_member_game(m_iNumCTWins));
 				}
 			}
 			else if(g_bCvar_mp_timelimit <= 0.0)
-				client_print_color(id, print_team_blue, "%s^1 Tiempo restante:^3 Ilimitado", g_GlobalConfigs[ChatPrefix]);
+				client_print_color(id, print_team_blue, "%s^1 %L:^3 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_TIMELEFT", LANG_PLAYER, "MM_NO_T_LIMIT");
 			else
 			{
 				new z = get_timeleft();
-				client_print_color(id, print_team_blue, "%s^1 Tiempo restante:^3 %d:%02d", g_GlobalConfigs[ChatPrefix], (z / 60), (z % 60));
+				client_print_color(id, print_team_blue, "%s^1 %L:^3 %d:%02d", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_TIMELEFT", (z / 60), (z % 60));
 			}
 		}
 	}
@@ -653,7 +661,7 @@ public OnTask_AlertStartNextVote()
 		client_cmd(0, "spk ^"get red(e80) ninety(s45) to check(e20) use bay(s18) mass(e42) cap(s50)^"");
 
 	set_hudmessage(255, 255, 255, -1.0, 0.35, 0, 0.0, 1.1, 0.0, 0.0, -1);
-	ShowSyncHudMsg(0, g_Hud_Alert, "La votación comenzará en %d segundo%s", g_iCountdownTime, (g_iCountdownTime != 1) ? "s" : "");
+	ShowSyncHudMsg(0, g_Hud_Alert, "%L", LANG_PLAYER, "MM_NEXT_VOTE_WILL_START_IN", g_iCountdownTime);
 
 	if(g_iCountdownTime <= 5)
 		client_cmd(0, "spk ^"fvox/%s^"", g_SOUND_CountDown[g_iCountdownTime]);
@@ -747,7 +755,7 @@ MultiMod_GetOffMods()
 
 	if(jConfigsFile == Invalid_JSON)
 	{
-		abort(AMX_ERR_GENERAL, "Archivo JSON invalido [%s]", szFileName);
+		abort(AMX_ERR_GENERAL, "[MULTIMOD] %L [%s]", LANG_SERVER, "MM_INVALID_JSON_FILE", szFileName);
 		return;
 	}
 
@@ -828,7 +836,7 @@ MultiMod_ExecCvars(const iMod)
 		server_cmd("%a", ArrayGetStringHandle(aMod[Cvars], i));
 	}
 
-	server_print("[MultiMod] Executing Cvars from Mod: %s (Count: %d)", aMod[ModName], iCvars);
+	server_print("[MULTIMOD] %L (%L: %d)", LANG_SERVER, "MM_EXECUTING_CVARS_MODE", aMod[ModName], LANG_SERVER, "MM_COUNT", iCvars);
 	return iCvars;
 }
 

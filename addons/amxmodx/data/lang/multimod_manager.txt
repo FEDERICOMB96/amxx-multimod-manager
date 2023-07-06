@@ -1,0 +1,337 @@
+[es]
+MULTIMOD_MANAGER = Multimod Manager
+
+MM_MODE = Modo
+MM_MODES = Modos
+MM_MAP = Mapa
+MM_MAPS = Mapas
+MM_VOTE = Voto
+MM_VOTES = Votos
+MM_PERCENT = Porcentaje
+MM_EXT = Extender
+MM_VOTE_RESULT = Resultado de la votación
+MM_MOD_WIN = Modo ganador
+MM_MAP_WIN = Mapa ganador
+MM_VOTING_END = ¡Votación finalizada!
+MM_SECOND_VOTE = Segunda votación
+MM_NO_MAP_CHOOSED_CVAR = [mapa no elegido]
+MM_ADMIN_NO_ACC = No tienes acceso a este comando.
+MM_ALREADY_VOTING = Ya existe una votación en este instante...
+MM_NO_VOTES_COUNT = No hay votos emitidos...
+
+MM_BACK = Atrás
+MM_MORE = Siguiente
+MM_EXIT = Salir
+MM_AGO = Hace %s
+MM_COUNT = Cantidad
+MM_ADMIN = Admin
+MM_LOCKED = Bloqueado
+MM_SELECTED = Seleccionado
+MM_CURRENT = Actual
+MM_MAX = Máximo
+MM_RANDOM = Aleatorio
+MM_RECENT = Reciente
+MM_NOMINATED = Nominado
+MM_YOU_NOMINATED = Has nominado
+
+MM_ERR_FIND_FILE = No se pudo encontrar el archivo
+MM_ERR_PARSE_FILE = No se pudo analizar el archivo
+MM_ERR_NO_LOADED_MODES = No hay modos cargados
+MM_ERR_INVALID_MAP_LIST = Lista de mapas inválida para el modo '%s'. Omitido.
+MM_INVALID_JSON_FILE = Archivo JSON inválido
+MM_EXECUTING_CVARS_MODE = Ejecutando cvars del modo '%s'
+
+MM_MAP_CHANGE_END_ROUND = El mapa cambiará al final de la ronda
+MM_NEXT_MODE_HASNT_BEEN_CHOOSED = El siguiente modo no ha sido elegido
+MM_NEXT_MAP_HASNT_BEEN_CHOOSED = El siguiente mapa no ha sido elegido
+MM_CURRENT_MODE = Modo actual
+MM_CURRENT_MAP = Mapa actual
+MM_NEXT_MODE = Siguiente modo
+MM_NEXT_MAP = Siguiente mapa
+MM_TIMELEFT = Tiempo restante
+MM_NO_T_LIMIT = Ilimitado
+MM_MAX_ROUNDS = Máximo de rondas
+MM_ROUNDS_LEFT = Rondas restantes
+MM_WIN_LIMIT = El primer equipo en llegar a^3 %d ronda(s) ganada(s)^1 ganará la partida
+
+MM_NO_RECENT_MODES_PLAYED = No se han jugado modos recientemente
+MM_NO_RECENT_MAPS_PLAYED = No se han jugado mapas recientemente
+MM_RECENT_MODES = Modos recientes
+MM_RECENT_MAPS = Mapas recientes
+
+MM_NEXT_VOTE_WILL_START_IN = La votación comenzará en %d segundo(s)
+MM_NEXT_MAP_CHANGE_WILL_BE_IN = El cambio de mapa será en %d segundo(s)
+MM_TIME_CHOOSE_MOD = Es momento de elegir el siguiente modo...
+MM_TIME_CHOOSE_MAP = Es momento de elegir el siguiente mapa...
+MM_SELECT_NEXT_MODE = Elige el siguiente modo
+MM_SELECT_NEXT_MAP = Elige el siguiente mapa
+MM_SELECT_VOTE_RANDOM_ITEM = Votar de manera aleatoria
+MM_M_EXTEND_CURRENT_MODE = \wExtender\y %s\w por\y %d minuto(s)\w más
+MM_VOTED_FOR = Has votado por^3 %s
+MM_PLAYER_VOTED_FOR = ^3%n^1 ha votado por^3 %s
+MM_CHO_NO_VOTES_MOD = Ningún voto ha sido emitido, el modo ganador al azar es^3 %s
+MM_CHO_NO_VOTES_MAP = Ningún voto ha sido emitido, el mapa ganador al azar es^3 %s
+MM_MOD_CHO_FIN_EXT = Votación finalizada, el modo actual se extenderá^3 %d minutos más^1 con^4 %d^1 /^4 %d^1 voto(s) (%d%%)
+MM_MOD_CHO_FIN_NEXT = Votación finalizada, el modo ganador es^3 %s^1 con^4 %d^1 /^4 %d^1 voto(s) (%d%%)
+MM_MOD_CHO_ONLY_MAP = El modo^3 %s^1 solo tiene el mapa^4 %s
+MM_MAP_CHO_FIN_NEXT = Votación finalizada, el mapa ganador es^3 %s^1 con^4 %d^1 /^4 %d^1 voto(s) (%d%%)
+MM_RTV_CHO_NO_RESULT = (RockTheVote) La votación para el cambio de mapa no ha tenido éxito!
+
+MM_ADMIN_VOTE_DISCONNECTED = ^3%n^1 se desconectó, por lo tanto, su votación fue anulada
+MM_ADMIN_FORCE_VOTEMODE = ^3%n^1 comenzó una votación para el siguiente modo
+MM_ADMIN_CANT_FORCE_VOTEMODE = No se puede forzar a una votación de modo en este momento.
+MM_ADMIN_SELECT_NEXTMOD = Elegir el\y siguiente modo\r (%s)
+MM_ADMIN_SELECT_NEXTMAP = Elegir el\y siguiente mapa\r (%a)
+MM_ADMIN_SELECT_NEXTMAP_UNKNOWN = Elegir el\y siguiente mapa\r (Sin definir)
+MM_ADMIN_CHANGE_TO_MODE_AND_MAP = Cambiar a:^n\w- Modo:\y %s^n\w- Mapa:\y %a
+MM_ADMIN_CHANGE_TO_MODE_AND_MAP_UNKNOWN = Cambiar a:^n\w- Modo:\y %s^n\w- Mapa:\y (Sin definir)
+MM_ADMIN_START_VOTEMODE = Comenzar una\y votación de modo
+MM_ADMIN_START_VOTEMAP = Comenzar una\y votación de mapa\r (%s)
+MM_ADMIN_MANAGE_MODS = Administrar\y modos
+
+MM_ADMIN_VOTEMOD_M_TITLE_SELECT_MODE = \yElige un modo
+MM_ADMIN_VOTEMAP_NO_MODS = No hay modos disponibles para seleccionar
+MM_ADMIN_VOTEMOD_MODE_SELECTED = Has seleccionado el modo^4 %s
+MM_ADMIN_VOTEMOD_MODE_SELECTED_INFO = Ahora puedes cambiar a un mapa del modo seleccionado o iniciar una votación
+MM_ADMIN_VOTEMOD_M_TITLE_VOTE = \yVotación de modos %d/%d
+MM_ADMIN_VOTEMOD_START_VOTE = Iniciar una votación de modo
+MM_ADMIN_VOTEMOD_MIN_MODES = Debes seleccionar al menos 2 modos (%d máximo)
+MM_ADMIN_VOTEMOD_SELECTED_MODES = \yModos seleccionados\w (%d%s)
+MM_ADMIN_VOTEMOD_ADMIN_NAME = \yVotación hecha por\w %n
+MM_ADMIN_VOTEMOD_START_VOTE_SAY = ^3%n^1 ha iniciado una votación para el cambio de modo
+
+MM_ADMIN_VOTEMAP_M_TITLE_SELECT_MAP = \yElige un mapa del modo\r (%s)\y
+MM_ADMIN_VOTEMAP_NO_MAPS = No hay mapas disponibles para seleccionar
+MM_ADMIN_VOTEMAP_MAP_SELECTED = Has seleccionado el mapa^4 %a^1 del modo^3 %s
+MM_ADMIN_VOTEMAP_MAP_SELECTED_INFO = Ahora puedes cambiar al mapa seleccionado
+MM_ADMIN_VOTEMAP_M_TITLE_VOTE = \yVotación de mapas para el modo\w %s\y %d/%d
+MM_ADMIN_VOTEMAP_START_VOTE = Iniciar una votación de mapa
+MM_ADMIN_VOTEMAP_MIN_MAPS = Debes seleccionar al menos 2 mapas (%d máximo)
+MM_ADMIN_VOTEMAP_SELECTED_MAPS = \yMapas seleccionados\w (%d%s)
+MM_ADMIN_VOTEMAP_ADMIN_NAME = \yVotación hecha por\w %n
+MM_ADMIN_VOTEMAP_START_VOTE_SAY = ^3%n^1 ha iniciado una votación para el cambio de mapa
+
+MM_ADMIN_VOTE_CONFIRM = Confirmar votación
+MM_ADMIN_VOTE_REF = Rechazar votación
+MM_ADMIN_RES_REF = ^3%n^1 ha rechazado la votación
+MM_ADMIN_CHANGE_MOD_MAP = ^3%n^1 ha cambiado al modo^4 %s^1 en el mapa^4 %s
+
+MM_ADMIN_M_TITLE_MANAGE_MODS = \yAdministrar modos
+MM_ADMIN_MODE_ENABLED = Has^3 habilitado^1 el modo^4 %s
+MM_ADMIN_MODE_DISABLED = Has^3 deshabilitado^1 el modo^4 %s
+MM_ADMIN_CANT_BLOCK_MAIN_MODE = No se puede bloquear el modo^3 %s^1 (Modo principal)
+MM_ADMIN_CANT_BLOCK_CURRENT_MODE = No se puede bloquear el modo^3 %s^1 (Modo actual)
+
+MM_MODCHOO_VOTED_FOR = Has votado por el modo:^3 %s
+MM_MODCHOO_PLAYER_VOTED_FOR = %n ha votado por el modo: %s
+MM_MODCHOO_VOTED_EXT = Has votado por extender el modo^3 %s^1 por^4 %d minuto(s)^1 más
+MM_MODCHOO_PLAYER_VOTED_EXT = %n ha votado por extender el modo %s por %d minuto(s) más
+MM_MODCHOO_NEXT = El siguiente modo será^3 %s
+MM_MODCHOO_NEED_SECOND_VOTE = Hubo^4 %d modos^1 con^4 %d^1 voto(s) cada uno, siguiente votación en^3 10 segundos
+MM_MODCHOO_SECOND_ROUND_EXT_INFO1 = Ningún modo ha superado^4 la mayoría de los votos^1 por segunda vez.
+MM_MODCHOO_SECOND_ROUND_EXT_INFO2 = Entre los más votados, la opción ganadora al azar es extender el modo^3 %s^1.
+MM_MODCHOO_SECOND_ROUND_EXT_INFO3 = El modo actual se extenderá^3 %d minuto(s)^1 más.
+MM_MODCHOO_SECOND_ROUND_NEXT_INFO1 = Ningún modo ha superado^4 la mayoría de los votos^1 por segunda vez.
+MM_MODCHOO_SECOND_ROUND_NEXT_INFO2 = Entre los más votados, la opción ganadora al azar es el modo^3 %s^1.
+
+MM_MAPCHOO_VOTED_FOR = Has votado por el mapa:^3 %s
+MM_MAPCHOO_PLAYER_VOTED_FOR = %n ha votado por el mapa: %s
+MM_MAPCHOO_NEXT = El siguiente mapa será^3 %s
+MM_MAPCHOO_CAN_NOM = Puedes nominar mapas para el siguiente modo durante los proximos^4 %d segundos
+MM_MAPCHOO_NEED_SECOND_VOTE = Hubo^4 %d mapas^1 con^4 %d^1 voto(s) cada uno, siguiente votación en^3 10 segundos
+MM_MAPCHOO_SECOND_ROUND_NEXT_INFO1 = Ningún mapa ha superado^4 la mayoría de los votos^1 por segunda vez.
+MM_MAPCHOO_SECOND_ROUND_NEXT_INFO2 = Entre los más votados, la opción ganadora al azar es el mapa^3 %s^1.
+
+MM_NOMS_MOD_NOT_ENABLED = Las nominación de modos no está habilitada!
+MM_NOMS_MAP_NOT_ENABLED = Las nominación de mapas no está habilitada!
+MM_NOMS_NOT_ALLOWED = Las nominaciones no están permitidas en este momento!
+MM_NOMS_MODS_NOT_ENOUGH = No hay suficientes modos para nominar en este momento!
+MM_NOMS_MAPS_NOT_ENOUGH = No hay suficientes mapas para nominar en este momento!
+MM_NOMS_M_TITLE_NOMINATE_MODS = Nominar modos
+MM_NOMS_M_TITLE_NOMINATE_MAPS = Nominar mapas
+MM_NOMS_PLAYER_NOMINATED_MOD = ^3%n^1 ha nominado el modo:^4 %s
+MM_NOMS_PLAYER_NOMINATED_MAP = ^3%n^1 ha nominado el mapa:^4 %a
+MM_NOMS_PLAYER_DEL_NOM_MOD = ^3%n^1 ha eliminado la nominación del modo:^4 %s
+MM_NOMS_PLAYER_DEL_NOM_MAP = ^3%n^1 ha eliminado la nominación del mapa:^4 %a
+MM_NOMS_ALREADY_NOMINATED_MOD = El modo^4 %s^1 ya ha sido nominado!
+MM_NOMS_ALREADY_NOMINATED_MOD_INFO1 = Ya has nominado el modo^4 %s^1, no puedes nominar más de un modo a la vez!
+MM_NOMS_ALREADY_NOMINATED_MAP = El mapa^4 %s^1 ya ha sido nominado!
+MM_NOMS_ALREADY_NOMINATED_MAP_INFO1 = Ya has nominado el mapa^4 %s^1, no puedes nominar más de un mapa a la vez!
+
+MM_RTV_NOT_ENABLED = El^3 Rock The Vote^1 se encuentra deshabilitado!
+MM_RTV_COOLDOWN = Tienes que esperar^4 %d segundos^1 para utilizar el^3 Rock The Vote
+MM_RTV_ALREADY_MOD_CHOOSED = Ya se ha realizado una votación para el cambio de modo!
+MM_RTV_MIN_PLAYERS = Se necesita un mínimo de^4 %d jugador(es)^1 en esta partida para utilizar el^3 Rock The Vote
+MM_RTV_ALREADY_VOTED = Ya has realizado el^3 Rock The Vote^1 para el cambio de modo!
+MM_RTV_NEED_MIN_VOTES = Se necesitan^4 %d voto(s)^1 más para iniciar el^3 Rock The Vote
+MM_RTV_PLAYER_VOTED = ^3%n^1 ha votado por el^3 Rock The Vote^1. Votos totales: ^4%d^1/^4%d
+MM_RTV_VOTING_START = El^3 Rock The Vote^1 ha comenzado! En^4 10 segundos^1 comenzará la votación para el cambio de modo
+
+[en]
+MULTIMOD_MANAGER = Multimod Manager
+
+MM_MODE = Mod
+MM_MODES = Mods
+MM_MAP = Map
+MM_MAPS = Maps
+MM_VOTE = Vote
+MM_VOTES = Votes
+MM_PERCENT = Percent
+MM_EXT = Extend
+MM_VOTE_RESULT = Voting result
+MM_MOD_WIN = Winner mod
+MM_MAP_WIN = Winner map
+MM_VOTING_END = Voting finished!
+MM_SECOND_VOTE = Second vote
+MM_NO_MAP_CHOOSED_CVAR = [map not chosen]
+MM_ADMIN_NO_ACC = You don't have access to this command.
+MM_ALREADY_VOTING = There is already a vote at this moment...
+MM_NO_VOTES_COUNT = No votes cast...
+
+MM_BACK = Back
+MM_MORE = Next
+MM_EXIT = Exit
+MM_AGO = %s ago
+MM_COUNT = Count
+MM_ADMIN = Admin
+MM_LOCKED = Locked
+MM_SELECTED = Selected
+MM_CURRENT = Current
+MM_MAX = Maximum
+MM_RANDOM = Random
+MM_RECENT = Recent
+MM_NOMINATED = Nominated
+MM_YOU_NOMINATED = You have nominated
+
+MM_ERR_FIND_FILE = Couldn't find file
+MM_ERR_PARSE_FILE = Couldn't parse file
+MM_ERR_NO_LOADED_MODES = No mods loaded
+MM_ERR_INVALID_MAP_LIST = Invalid map list for mod '%s'. Omitted.
+MM_INVALID_JSON_FILE = Invalid JSON file
+MM_EXECUTING_CVARS_MODE = Running cvars of mod '%s'
+
+MM_MAP_CHANGE_END_ROUND = The map will change at the end of the round
+MM_NEXT_MODE_HASNT_BEEN_CHOOSED = The next mod has not been chosen
+MM_NEXT_MAP_HASNT_BEEN_CHOOSED = The next map has not been chosen
+MM_CURRENT_MODE = Current mod
+MM_CURRENT_MAP = Current map
+MM_NEXT_MODE = Next mod
+MM_NEXT_MAP = Next map
+MM_TIMELEFT = Time left
+MM_NO_T_LIMIT = Unlimited
+MM_MAX_ROUNDS = Maximum rounds
+MM_ROUNDS_LEFT = Remaining rounds
+MM_WIN_LIMIT = The first team to reach^3 %d round(s) won^1 will win the match
+
+MM_NO_RECENT_MODES_PLAYED = No mods have been played recently
+MM_NO_RECENT_MAPS_PLAYED = No maps have been played recently
+MM_RECENT_MODES = Recent mods
+MM_RECENT_MAPS = Recent maps
+
+MM_NEXT_VOTE_WILL_START_IN = Voting will start in %d second(s)
+MM_NEXT_MAP_CHANGE_WILL_BE_IN = The map change will be in %d second(s)
+MM_TIME_CHOOSE_MOD = It's time to choose the next mod...
+MM_TIME_CHOOSE_MAP = It's time to choose the next map...
+MM_SELECT_NEXT_MODE = Choose the following mod
+MM_SELECT_NEXT_MAP = Choose the following map
+MM_SELECT_VOTE_RANDOM_ITEM = Vote randomly
+MM_M_EXTEND_CURRENT_MODE = \wExtend\y %s\w by\y %d minute(s)\w more
+MM_VOTED_FOR = You voted for^3 %s
+MM_PLAYER_VOTED_FOR = ^3%n^1 voted for^3 %s
+MM_CHO_NO_VOTES_MOD = No votes have been cast, the random winner mod is^3 %s
+MM_CHO_NO_VOTES_MAP = No votes have been cast, the random winner map is^3 %s
+MM_MOD_CHO_FIN_EXT = Voting finished, the current mod will be extended^3 %d more minutes^1 with^4 %d^1 /^4 %d^1 vote(s) (%d%%)
+MM_MOD_CHO_FIN_NEXT = Voting finished, the winner mod is^3 %s^1 with^4 %d^1 /^4 %d^1 vote(s) (%d%%)
+MM_MOD_CHO_ONLY_MAP = The mod^3 %s^1 only has the map^4 %s
+MM_MAP_CHO_FIN_NEXT = Voting finished, the winner map is^3 %s^1 with^4 %d^1 /^4 %d^1 vote(s) (%d%%)
+MM_RTV_CHO_NO_RESULT = (RockTheVote) The voting for the map change has not been successful!
+
+MM_ADMIN_VOTE_DISCONNECTED = ^3%n^1 disconnected, therefore, his vote was canceled
+MM_ADMIN_FORCE_VOTEMODE = ^3%n^1 started a vote for the next mod
+MM_ADMIN_CANT_FORCE_VOTEMODE = You can't force a mod vote at this time.
+MM_ADMIN_SELECT_NEXTMOD = Select the\y next mod\r (%s)
+MM_ADMIN_SELECT_NEXTMAP = Select the\y next map\r (%a)
+MM_ADMIN_SELECT_NEXTMAP_UNKNOWN = Select the\y next map\r (Unknown)
+MM_ADMIN_CHANGE_TO_MODE_AND_MAP = Change to:^n\w- Mod:\y %s^n\w- Map:\y %a
+MM_ADMIN_CHANGE_TO_MODE_AND_MAP_UNKNOWN = Change to:^n\w- Mod:\y %s^n\w- Map:\y (Unknown)
+MM_ADMIN_START_VOTEMODE = Start a\y vote mod
+MM_ADMIN_START_VOTEMAP = Start a\y vote map\r (%s)
+MM_ADMIN_MANAGE_MODS = Manage\y mods
+
+MM_ADMIN_VOTEMOD_M_TITLE_SELECT_MODE = \yChoose a mod
+MM_ADMIN_VOTEMAP_NO_MODS = There are no mods available to select
+MM_ADMIN_VOTEMOD_MODE_SELECTED = You have selected the mod^4 %s
+MM_ADMIN_VOTEMOD_MODE_SELECTED_INFO = Now you can change to a map of the selected mod or start a vote
+MM_ADMIN_VOTEMOD_M_TITLE_VOTE = \yVote mods %d/%d
+MM_ADMIN_VOTEMOD_START_VOTE = Start a vote mod
+MM_ADMIN_VOTEMOD_MIN_MODES = You must select at least 2 mods (%d maximum)
+MM_ADMIN_VOTEMOD_SELECTED_MODES = \ySelected mods\w (%d%s)
+MM_ADMIN_VOTEMOD_ADMIN_NAME = \yVote made by\w %n
+MM_ADMIN_VOTEMOD_START_VOTE_SAY = ^3%n^1 has started a vote for the mod change
+
+MM_ADMIN_VOTEMAP_M_TITLE_SELECT_MAP = \yChoose a map of the mod\r (%s)\y
+MM_ADMIN_VOTEMAP_NO_MAPS = There are no maps available to select
+MM_ADMIN_VOTEMAP_MAP_SELECTED = You have selected the map^4 %a^1 of the mod^3 %s
+MM_ADMIN_VOTEMAP_MAP_SELECTED_INFO = Now you can change to the selected map
+MM_ADMIN_VOTEMAP_M_TITLE_VOTE = \yVote maps for the mod\w %s\y %d/%d
+MM_ADMIN_VOTEMAP_START_VOTE = Start a vote map
+MM_ADMIN_VOTEMAP_MIN_MAPS = You must select at least 2 maps (%d maximum)
+MM_ADMIN_VOTEMAP_SELECTED_MAPS = \ySelected maps\w (%d%s)
+MM_ADMIN_VOTEMAP_ADMIN_NAME = \yVote made by\w %n
+MM_ADMIN_VOTEMAP_START_VOTE_SAY = ^3%n^1 has started a vote for the map change
+
+MM_ADMIN_VOTE_CONFIRM = Confirm vote
+MM_ADMIN_VOTE_REF = Refuse vote
+MM_ADMIN_RES_REF = ^3%n^1 has refused the vote
+MM_ADMIN_CHANGE_MOD_MAP = ^3%n^1 has changed to the mod^4 %s^1 in the map^4 %s
+
+MM_ADMIN_M_TITLE_MANAGE_MODS = \yManage mods
+MM_ADMIN_MODE_ENABLED = You have^3 enabled^1 the mod^4 %s
+MM_ADMIN_MODE_DISABLED = You have^3 disabled^1 the mod^4 %s
+MM_ADMIN_CANT_BLOCK_MAIN_MODE = You can't block the mod^3 %s^1 (Main mod)
+MM_ADMIN_CANT_BLOCK_CURRENT_MODE = You can't block the mod^3 %s^1 (Current mod)
+
+MM_MODCHOO_VOTED_FOR = You voted for the mod:^3 %s
+MM_MODCHOO_PLAYER_VOTED_FOR = %n voted for the mod: %s
+MM_MODCHOO_VOTED_EXT = You voted to extend the mod^3 %s^1 by^4 %d minute(s)^1 more
+MM_MODCHOO_PLAYER_VOTED_EXT = %n voted to extend the mod %s by %d minute(s) more
+MM_MODCHOO_NEXT = The next mod will be^3 %s
+MM_MODCHOO_NEED_SECOND_VOTE = There were^4 %d mods^1 with^4 %d^1 vote(s) each, next vote in^3 10 seconds
+MM_MODCHOO_SECOND_ROUND_EXT_INFO1 = No mod has exceeded^4 the majority of votes^1 for the second time.
+MM_MODCHOO_SECOND_ROUND_EXT_INFO2 = Among the most voted, the random winning option is to extend the mod^3 %s^1.
+MM_MODCHOO_SECOND_ROUND_EXT_INFO3 = The current mod will be extended^3 %d minute(s)^1 more.
+MM_MODCHOO_SECOND_ROUND_NEXT_INFO1 = No mod has exceeded^4 the majority of votes^1 for the second time.
+MM_MODCHOO_SECOND_ROUND_NEXT_INFO2 = Among the most voted, the random winning option is the mod^3 %s^1.
+
+MM_MAPCHOO_VOTED_FOR = You voted for the map:^3 %s
+MM_MAPCHOO_PLAYER_VOTED_FOR = %n voted for the map: %s
+MM_MAPCHOO_NEXT = The next map will be^3 %s
+MM_MAPCHOO_CAN_NOM = You can nominate maps for the next mod for the next^4 %d seconds
+MM_MAPCHOO_NEED_SECOND_VOTE = There were^4 %d maps^1 with^4 %d^1 vote(s) each, next vote in^3 10 seconds
+MM_MAPCHOO_SECOND_ROUND_NEXT_INFO1 = No map has exceeded^4 the majority of votes^1 for the second time.
+MM_MAPCHOO_SECOND_ROUND_NEXT_INFO2 = Among the most voted, the random winning option is the map^3 %s^1.
+
+MM_NOMS_MOD_NOT_ENABLED = The mod nomination is not enabled!
+MM_NOMS_MAP_NOT_ENABLED = The map nomination is not enabled!
+MM_NOMS_NOT_ALLOWED = Nominations are not allowed at this time!
+MM_NOMS_MODS_NOT_ENOUGH = There are not enough mods to nominate at this time!
+MM_NOMS_MAPS_NOT_ENOUGH = There are not enough maps to nominate at this time!
+MM_NOMS_M_TITLE_NOMINATE_MODS = Nominate mods
+MM_NOMS_M_TITLE_NOMINATE_MAPS = Nominate maps
+MM_NOMS_PLAYER_NOMINATED_MOD = ^3%n^1 has nominated the mod:^4 %s
+MM_NOMS_PLAYER_NOMINATED_MAP = ^3%n^1 has nominated the map:^4 %a
+MM_NOMS_PLAYER_DEL_NOM_MOD = ^3%n^1 has removed the nomination of the mod:^4 %s
+MM_NOMS_PLAYER_DEL_NOM_MAP = ^3%n^1 has removed the nomination of the map:^4 %a
+MM_NOMS_ALREADY_NOMINATED_MOD = The mod^4 %s^1 has already been nominated!
+MM_NOMS_ALREADY_NOMINATED_MOD_INFO1 = You have already nominated the mod^4 %s^1, you can't nominate more than one mod at a time!
+MM_NOMS_ALREADY_NOMINATED_MAP = The map^4 %s^1 has already been nominated!
+MM_NOMS_ALREADY_NOMINATED_MAP_INFO1 = You have already nominated the map^4 %s^1, you can't nominate more than one map at a time!
+
+MM_RTV_NOT_ENABLED = The^3 Rock The Vote^1 is disabled!
+MM_RTV_COOLDOWN = You have to wait^4 %d seconds^1 to use the^3 Rock The Vote
+MM_RTV_ALREADY_MOD_CHOOSED = A vote for the mod change has already been made!
+MM_RTV_MIN_PLAYERS = A minimum of^4 %d player(s)^1 in this game is needed to use the^3 Rock The Vote
+MM_RTV_ALREADY_VOTED = You have already made the^3 Rock The Vote^1 for the mod change!
+MM_RTV_NEED_MIN_VOTES = Needs^4 %d vote(s)^1 more to start the^3 Rock The Vote
+MM_RTV_PLAYER_VOTED = ^3%n^1 has voted for the^3 Rock The Vote^1. Total votes: ^4%d^1/^4%d
+MM_RTV_VOTING_START = The^3 Rock The Vote^1 has started! In^4 10 seconds^1 the voting for the mod change will begin

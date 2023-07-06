@@ -26,7 +26,7 @@
 #define OPTION_EXTEND_MOD				-1
 
 #define CHECK_CONNECTED(%0)				if(!GetPlayerBit(g_bConnected, %0)) { return PLUGIN_HANDLED; }
-#define CHECK_ADMINVOTEINPROGRESS(%0)	if(g_bCvar_amx_last_voting > get_gametime()) { client_print_color(%0, print_team_default, "%s^1 Existe una votación en curso, debes esperar unos segundos para utilizar esta función!", g_GlobalConfigs[ChatPrefix]); return PLUGIN_HANDLED; }
+#define CHECK_ADMINVOTEINPROGRESS(%0)	if(g_bCvar_amx_last_voting > get_gametime()) { client_print_color(%0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_ALREADY_VOTING"); return PLUGIN_HANDLED; }
 
 #define CHECK_CONNECTED_NEWMENU(%0,%1)	if(!GetPlayerBit(g_bConnected, %0)) { menu_destroy(%1); return PLUGIN_HANDLED; }
 #define CHECK_EXIT_NEWMENU(%0,%1,%2)	if(likely(%2 == MENU_EXIT)) { menu_destroy(%1); return PLUGIN_HANDLED; }
@@ -35,7 +35,7 @@
 #define CHECK_MENU_EXIT(%0)				if(likely(%0 == MENU_EXIT)) { return PLUGIN_HANDLED; }
 #define CHECK_MENU_TIMEOUT(%0)			if(likely(%0 == MENU_TIMEOUT)) { return PLUGIN_HANDLED; }
 
-#define CHECK_ADMIN_ACCESS(%0,%1)		if(~get_user_flags(%0) & %1) { client_print_color(%0, print_team_default, "%s^1 No tenés acceso a este comando.", g_GlobalConfigs[ChatPrefix]); return PLUGIN_HANDLED; }
+#define CHECK_ADMIN_ACCESS(%0,%1)		if(~get_user_flags(%0) & %1) { client_print_color(%0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_ADMIN_NO_ACC"); return PLUGIN_HANDLED; }
 
 enum 
 {

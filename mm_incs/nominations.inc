@@ -38,7 +38,7 @@ public ClientCommand_Nominate(const id)
 	{
 		if(!g_GlobalConfigs[Nom_Mods_Enabled])
 		{
-			client_print_color(id, print_team_default, "%s^1 La nominación de modos se encuentra deshabilitada!", g_GlobalConfigs[ChatPrefix]);
+			client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NOMS_MOD_NOT_ENABLED");
 			return PLUGIN_HANDLED;
 		}
 
@@ -49,7 +49,7 @@ public ClientCommand_Nominate(const id)
 	{
 		if(!g_GlobalConfigs[Nom_Maps_Enabled])
 		{
-			client_print_color(id, print_team_default, "%s^1 La nominación de mapas se encuentra deshabilitada!", g_GlobalConfigs[ChatPrefix]);
+			client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NOMS_MAP_NOT_ENABLED");
 			return PLUGIN_HANDLED;
 		}
 
@@ -57,7 +57,7 @@ public ClientCommand_Nominate(const id)
 		return PLUGIN_HANDLED;
 	}
 
-	client_print_color(id, print_team_default, "%s^1 Nominaciones no disponibles en este momento!", g_GlobalConfigs[ChatPrefix]);
+	client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NOMS_NOT_ALLOWED");
 	return PLUGIN_HANDLED;
 }
 
@@ -69,29 +69,31 @@ ShowMenu_NominateMod(const id, menupage=0)
 
 	if(likely((iArraySizeMods - 1 - UTIL_GetOffModsCount() - Recent_CountRecentMods()) <= g_GlobalConfigs[ModsInMenu]))
 	{
-		client_print_color(id, print_team_default, "%s^1 No hay suficientes modos para nominar en este momento!", g_GlobalConfigs[ChatPrefix]);
+		client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NOMS_MODS_NOT_ENOUGH");
 		return PLUGIN_HANDLED;
 	}
 
-	new iMenu = menu_create("\yNominar próximo modo:\R", "menu_NominateMod");
+	new iMenu = menu_create(fmt("\y%L:", LANG_PLAYER, "MM_NOMS_M_TITLE_NOMINATE_MODS"), "menu_NominateMod");
 
 	for(new iModId = 0, aData[ArrayMods_e]; iModId < iArraySizeMods; ++iModId)
 	{
 		ArrayGetArray(g_GlobalConfigs[Mods], iModId, aData);
 
 		if(g_iCurrentMod == iModId)
-			menu_additem(iMenu, fmt("%s\y (ACTUAL)", aData[ModName]), .callback=menu_makecallback("UTIL_DisableItem"));
+			menu_additem(iMenu, fmt("%s\y (%L)", aData[ModName], LANG_PLAYER, "MM_CURRENT"), .callback=menu_makecallback("UTIL_DisableItem"));
 		else if(UTIL_IsModOff(iModId))
-			menu_additem(iMenu, fmt("%s\r (BLOQUEADO)", aData[ModName]), .callback=menu_makecallback("UTIL_DisableItem"));
+			menu_additem(iMenu, fmt("%s\r (%L)", aData[ModName], LANG_PLAYER, "MM_LOCKED"), .callback=menu_makecallback("UTIL_DisableItem"));
 		else if(Recent_IsRecentMod(aData[ModName]))
-			menu_additem(iMenu, fmt("%s\r (RECIENTE)", aData[ModName]), .callback=menu_makecallback("UTIL_DisableItem"));
+			menu_additem(iMenu, fmt("%s\r (%L)", aData[ModName], LANG_PLAYER, "MM_RECENT"), .callback=menu_makecallback("UTIL_DisableItem"));
+		else if(IsNominated(iModId))
+			menu_additem(iMenu, fmt("%s\y (%L)", aData[ModName], LANG_PLAYER, ((iModId == (g_SVM_MyNominate[id]-1)) ? "MM_YOU_NOMINATED" : "MM_NOMINATED")));
 		else
-			menu_additem(iMenu, fmt("%s%s", aData[ModName], IsNominated(iModId) ? ((iModId == (g_SVM_MyNominate[id]-1)) ? "\y [TU NOMINASTE]" : "\y [NOMINADO]"): ""));
+			menu_additem(iMenu, fmt("%s", aData[ModName]));
 	}
 
-	menu_setprop(iMenu, MPROP_NEXTNAME, "Siguiente");
-	menu_setprop(iMenu, MPROP_BACKNAME, "Atrás");
-	menu_setprop(iMenu, MPROP_EXITNAME, "Salir");
+	menu_setprop(iMenu, MPROP_NEXTNAME, fmt("%L", LANG_PLAYER, "MM_MORE"));
+	menu_setprop(iMenu, MPROP_BACKNAME, fmt("%L", LANG_PLAYER, "MM_BACK"));
+	menu_setprop(iMenu, MPROP_EXITNAME, fmt("%L", LANG_PLAYER, "MM_EXIT"));
 
 	menu_display(id, iMenu, min(menupage, menu_pages(iMenu) - 1));
 	return PLUGIN_HANDLED;
@@ -113,21 +115,21 @@ public menu_NominateMod(const id, const menuid, const item)
 			DeleteNominated(g_SVM_MyNominate[id]-1);
 
 			g_SVM_MyNominate[id] = 0;
-			client_print_color(0, print_team_red, "%s^3 %n^1 ha eliminado de las nominaciones el modo:^4 %s", g_GlobalConfigs[ChatPrefix], id, aData[ModName]);
+			client_print_color(0, print_team_red, "%s %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NOMS_PLAYER_DEL_NOM_MOD", id, aData[ModName]);
 		}
 		else
-			client_print_color(id, print_team_blue, "%s^1 El modo^4 %s^1 ya fue nominado!", g_GlobalConfigs[ChatPrefix], aData[ModName]);
+			client_print_color(id, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NOMS_ALREADY_NOMINATED_MOD", aData[ModName]);
 	}
 	else
 	{
 		if(g_SVM_MyNominate[id])
-			client_print_color(id, print_team_default, "%s^1 No podes nominar más de un modo a la vez!", g_GlobalConfigs[ChatPrefix]);
+			client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NOMS_ALREADY_NOMINATED_MOD_INFO1", aData[ModName]);
 		else
 		{
 			ArrayPushCell(g_Array_Nominations, iModId);
 
 			g_SVM_MyNominate[id] = iModId+1;
-			client_print_color(0, print_team_blue, "%s^3 %n^1 ha nominado el modo:^4 %s", g_GlobalConfigs[ChatPrefix], id, aData[ModName]);
+			client_print_color(0, print_team_blue, "%s %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NOMS_PLAYER_NOMINATED_MOD", id, aData[ModName]);
 		}
 	}
 
@@ -150,25 +152,27 @@ ShowMenu_NominateMap(const id, menupage=0)
 
 	if(likely((iArraySizeMaps - Recent_CountRecentMaps(g_iNextSelectMod)) <= g_GlobalConfigs[MapsInMenu]))
 	{
-		client_print_color(id, print_team_default, "%s^1 No hay suficientes mapas para nominar en este momento!", g_GlobalConfigs[ChatPrefix]);
+		client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NOMS_MAPS_NOT_ENOUGH");
 		return PLUGIN_HANDLED;
 	}
 
-	new iMenu = menu_create("\yNominar próximo mapa:\R", "menu_NominateMap");
+	new iMenu = menu_create(fmt("\y%L:", LANG_PLAYER, "MM_NOMS_M_TITLE_NOMINATE_MAPS"), "menu_NominateMap");
 
 	for(new iMapId = 0, szMapName[MAX_MAPNAME_LENGTH]; iMapId < iArraySizeMaps; ++iMapId)
 	{
 		ArrayGetString(aMods[Maps], iMapId, szMapName, MAX_MAPNAME_LENGTH-1);
 
 		if(Recent_IsRecentMap(g_iNextSelectMod, szMapName))
-			menu_additem(iMenu, fmt("%s\r (RECIENTE)", szMapName), .callback=menu_makecallback("UTIL_DisableItem"));
+			menu_additem(iMenu, fmt("%s\r (%L)", szMapName, LANG_PLAYER, "MM_RECENT"), .callback=menu_makecallback("UTIL_DisableItem"));
+		else if(IsNominated(iMapId))
+			menu_additem(iMenu, fmt("%s\y (%L)", szMapName, LANG_PLAYER, ((iMapId == (g_SVM_MyNominate[id]-1)) ? "MM_YOU_NOMINATED" : "MM_NOMINATED")));
 		else
-			menu_additem(iMenu, fmt("%s%s", szMapName, IsNominated(iMapId) ? ((iMapId == (g_SVM_MyNominate[id]-1)) ? "\y [TU NOMINASTE]" : "\y (NOMINADO)"): ""));
+			menu_additem(iMenu, fmt("%s", szMapName));
 	}
 
-	menu_setprop(iMenu, MPROP_NEXTNAME, "Siguiente");
-	menu_setprop(iMenu, MPROP_BACKNAME, "Atrás");
-	menu_setprop(iMenu, MPROP_EXITNAME, "Salir");
+	menu_setprop(iMenu, MPROP_NEXTNAME, fmt("%L", LANG_PLAYER, "MM_MORE"));
+	menu_setprop(iMenu, MPROP_BACKNAME, fmt("%L", LANG_PLAYER, "MM_BACK"));
+	menu_setprop(iMenu, MPROP_EXITNAME, fmt("%L", LANG_PLAYER, "MM_EXIT"));
 
 	menu_display(id, iMenu, min(menupage, menu_pages(iMenu) - 1));
 	return PLUGIN_HANDLED;
@@ -191,21 +195,21 @@ public menu_NominateMap(const id, const menuid, const item)
 			DeleteNominated(g_SVM_MyNominate[id]-1);
 
 			g_SVM_MyNominate[id] = 0;
-			client_print_color(0, print_team_red, "%s^3 %n^1 ha eliminado de las nominaciones el mapa:^4 %a", g_GlobalConfigs[ChatPrefix], id, ArrayGetStringHandle(aMods[Maps], iMapId));
+			client_print_color(0, print_team_red, "%s %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NOMS_PLAYER_DEL_NOM_MAP", id, ArrayGetStringHandle(aMods[Maps], iMapId));
 		}
 		else
-			client_print_color(id, print_team_blue, "%s^1 El mapa^4 %a^1 ya fue nominado!", g_GlobalConfigs[ChatPrefix], ArrayGetStringHandle(aMods[Maps], iMapId));
+			client_print_color(id, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NOMS_ALREADY_NOMINATED_MAP", ArrayGetStringHandle(aMods[Maps], iMapId));
 	}
 	else
 	{
 		if(g_SVM_MyNominate[id])
-			client_print_color(id, print_team_default, "%s^1 No podes nominar más de un mapa a la vez!", g_GlobalConfigs[ChatPrefix]);
+			client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NOMS_ALREADY_NOMINATED_MAP_INFO1");
 		else
 		{
 			ArrayPushCell(g_Array_Nominations, iMapId);
 
 			g_SVM_MyNominate[id] = iMapId+1;
-			client_print_color(0, print_team_blue, "%s^3 %n^1 ha nominado el mapa:^4 %a", g_GlobalConfigs[ChatPrefix], id, ArrayGetStringHandle(aMods[Maps], iMapId));
+			client_print_color(0, print_team_blue, "%s %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NOMS_PLAYER_NOMINATED_MAP", id, ArrayGetStringHandle(aMods[Maps], iMapId));
 		}
 	}
 

@@ -43,7 +43,7 @@ MapChooser_InitNextVoteMap(iStartVote)
 		ArrayGetString(aMods[Maps], 0, szMap, MAX_MAPNAME_LENGTH-1);
 		set_pcvar_string(g_pCvar_amx_nextmap, szMap);
 
-		client_print_color(0, print_team_blue, "%s^1 El próximo mapa será^3 %s^1!", g_GlobalConfigs[ChatPrefix], szMap);
+		client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MAPCHOO_NEXT", szMap);
 		
 		MapChooser_ResetAllData();
 		Nominations_ResetAllData();
@@ -73,7 +73,7 @@ MapChooser_InitNextVoteMap(iStartVote)
 	set_task(flStartVote, "OnTask_VoteNextMap", TASK_VOTEMAP);
 
 	if(g_GlobalConfigs[Nom_Maps_Enabled])
-		client_print_color(0, print_team_default, "%s^1 Puedes nominar mapas para el próximo modo durante los proximos^4 %d segundos", g_GlobalConfigs[ChatPrefix], iStartVote);
+		client_print_color(0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MAPCHOO_CAN_NOM", iStartVote);
 }
 
 MapChooser_ClientPutInServer(const id)
@@ -106,7 +106,7 @@ public OnTask_VoteNextMap()
 
 	new iMaxMaps = min(g_GlobalConfigs[MapsInMenu], (iArraySizeMaps - iRecentMaps));
 
-	g_Menu_MapChooser = menu_create("\yElige el próximo mapa: ¡VOTÁ AHORA!", "menu__CountVoteMap");
+	g_Menu_MapChooser = menu_create(fmt("\y%L", LANG_PLAYER, "MM_SELECT_NEXT_MAP"), "menu__CountVoteMap");
 
 	g_iMapVoteNum = 0;
 	for(new iRandom, iMapId, iArraySizeNoms, szMapName[MAX_MAPNAME_LENGTH]; g_iMapVoteNum < iMaxMaps; ++g_iMapVoteNum)
@@ -128,7 +128,7 @@ public OnTask_VoteNextMap()
 		menu_additem(g_Menu_MapChooser, fmt("\w%s%s", szMapName, likely(g_iMapVoteNum == (iMaxMaps-1)) ? "^n" : ""));
 	}
 
-	menu_additem(g_Menu_MapChooser, "\ySeleccionar al azar");
+	menu_additem(g_Menu_MapChooser, fmt("\y%L", LANG_PLAYER, "MM_SELECT_VOTE_RANDOM_ITEM"));
 
 	menu_setprop(g_Menu_MapChooser, MPROP_PERPAGE, 0);
 	menu_setprop(g_Menu_MapChooser, MPROP_EXIT, MEXIT_NEVER);
@@ -144,7 +144,7 @@ public OnTask_VoteNextMap()
 	set_task(15.1, "OnTask_CheckVoteMap");
 	
 	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
-	client_print_color(0, print_team_default, "%s^1 Es momento de elegir el próximo mapa!", g_GlobalConfigs[ChatPrefix]);
+	client_print_color(0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_TIME_CHOOSE_MAP");
 	
 	ClearSyncHud(0, g_Hud_Vote);
 	OnTask_MapChooserHudVote();
@@ -166,20 +166,20 @@ public menu__CountVoteMap(const id, const menuid, const item)
 	{
 		ArrayGetString(aMods[Maps], g_iSVM_MapInMenu[iMapId], szMap, MAX_MAPNAME_LENGTH-1);
 		
-		client_print_color(id, print_team_blue, "%s^1 Has elegido el mapa^3 %s", g_GlobalConfigs[ChatPrefix], szMap);
+		client_print_color(id, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MAPCHOO_VOTED_FOR", szMap);
 		
 		if(g_bCvar_amx_vote_answers)
-			client_print(0, print_console, "%n ha votado por el mapa: %s", id, szMap);
+			client_print(0, print_console, "%L", LANG_PLAYER, "MM_MAPCHOO_PLAYER_VOTED_FOR", id, szMap);
 	}
 	else
 	{
 		iMapId = random(g_iMapVoteNum);
 		ArrayGetString(aMods[Maps], g_iSVM_MapInMenu[iMapId], szMap, MAX_MAPNAME_LENGTH-1);
 
-		client_print_color(id, print_team_blue, "%s^1 Has elegido el mapa^3 %s^4 [ELECCIÓN ALEATORIA]", g_GlobalConfigs[ChatPrefix], szMap);
+		client_print_color(id, print_team_blue, "%s^1 %L^4 [%L]", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MAPCHOO_VOTED_FOR", szMap, LANG_PLAYER, "MM_RANDOM");
 		
 		if(g_bCvar_amx_vote_answers)
-			client_print(0, print_console, "%n ha votado por el mapa: %s [ELECCIÓN ALEATORIA]", id, szMap);
+			client_print(0, print_console, "%L [%L]", LANG_PLAYER, "MM_MAPCHOO_PLAYER_VOTED_FOR", id, szMap, LANG_PLAYER, "MM_RANDOM");
 	}
 	
 	++g_iVoteMapCountGlobal[iMapId];
@@ -200,7 +200,7 @@ public OnTask_CheckVoteMap()
 	ResetMapMenuAll();
 	menu_destroy(g_Menu_MapChooser);
 
-	client_print(0, print_console, "Resultados de la votacion:");
+	client_print(0, print_console, "%L:", LANG_PLAYER, "MM_VOTE_RESULT");
 
 	for(new i = 0; i < g_iMapVoteNum; ++i)
 	{
@@ -210,8 +210,8 @@ public OnTask_CheckVoteMap()
 			iResult = g_iVoteMapCountGlobal[i];
 		}
 
-		client_print(0, print_console, "Mapa: %a - Votos: %d - Porcentaje: %d%%", 
-			ArrayGetStringHandle(aMods[Maps], g_iSVM_MapInMenu[i]), g_iVoteMapCountGlobal[i], UTIL_GetPercent(g_iVoteMapCountGlobal[i], g_iVoteMapCount));
+		client_print(0, print_console, "%L: %a - %L: %d - Porcentaje: %d%%", LANG_PLAYER, "MM_MAP",	ArrayGetStringHandle(aMods[Maps], g_iSVM_MapInMenu[i]), 
+			LANG_PLAYER, "MM_VOTES", g_iVoteMapCountGlobal[i], LANG_PLAYER, "MM_PERCENT", UTIL_GetPercent(g_iVoteMapCountGlobal[i], g_iVoteMapCount));
 	}
 
 	// Hubo votos emitidos..
@@ -236,7 +236,7 @@ public OnTask_CheckVoteMap()
 			g_bSVM_MapSecondRound = true;
 			g_iMapVoteNum = j;
 
-			client_print_color(0, print_team_blue, "%s^1 Hubo^4 %d mapas^1 con^4 %d^1 voto%s cada uno, siguiente votación en^3 10 segundos^1!", g_GlobalConfigs[ChatPrefix], j, iResult, (iResult != 1) ? "s" : "");
+			client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MAPCHOO_NEED_SECOND_VOTE", j, iResult);
 
 			client_cmd(0, "spk ^"run officer(e40) voltage(e30) accelerating(s70) is required^"");
 
@@ -250,8 +250,7 @@ public OnTask_CheckVoteMap()
 		ArrayGetString(aMods[Maps], g_iSVM_MapInMenu[iWinner], szMap, MAX_MAPNAME_LENGTH-1);
 		set_pcvar_string(g_pCvar_amx_nextmap, szMap);
 
-		client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el mapa ganador es^3 %s^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", 
-			g_GlobalConfigs[ChatPrefix], szMap, iResult, g_iVoteMapCount, (g_iVoteMapCount != 1) ? "s" : "", UTIL_GetPercent(iResult, g_iVoteMapCount));
+		client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MAP_CHO_FIN_NEXT", szMap, iResult, g_iVoteMapCount, UTIL_GetPercent(iResult, g_iVoteMapCount));
 		
 		MapChooser_ResetAllData();
 		Nominations_ResetAllData();
@@ -276,7 +275,7 @@ public OnTask_CheckVoteMap()
 		ArrayGetString(aMods[Maps], g_iSVM_MapInMenu[iWinner], szMap, MAX_MAPNAME_LENGTH-1);
 		set_pcvar_string(g_pCvar_amx_nextmap, szMap);
 
-		client_print_color(0, print_team_blue, "%s^1 Ningún voto fue emitido, por lo tanto el mapa ganador al azar es:^3 %s", g_GlobalConfigs[ChatPrefix], szMap);
+		client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_CHO_NO_VOTES_MAP", szMap);
 
 		MapChooser_ResetAllData();
 		Nominations_ResetAllData();
@@ -294,7 +293,7 @@ public OnTask_VoteNextMap__FIX()
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMods);
 
-	g_Menu_MapChooser = menu_create("\yElige el próximo mapa: ¡VOTÁ AHORA!", "menu__CountVoteMapFIX");
+	g_Menu_MapChooser = menu_create(fmt("\y%L", LANG_PLAYER, "MM_SELECT_NEXT_MAP"), "menu__CountVoteMapFIX");
 
 	for(new i = 0; i < g_iMapVoteNum; ++i)
 		menu_additem(g_Menu_MapChooser, fmt("\w%a%s", ArrayGetStringHandle(aMods[Maps], g_iSVM_MapInMenu_SecondRound[i]), likely(i == (g_iMapVoteNum-1)) ? "^n^n\d(SEGUNDA VOTACIÓN)" : ""));
@@ -313,7 +312,7 @@ public OnTask_VoteNextMap__FIX()
 	set_task(15.1, "OnTask_CheckVoteMapFIX");
 	
 	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
-	client_print_color(0, print_team_grey, "%s^1 Es momento de elegir el próximo mapa!^3 (SEGUNDA VOTACIÓN)", g_GlobalConfigs[ChatPrefix]);
+	client_print_color(0, print_team_grey, "%s^1 %L^3 (%L)", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_TIME_CHOOSE_MAP", LANG_PLAYER, "MM_SECOND_VOTE");
 	
 	ClearSyncHud(0, g_Hud_Vote);
 	OnTask_MapChooserHudVote();
@@ -333,10 +332,10 @@ public menu__CountVoteMapFIX(const id, const menuid, const item)
 
 	ArrayGetString(aMods[Maps], g_iSVM_MapInMenu_SecondRound[iMapId], szMap, MAX_MAPNAME_LENGTH-1);
 	
-	client_print_color(id, print_team_blue, "%s^1 Has elegido el mapa^3 %s", g_GlobalConfigs[ChatPrefix], szMap);
+	client_print_color(id, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MAPCHOO_VOTED_FOR", szMap);
 	
 	if(g_bCvar_amx_vote_answers)
-		client_print(0, print_console, "%n ha votado por el mapa: %s", id, szMap);
+		client_print(0, print_console, "%L", LANG_PLAYER, "MM_MAPCHOO_PLAYER_VOTED_FOR", id, szMap);
 
 	++g_iVoteMapCountGlobal[iMapId];
 	++g_iVoteMapCount;
@@ -356,7 +355,7 @@ public OnTask_CheckVoteMapFIX()
 	ResetMapMenuAll();
 	menu_destroy(g_Menu_MapChooser);
 
-	client_print(0, print_console, "Resultados de la votacion:");
+	client_print(0, print_console, "%L:", LANG_PLAYER, "MM_VOTE_RESULT");
 
 	for(new i = 0; i < g_iMapVoteNum; ++i)
 	{
@@ -366,8 +365,8 @@ public OnTask_CheckVoteMapFIX()
 			iResult = g_iVoteMapCountGlobal[i];
 		}
 
-		client_print(0, print_console, "Mapa: %a - Votos: %d - Porcentaje: %d%%", 
-			ArrayGetStringHandle(aMods[Maps], g_iSVM_MapInMenu_SecondRound[i]), g_iVoteMapCountGlobal[i], UTIL_GetPercent(g_iVoteMapCountGlobal[i], g_iVoteMapCount));
+		client_print(0, print_console, "%L: %a - %L: %d - %L: %d%%", LANG_PLAYER, "MM_MAP", ArrayGetStringHandle(aMods[Maps], g_iSVM_MapInMenu_SecondRound[i]), 
+			LANG_PLAYER, "MM_VOTES", g_iVoteMapCountGlobal[i], LANG_PLAYER, "MM_PERCENT", UTIL_GetPercent(g_iVoteMapCountGlobal[i], g_iVoteMapCount));
 	}
 
 	// Hubo votos emitidos..
@@ -394,12 +393,11 @@ public OnTask_CheckVoteMapFIX()
 		
 		if(j > 1)
 		{
-			client_print_color(0, print_team_default, "%s^1 Ningún mapa superó^4 la mayoría de los votos^1 por segunda vez.", g_GlobalConfigs[ChatPrefix]);
-			client_print_color(0, print_team_blue, "%s^1 Entre los más votados, el mapa ganador al azar es:^3 %s", g_GlobalConfigs[ChatPrefix], szMap);
+			client_print_color(0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MAPCHOO_SECOND_ROUND_NEXT_INFO1");
+			client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MAPCHOO_SECOND_ROUND_NEXT_INFO2", szMap);
 		}
 		else
-			client_print_color(0, print_team_blue, "%s^1 Votación finalizada, el mapa ganador es^3 %s^1 con^4 %d^1 /^4 %d^1 voto%s (%d%%)!", 
-				g_GlobalConfigs[ChatPrefix], szMap, iResult, g_iVoteMapCount, (g_iVoteMapCount != 1) ? "s" : "", UTIL_GetPercent(iResult, g_iVoteMapCount));
+			client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MAP_CHO_FIN_NEXT", szMap, iResult, g_iVoteMapCount,  UTIL_GetPercent(iResult, g_iVoteMapCount));
 		
 		MapChooser_ResetAllData();
 		Nominations_ResetAllData();
@@ -424,7 +422,7 @@ public OnTask_CheckVoteMapFIX()
 		ArrayGetString(aMods[Maps], g_iSVM_MapInMenu_SecondRound[iWinner], szMap, MAX_MAPNAME_LENGTH-1);
 		set_pcvar_string(g_pCvar_amx_nextmap, szMap);
 
-		client_print_color(0, print_team_blue, "%s^1 Ningún voto fue emitido, por lo tanto el mapa ganador al azar es:^3 %s", g_GlobalConfigs[ChatPrefix], szMap);
+		client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_CHO_NO_VOTES_MAP", szMap);
 
 		MapChooser_ResetAllData();
 		Nominations_ResetAllData();
@@ -447,7 +445,7 @@ public OnTask_MapChooserHudVote()
 	if(!g_iVoteMapCount)
 	{
 		set_hudmessage(255, 255, 255, 0.75, 0.35, 0, 0.0, 0.2, 0.0, 0.0, -1);
-		ShowSyncHudMsg(0, g_Hud_Vote, "Sin votos emitidos");
+		ShowSyncHudMsg(0, g_Hud_Vote, "%L", LANG_PLAYER, "MM_NO_VOTES_COUNT");
 		return;
 	}
 
@@ -483,7 +481,7 @@ public OnTask_MapChooserHudVote()
 
 		iNoFirst = 1;
 
-		iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "%a: %d voto%s (%d%%%%)", ArrayGetStringHandle(aMods[Maps], iMapId[i]), iVoteMaps[i], (iVoteMaps[i] == 1) ? "" : "s", UTIL_GetPercent(iVoteMaps[i], g_iVoteMapCount));
+		iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "%a: %d %L (%d%%%%)", ArrayGetStringHandle(aMods[Maps], iMapId[i]), iVoteMaps[i], LANG_PLAYER, (iVoteMaps[i] == 1) ? "MM_VOTE" : "MM_VOTES", UTIL_GetPercent(iVoteMaps[i], g_iVoteMapCount));
 	}
 
 	set_hudmessage(255, 255, 255, 0.75, 0.35, 0, 0.0, 0.3, 0.0, 0.0, -1);
@@ -501,7 +499,7 @@ public OnTask_ChangeTimeLeft()
 		case CHANGEMAP_END_OF_ROUND:
 		{
 			client_cmd(0, "spk ^"%s^"", g_SOUND_ExtendTime);
-			client_print_color(0, print_team_default, "%s^1 El mapa cambiará al finalizar la ronda!", g_GlobalConfigs[ChatPrefix]);
+			client_print_color(0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MAP_CHANGE_END_ROUND");
 		}
 		case CHANGEMAP_ONE_MORE_ROUND:
 		{
@@ -538,7 +536,7 @@ public OnTask_AlertChangeMap()
 	}
 	
 	set_hudmessage(255, 255, 255, -1.0, 0.35, 0, 0.0, 1.1, 0.0, 0.0, -1);
-	ShowSyncHudMsg(0, g_Hud_Alert, "El mapa cambiará en %d segundo%s", g_iChangeMapTime, (g_iChangeMapTime != 1) ? "s" : "");
+	ShowSyncHudMsg(0, g_Hud_Alert, "%L", g_iChangeMapTime, LANG_PLAYER, "MM_NEXT_MAP_CHANGE_WILL_BE_IN");
 
 	client_cmd(0, "spk ^"fvox/%s^"", g_SOUND_CountDown[g_iChangeMapTime]);
 

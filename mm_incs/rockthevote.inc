@@ -48,26 +48,26 @@ public ClientCommand_RockTheVote(const id)
 
 	if(!g_GlobalConfigs[RTV_Enabled])
 	{
-		client_print_color(id, print_team_default, "%s^1 La opción^3 Rock The Vote^1 se encuentra deshabilitada!", g_GlobalConfigs[ChatPrefix]);
+		client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_RTV_NOT_ENABLED");
 		return PLUGIN_HANDLED;
 	}
 
 	new iCurrentTime = get_systime();
 	if(g_GlobalConfigs[RTV_Cooldown] && (0 < ((g_iSystimeRtv + g_GlobalConfigs[RTV_Cooldown]) - iCurrentTime) < g_GlobalConfigs[RTV_Cooldown]))
 	{
-		client_print_color(id, print_team_default, "%s^1 Tenés que esperar^4 %d segundos^1 para utilizar^3 Rock The Vote!", g_GlobalConfigs[ChatPrefix], ((g_iSystimeRtv + g_GlobalConfigs[RTV_Cooldown]) - iCurrentTime));
+		client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_RTV_COOLDOWN", ((g_iSystimeRtv + g_GlobalConfigs[RTV_Cooldown]) - iCurrentTime));
 		return PLUGIN_HANDLED;
 	}
 
 	if(g_bVoteRtvResult)
 	{
-		client_print_color(id, print_team_default, "%s^1 Ya se realizó una votación para el cambio de modo!", g_GlobalConfigs[ChatPrefix]);
+		client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_RTV_ALREADY_MOD_CHOOSED");
 		return PLUGIN_HANDLED;
 	}
 	
 	if(g_bIsVotingRtv || g_bVoteModHasStarted || g_bSVM_ModSecondRound || g_bVoteMapHasStarted || g_bSVM_MapSecondRound || g_bVoteInProgress)
 	{
-		client_print_color(id, print_team_default, "%s^1 Ya existe una votación en curso!", g_GlobalConfigs[ChatPrefix]);
+		client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_ALREADY_VOTING");
 		return PLUGIN_HANDLED;
 	}
 
@@ -75,8 +75,7 @@ public ClientCommand_RockTheVote(const id)
 
 	if(g_GlobalConfigs[RTV_MinPlayers] && (iPlayersNum < g_GlobalConfigs[RTV_MinPlayers]))
 	{
-		client_print_color(id, print_team_default, "%s^1 Se necesita al menos^4 %d jugador%s^1 en la partida para utilizar^3 Rock The Vote!", 
-			g_GlobalConfigs[ChatPrefix], g_GlobalConfigs[RTV_MinPlayers], (g_GlobalConfigs[RTV_MinPlayers] != 1) ? "es" : "");
+		client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_RTV_MIN_PLAYERS", g_GlobalConfigs[RTV_MinPlayers]);
 		return PLUGIN_HANDLED;
 	}
 	
@@ -86,9 +85,9 @@ public ClientCommand_RockTheVote(const id)
 	{
 		new iResult = (iPercent - g_iVoteCountRtv);
 		
-		client_print_color(id, print_team_default, "%s^1 Ya diste tu voto para iniciar una votación para el cambio de modo!", g_GlobalConfigs[ChatPrefix]);
+		client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_RTV_ALREADY_VOTED");
 		
-		client_print_color(0, print_team_default, "%s^1 Se necesita%s^4 %d voto%s más^1 para iniciar una votación para el cambio de modo!", g_GlobalConfigs[ChatPrefix], (iResult != 1) ? "n" : "", iResult, (iResult != 1) ? "s" : "");
+		client_print_color(0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_RTV_NEED_MIN_VOTES", iResult);
 		return PLUGIN_HANDLED;
 	}
 
@@ -96,7 +95,7 @@ public ClientCommand_RockTheVote(const id)
 
 	++g_iVoteCountRtv;
 	
-	client_print_color(0, print_team_blue, "%s^3 %n^1 votó para iniciar una votación para cambiar el mapa! Votos emitidos^4 %d^1 /^4 %d", g_GlobalConfigs[ChatPrefix], id, g_iVoteCountRtv, iPercent);
+	client_print_color(0, print_team_blue, "%s %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_RTV_PLAYER_VOTED", id, g_iVoteCountRtv, iPercent);
 	
 	if(g_iVoteCountRtv >= iPercent)
 	{
@@ -104,7 +103,7 @@ public ClientCommand_RockTheVote(const id)
 		
 		client_cmd(0, "spk ^"get red(e80) ninety(s45) to check(e20) use bay(s18) mass(e42) cap(s50)^"");
 		
-		client_print_color(0, print_team_default, "%s^1 RockTheVote finalizado, en^4 10 segundos ^1comenzará una nueva votación para el cambio de mapa!", g_GlobalConfigs[ChatPrefix]);
+		client_print_color(0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_RTV_VOTING_START");
 
 		SetAlertStartNextVote(5.0, 5);
 		
