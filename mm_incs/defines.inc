@@ -7,7 +7,7 @@
 
 #define MM_VERSION_MAJOR                1
 #define MM_VERSION_MINOR                0
-#define MM_VERSION_PATCH                157
+#define MM_VERSION_PATCH                158
 
 #define PLUGIN_VERSION                  fmt("v%d.%d.%d", MM_VERSION_MAJOR, MM_VERSION_MINOR, MM_VERSION_PATCH)
 
@@ -23,39 +23,39 @@
 
 #define MM_LOG_FILENAME                 "error_multimod_manager.log"
 
-#define MAX_USERS						MAX_CLIENTS+1
+#define MAX_USERS                       MAX_CLIENTS+1
 
-#define IsPlayer(%0) 					( 1 <= %0 <= MAX_CLIENTS )
+#define IsPlayer(%0)                    ( 1 <= %0 <= MAX_CLIENTS )
 
-#define GetPlayerBit(%0,%1) 			( IsPlayer(%1) && ( %0 & ( 1 << ( %1 & 31 ) ) ) )
-#define SetPlayerBit(%0,%1) 			( IsPlayer(%1) && ( %0 |= ( 1 << ( %1 & 31 ) ) ) )
-#define ClearPlayerBit(%0,%1) 			( IsPlayer(%1) && ( %0 &= ~( 1 << ( %1 & 31 ) ) ) )
-#define SwitchPlayerBit(%0,%1) 			( IsPlayer(%1) && ( %0 ^= ( 1 << ( %1 & 31 ) ) ) )
+#define GetPlayerBit(%0,%1)             ( IsPlayer(%1) && ( %0 & ( 1 << ( %1 & 31 ) ) ) )
+#define SetPlayerBit(%0,%1)             ( IsPlayer(%1) && ( %0 |= ( 1 << ( %1 & 31 ) ) ) )
+#define ClearPlayerBit(%0,%1)           ( IsPlayer(%1) && ( %0 &= ~( 1 << ( %1 & 31 ) ) ) )
+#define SwitchPlayerBit(%0,%1)          ( IsPlayer(%1) && ( %0 ^= ( 1 << ( %1 & 31 ) ) ) )
 
-#define likely(%0) 						((%0))
-#define unlikely(%0) 					(!(%0))
+#define likely(%0)                      ((%0))
+#define unlikely(%0)                    (!(%0))
 
-#define MAX_MODNAME_LENGTH 				64
-#define MAX_MAPNAME_LENGTH 				64
-#define MAX_RESEMICLIP_LENGTH			64
+#define MAX_MODNAME_LENGTH              64
+#define MAX_MAPNAME_LENGTH              64
+#define MAX_RESEMICLIP_LENGTH           64
 
-#define MAX_ADMIN_VOTEOPTIONS			9
-#define MAX_SELECTMODS					9
-#define MAX_SELECTMAPS					9
+#define MAX_ADMIN_VOTEOPTIONS           9
+#define MAX_SELECTMODS                  9
+#define MAX_SELECTMAPS                  9
 
-#define OPTION_EXTEND_MOD				-1
+#define OPTION_EXTEND_MOD               -1
 
-#define CHECK_CONNECTED(%0)				if(!GetPlayerBit(g_bConnected, %0)) { return PLUGIN_HANDLED; }
-#define CHECK_ADMINVOTEINPROGRESS(%0)	if(g_bCvar_amx_last_voting > get_gametime()) { client_print_color(%0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_ALREADY_VOTING"); return PLUGIN_HANDLED; }
+#define CHECK_CONNECTED(%0)             if(!GetPlayerBit(g_bConnected, %0)) { return PLUGIN_HANDLED; }
+#define CHECK_ADMINVOTEINPROGRESS(%0)   if(g_bCvar_amx_last_voting > get_gametime()) { client_print_color(%0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_ALREADY_VOTING"); return PLUGIN_HANDLED; }
 
-#define CHECK_CONNECTED_NEWMENU(%0,%1)	if(!GetPlayerBit(g_bConnected, %0)) { menu_destroy(%1); return PLUGIN_HANDLED; }
-#define CHECK_EXIT_NEWMENU(%0,%1,%2)	if(likely(%2 == MENU_EXIT)) { menu_destroy(%1); return PLUGIN_HANDLED; }
-#define CHECK_TIMEOUT_NEWMENU(%0,%1,%2)	if(likely(%2 == MENU_TIMEOUT)) { menu_destroy(%1); return PLUGIN_HANDLED; }
+#define CHECK_CONNECTED_NEWMENU(%0,%1)  if(!GetPlayerBit(g_bConnected, %0)) { menu_destroy(%1); return PLUGIN_HANDLED; }
+#define CHECK_EXIT_NEWMENU(%0,%1,%2)    if(likely(%2 == MENU_EXIT)) { menu_destroy(%1); return PLUGIN_HANDLED; }
+#define CHECK_TIMEOUT_NEWMENU(%0,%1,%2) if(likely(%2 == MENU_TIMEOUT)) { menu_destroy(%1); return PLUGIN_HANDLED; }
 
-#define CHECK_MENU_EXIT(%0)				if(likely(%0 == MENU_EXIT)) { return PLUGIN_HANDLED; }
-#define CHECK_MENU_TIMEOUT(%0)			if(likely(%0 == MENU_TIMEOUT)) { return PLUGIN_HANDLED; }
+#define CHECK_MENU_EXIT(%0)             if(likely(%0 == MENU_EXIT)) { return PLUGIN_HANDLED; }
+#define CHECK_MENU_TIMEOUT(%0)          if(likely(%0 == MENU_TIMEOUT)) { return PLUGIN_HANDLED; }
 
-#define CHECK_ADMIN_ACCESS(%0,%1)		if(~get_user_flags(%0) & %1) { client_print_color(%0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_ADMIN_NO_ACC"); return PLUGIN_HANDLED; }
+#define CHECK_ADMIN_ACCESS(%0,%1)       if(~get_user_flags(%0) & %1) { client_print_color(%0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_ADMIN_NO_ACC"); return PLUGIN_HANDLED; }
 
 enum 
 {
@@ -70,9 +70,9 @@ enum
 
 const KEYSMENU = (1<<0) | (1<<1) | (1<<2) | (1<<3) | (1<<4) | (1<<5) | (1<<6) | (1<<7) | (1<<8) | (1<<9);
 
-new const g_SOUND_ExtendTime[] = "fvox/time_remaining.wav";
-new const g_SOUND_GmanChoose[][] = {"Gman/Gman_Choose1.wav", "Gman/Gman_Choose2.wav"};
-new const g_SOUND_CountDown[][] = {"", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
+new const g_SOUND_ExtendTime[]          = "fvox/time_remaining.wav";
+new const g_SOUND_GmanChoose[][]        = {"Gman/Gman_Choose1.wav", "Gman/Gman_Choose2.wav"};
+new const g_SOUND_CountDown[][]         = {"", "one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"};
 
 enum ChangeMap_e
 {

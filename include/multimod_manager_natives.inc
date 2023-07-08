@@ -7,10 +7,13 @@
 *                 [ MULTIMOD MANAGER NATIVES ]
 * ============================================================================ */
 
-// Multimod Manager version
+/**
+ * Multimod Manager version check.
+ * Do not modify this!
+ */
 #define MM_VERSION_MAJOR 1
 #define MM_VERSION_MINOR 0
-#define MM_VERSION_PATCH 157
+#define MM_VERSION_PATCH 158
 
 /**
  * Return the current mod index based on JSON position.
