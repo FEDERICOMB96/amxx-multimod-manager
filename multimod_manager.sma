@@ -36,6 +36,8 @@ public plugin_precache()
 	g_GlobalConfigs[RecentMaps] = ArrayCreate(ArrayRecentMaps_e);
 	g_Array_Nominations = ArrayCreate(1);
 
+	g_Forward_VersionCheck = CreateMultiForward("__multimod_version_check", ET_IGNORE, FP_CELL, FP_CELL);
+
 	register_dictionary("common.txt");
 	register_dictionary("multimod_manager.txt");
 
@@ -318,6 +320,9 @@ MultiMod_Init()
 	Recent_LoadRecentModsMaps();
 	Recent_SaveRecentModsMaps(g_iCurrentMod, g_szCurrentMap);
 	OnEvent_GameRestart();
+
+	new iRes;
+	ExecuteForward(g_Forward_VersionCheck, iRes, MM_VERSION_MAJOR, MM_VERSION_MINOR);
 }
 
 public OnEvent_GameRestart()

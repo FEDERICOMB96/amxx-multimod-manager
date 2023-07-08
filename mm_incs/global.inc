@@ -23,6 +23,8 @@ new Float:g_RestoreChattime;
 new bool:g_bGameOver;
 new bool:g_bVoteInProgress;
 
+new g_Forward_VersionCheck;
+
 new g_Hud_Vote;
 new g_Hud_Alert;
 

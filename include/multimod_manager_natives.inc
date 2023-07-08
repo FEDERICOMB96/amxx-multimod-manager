@@ -7,6 +7,11 @@
 *                 [ MULTIMOD MANAGER NATIVES ]
 * ============================================================================ */
 
+// Multimod Manager version
+#define MM_VERSION_MAJOR 1
+#define MM_VERSION_MINOR 0
+#define MM_VERSION_PATCH 157
+
 /**
  * Return the current mod index based on JSON position.
  *
@@ -72,3 +77,30 @@ native mm_get_nextmod_name(szOutput[], const iLen);
  * @return (int)        1 on success, 0 otherwise
  */
 native mm_force_votemod();
+
+/*
+* This is the callback from the plugin core that gives major/minor versions for verifying compatibility for Multimod Manager versions.
+* If an AMXX plugin gets a failure, then you do need to upgrade to the latest version of the Multimod Manager or update the files included for AMXX plugins.
+* Do not modify this!
+*
+* Ported function from ReAPI include.
+*/
+forward __multimod_version_check(const majorVersion, const minorVersion);
+public __multimod_version_check(const majorVersion, const minorVersion)
+{
+	if(majorVersion != MM_VERSION_MAJOR)
+	{
+		new szTemp[512];
+		formatex(szTemp, charsmax(szTemp), "[MULTIMOD]: Api major version mismatch; expected %d, real %d", MM_VERSION_MAJOR, majorVersion);
+		set_fail_state(szTemp);
+		return;
+	}
+
+	if(minorVersion < MM_VERSION_MINOR)
+	{
+		new szTemp[512];
+		formatex(szTemp, charsmax(szTemp), "[MULTIMOD]: Api minor version mismatch; expected at least %d, real %d", MM_VERSION_MINOR, minorVersion);
+		set_fail_state(szTemp);
+		return;
+	}
+}
