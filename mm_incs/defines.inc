@@ -3,6 +3,26 @@
 #endif
 #define _mm_defines_included_
 
+#define PLUGIN_NAME                     "MultiMod Manager"
+
+#define MM_VERSION_MAJOR                1
+#define MM_VERSION_MINOR                0
+#define MM_VERSION_PATCH                155
+
+#define PLUGIN_VERSION                  fmt("v%d.%d.%d", MM_VERSION_MAJOR, MM_VERSION_MINOR, MM_VERSION_PATCH)
+
+#define MM_PLUGINS_FILENAME             "plugins-multimodmanager.ini"
+
+#define MM_CONFIG_FOLDER                "multimod_manager"
+#define MM_MAPSFILE_FOLDER              "mapsfile"
+
+#define MM_CONFIG_FILENAME              "configs.json"
+#define MM_RECENT_MODS_FILENAME         "recent_mods.json"
+#define MM_RECENT_MAPS_FILENAME         "recent_maps.json"
+#define MM_OFF_MODS_FILENAME            "off_mods.json"
+
+#define MM_LOG_FILENAME                 "error_multimod_manager.log"
+
 #define MAX_USERS						MAX_CLIENTS+1
 
 #define IsPlayer(%0) 					( 1 <= %0 <= MAX_CLIENTS )

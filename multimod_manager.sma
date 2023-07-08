@@ -1,10 +1,5 @@
 #pragma semicolon 1
 
-new const PLUGIN_NAME[] = "MultiMod Manager";
-new const PLUGIN_VERSION[] = "v2021.08.26";
-
-new const PLUGINS_FILENAME[] = "plugins-multimodmanager.ini";
-
 #include <amxmodx>
 #include <amxmisc>
 #include <reapi>
@@ -159,12 +154,12 @@ MultiMod_Init()
 	new szDefaultCurrentMap[MAX_MAPNAME_LENGTH];
 
 	new szConfigDir[PLATFORM_MAX_PATH], szFileName[PLATFORM_MAX_PATH], szPluginsFile[PLATFORM_MAX_PATH];
-	get_configsdir(szConfigDir, PLATFORM_MAX_PATH-1);
+	get_configsdir(szConfigDir, charsmax(szFileName));
 
-	formatex(szPluginsFile, PLATFORM_MAX_PATH-1, "%s/%s", szConfigDir, PLUGINS_FILENAME);
+	formatex(szPluginsFile, charsmax(szPluginsFile), "%s/%s", szConfigDir, MM_PLUGINS_FILENAME);
 	UTIL_GetCurrentMod(szPluginsFile, g_szCurrentMod, MAX_MODNAME_LENGTH-1, szDefaultCurrentMap, MAX_MAPNAME_LENGTH-1);
 
-	formatex(szFileName, PLATFORM_MAX_PATH-1, "%s/multimod_manager/configs.json", szConfigDir);
+	formatex(szFileName, charsmax(szFileName), "%s/%s/%s", szConfigDir, MM_CONFIG_FOLDER, MM_CONFIG_FILENAME);
 
 	if(!file_exists(szFileName))
 	{
@@ -242,7 +237,7 @@ MultiMod_Init()
 
 			aMod[Maps] = ArrayCreate(MAX_MAPNAME_LENGTH);
 			json_object_get_string(jArrayValue, "mapsfile", szMapFile, charsmax(szMapFile));
-			format(szMapFile, PLATFORM_MAX_PATH-1, "%s/multimod_manager/mapsfiles/%s", szConfigDir, szMapFile);
+			format(szMapFile, PLATFORM_MAX_PATH-1, "%s/%s/%s/%s", szConfigDir, MM_CONFIG_FOLDER, MM_MAPSFILE_FOLDER, szMapFile);
 			MapChooser_LoadMaps(aMod[Maps], szMapFile);
 
 			// El modo contiene mapas
@@ -678,8 +673,8 @@ MultiMod_SetNextMod(const iNextMod)
 	ArrayGetArray(g_GlobalConfigs[Mods], iNextMod, aDataNextMod);
 
 	new szFileName[PLATFORM_MAX_PATH];
-	get_configsdir(szFileName, PLATFORM_MAX_PATH-1);
-	add(szFileName, PLATFORM_MAX_PATH-1, fmt("/%s", PLUGINS_FILENAME));
+	new iLen = get_configsdir(szFileName, charsmax(szFileName));
+	formatex(szFileName[iLen], charsmax(szFileName) - iLen, "/%s", MM_PLUGINS_FILENAME);
 
 	new pPluginsFile = fopen(szFileName, "w+");
 
@@ -714,8 +709,8 @@ MultiMod_SetNextMod(const iNextMod)
 MultiMod_ClearPluginsFile()
 {
 	new szFileName[PLATFORM_MAX_PATH];
-	get_configsdir(szFileName, PLATFORM_MAX_PATH-1);
-	add(szFileName, PLATFORM_MAX_PATH-1, fmt("/%s", PLUGINS_FILENAME));
+	new iLen = get_configsdir(szFileName, charsmax(szFileName));
+	formatex(szFileName[iLen], charsmax(szFileName) - iLen, "/%s", MM_PLUGINS_FILENAME);
 
 	new pPluginsFile = fopen(szFileName, "w+");
 
@@ -745,8 +740,8 @@ MultiMod_OverwriteMapCycle(const iMod)
 MultiMod_GetOffMods()
 {
 	new szFileName[PLATFORM_MAX_PATH];
-	get_configsdir(szFileName, PLATFORM_MAX_PATH-1);
-	add(szFileName, PLATFORM_MAX_PATH-1, "/multimod_manager/off_mods.json");
+	new iLen = get_configsdir(szFileName, charsmax(szFileName));
+	formatex(szFileName[iLen], charsmax(szFileName) - iLen, "/%s/%s", MM_CONFIG_FOLDER, MM_OFF_MODS_FILENAME);
 
 	if(!file_exists(szFileName))
 		return;
@@ -813,8 +808,8 @@ bool:MultiMod_SaveOffMods()
 	json_free(array);
 
 	new szFileName[PLATFORM_MAX_PATH];
-	get_configsdir(szFileName, charsmax(szFileName));
-	add(szFileName, charsmax(szFileName), "/multimod_manager/off_mods.json");
+	new iLen = get_configsdir(szFileName, charsmax(szFileName));
+	formatex(szFileName[iLen], charsmax(szFileName) - iLen, "/%s/%s", MM_CONFIG_FOLDER, MM_OFF_MODS_FILENAME);
 
 	new bool:bRet = json_serial_to_file(root_value, szFileName, true);
 	json_free(root_value);
