@@ -7,14 +7,14 @@
 
 #define MM_VERSION_MAJOR                1
 #define MM_VERSION_MINOR                0
-#define MM_VERSION_PATCH                158
+#define MM_VERSION_PATCH                159
 
 #define PLUGIN_VERSION                  fmt("v%d.%d.%d", MM_VERSION_MAJOR, MM_VERSION_MINOR, MM_VERSION_PATCH)
 
 #define MM_PLUGINS_FILENAME             "plugins-multimodmanager.ini"
 
 #define MM_CONFIG_FOLDER                "multimod_manager"
-#define MM_MAPSFILE_FOLDER              "mapsfile"
+#define MM_MAPSFILE_FOLDER              "mapsfiles"
 
 #define MM_CONFIG_FILENAME              "configs.json"
 #define MM_RECENT_MODS_FILENAME         "recent_mods.json"

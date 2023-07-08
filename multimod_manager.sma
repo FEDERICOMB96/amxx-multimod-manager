@@ -154,7 +154,7 @@ MultiMod_Init()
 	new szDefaultCurrentMap[MAX_MAPNAME_LENGTH];
 
 	new szConfigDir[PLATFORM_MAX_PATH], szFileName[PLATFORM_MAX_PATH], szPluginsFile[PLATFORM_MAX_PATH];
-	get_configsdir(szConfigDir, charsmax(szFileName));
+	get_configsdir(szConfigDir, charsmax(szConfigDir));
 
 	formatex(szPluginsFile, charsmax(szPluginsFile), "%s/%s", szConfigDir, MM_PLUGINS_FILENAME);
 	UTIL_GetCurrentMod(szPluginsFile, g_szCurrentMod, MAX_MODNAME_LENGTH-1, szDefaultCurrentMap, MAX_MAPNAME_LENGTH-1);
