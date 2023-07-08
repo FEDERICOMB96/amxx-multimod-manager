@@ -3,7 +3,6 @@
 #include <amxmodx>
 #include <amxmisc>
 #include <reapi>
-#include <fakemeta>
 #include <json>
 #include "mm_incs/defines"
 #include "mm_incs/global"
@@ -43,6 +42,7 @@ public plugin_precache()
 	Cvars_Init();
 	MultiMod_Init();
 	MultiMod_ExecCvars(g_iCurrentMod);
+	MultiMod_SetGameDescription(g_iCurrentMod);
 }
 
 public plugin_init()
@@ -62,8 +62,6 @@ public plugin_init()
 	UTIL_RegisterClientCommandAll("nextmod", "OnClientCommand_NextMod");
 	UTIL_RegisterClientCommandAll("nextmap", "OnClientCommand_NextMap");
 	UTIL_RegisterClientCommandAll("timeleft", "OnClientCommand_Timeleft");
-
-	register_forward(FM_GetGameDescription, "OnGetGameDescription_Pre", 0);
 
 	g_Hud_Vote = CreateHudSyncObj();
 	g_Hud_Alert = CreateHudSyncObj();
@@ -570,20 +568,6 @@ public OnClientCommand_Timeleft(const id)
 	return PLUGIN_HANDLED;
 }
 
-public OnGetGameDescription_Pre()
-{
-	if(likely(g_GlobalConfigs[ChangeGameDescription] == true))
-	{
-		new aMod[ArrayMods_e];
-		ArrayGetArray(g_GlobalConfigs[Mods], g_iCurrentMod, aMod);
-
-		forward_return(FMV_STRING, aMod[ModName]);
-		return FMRES_SUPERCEDE;
-	}
-
-	return FMRES_IGNORED;
-}
-
 public OnTask_CheckVoteNextMod()
 {
 	if(g_bSelectedNextMod || g_bSelectedNextMap)
@@ -833,6 +817,23 @@ MultiMod_ExecCvars(const iMod)
 
 	server_print("[MULTIMOD] %L (%L: %d)", LANG_SERVER, "MM_EXECUTING_CVARS_MODE", aMod[ModName], LANG_SERVER, "MM_COUNT", iCvars);
 	return iCvars;
+}
+
+MultiMod_SetGameDescription(const iMod)
+{
+	if(iMod < 0 || iMod > ArraySize(g_GlobalConfigs[Mods]))
+		return 0;
+		
+	if(likely(g_GlobalConfigs[ChangeGameDescription] == true))
+	{
+		new aMod[ArrayMods_e];
+		ArrayGetArray(g_GlobalConfigs[Mods], iMod, aMod);
+
+		set_member_game(m_GameDesc, aMod[ModName]);
+		return 1;
+	}
+
+	return 0;
 }
 
 bool:IsValidMapForMod(const iModId)
