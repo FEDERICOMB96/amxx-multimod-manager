@@ -44,7 +44,6 @@ public plugin_precache()
 	Cvars_Init();
 	MultiMod_Init();
 	MultiMod_ExecCvars(g_iCurrentMod);
-	MultiMod_SetGameDescription(g_iCurrentMod);
 }
 
 public plugin_init()
@@ -73,6 +72,8 @@ public plugin_init()
 	MapChooser_Init();
 	RockTheVote_Init();
 	Nominations_Init();
+
+	MultiMod_SetGameDescription(g_iCurrentMod);
 
 	g_bGameOver = false;
 }
