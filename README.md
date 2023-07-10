@@ -10,6 +10,7 @@
 - [Totopizza](https://github.com/oaus)
 - [Roccoxx](https://github.com/Roccoxx)
 - [r0ma](https://github.com/francoromaniello)
+- [Maxi605](https://github.com/Maxi605)
 
 ## Requerimientos _(Requirements)_:
 - [AmxModX](https://github.com/alliedmodders/amxmodx) >= 1.9.0.5263
