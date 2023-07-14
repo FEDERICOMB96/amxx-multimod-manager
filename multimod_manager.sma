@@ -389,7 +389,7 @@ public OnClientCommand_RecentMods(const id)
 
 	if(Recent_CountRecentMods() < 1)
 	{
-		client_print_color(id, id, "%s^1 %L", LANG_PLAYER, "MM_NO_RECENT_MODES_PLAYED", g_GlobalConfigs[ChatPrefix]);
+		client_print_color(id, id, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NO_RECENT_MODES_PLAYED");
 		return PLUGIN_HANDLED;
 	}
 
@@ -441,7 +441,7 @@ public OnClientCommand_RecentMaps(const id)
 
 	if(Recent_CountRecentMaps(g_iCurrentMod) < 1)
 	{
-		client_print_color(id, id, "%s^1 %L", LANG_PLAYER, "MM_NO_RECENT_MAPS_PLAYED", g_GlobalConfigs[ChatPrefix]);
+		client_print_color(id, id, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NO_RECENT_MAPS_PLAYED");
 		return PLUGIN_HANDLED;
 	}
 
