@@ -319,7 +319,7 @@ MultiMod_Init()
 	MultiMod_OverwriteMapCycle(g_iCurrentMod);
 	MultiMod_GetOffMods();
 	Recent_LoadRecentModsMaps();
-	Recent_SaveRecentModsMaps(g_iCurrentMod, g_szCurrentMap);
+	Recent_SaveRecentModsMaps();
 	OnEvent_GameRestart();
 
 	new iRes;

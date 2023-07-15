@@ -7,7 +7,7 @@
 
 #define MM_VERSION_MAJOR                1
 #define MM_VERSION_MINOR                0
-#define MM_VERSION_PATCH                163
+#define MM_VERSION_PATCH                164
 
 #define PLUGIN_VERSION                  fmt("v%d.%d.%d", MM_VERSION_MAJOR, MM_VERSION_MINOR, MM_VERSION_PATCH)
 
