@@ -1,0 +1,125 @@
+name: Pawn Compiler
+
+on:
+  push:
+    branches: [master]
+    paths-ignore:
+      - '**.md'
+
+  pull_request:
+    types: [opened, reopened, synchronize]
+  release:
+    types: [published]
+    tags:
+      - "v*.*.*"
+
+jobs:
+  build:
+    name: "Build"
+    runs-on: ubuntu-latest
+    outputs:
+      sha: ${{ steps.declare_sha.outputs.sha }}
+      semver: ${{ steps.declare_sha.outputs.semver }}
+      
+    strategy:
+      matrix:
+        reapi: ['5.19.0.217']
+        amxmodx: ['1.10.5461']
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+
+      - name: Parse SemVer string (release)
+        id: semver_parser
+        if: |
+          github.event_name == 'release' &&
+          github.event.action == 'published' &&
+          startsWith(github.ref, 'refs/tags/')
+        uses: booxmedialtd/ws-action-parse-semver@v1
+        with:
+          input_string: ${{ github.ref }}
+          version_extractor_regex: '\/v(.*)$'
+      
+      - name: Declare SHA & package name
+        id: declare_sha
+        shell: bash
+        run: |
+          SHA=$(git rev-parse --short HEAD)
+          echo "COMMIT_SHA=${SHA}" >> $GITHUB_ENV
+          echo "::set-output name=sha::$SHA"
+          echo "::set-output name=semver::${{ steps.semver_parser.outputs.fullversion }}"
+
+      - name: Setup AMXXPawn Compiler
+        uses: wopox1337/setup-amxxpawn@master
+        with:
+          version: ${{ matrix.amxmodx }}
+          
+      - name: Setup ReAPI includes
+        env:
+          REPO: "s1lentq/reapi"
+        run: |
+          mkdir -p dep/reapi
+          cd dep/reapi
+          curl \
+            --silent \
+            https://api.github.com/repos/$REPO/releases/tag/${{ matrix.reapi }} | \
+            grep "browser_download_url" | \
+            grep -Eo 'https://[^\"]*' | \
+            xargs wget
+          7z x *.zip
+          echo "REAPI_INCLUDE_PATH=$(pwd)/addons/amxmodx/scripting/include" >> $GITHUB_ENV
+
+      - name: Compile AMXX plugins
+        working-directory: addons/amxmodx/scripting/
+        env:
+          REAPI_INCLUDE: ${{env.REAPI_INCLUDE_PATH}}
+        run: |
+          mkdir ../plugins/
+          for sourcefile in *.sma;
+          do
+            amxxfile="`echo $sourcefile | sed -e 's/\.sma$/.amxx/'`"
+            echo -n "Compiling $sourcefile ... "
+            amxxpc $(basename $sourcefile) -o"../plugins/$(basename $amxxfile)" -i"include" -i"$REAPI_INCLUDE"
+          done
+          
+      - name: Move files
+        run: |
+          mkdir publish
+          
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: MultiModManagerCS-${{ env.COMMIT_SHA }}
+          path: publish/*
+
+  publish:
+    name: "Publish"
+    runs-on: ubuntu-latest
+    needs: [build]
+    if: |
+      github.event_name == 'release' &&
+      github.event.action == 'published' &&
+      startsWith(github.ref, 'refs/tags/')
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v2
+        with:
+         name: MultiModManagerCS-${{needs.build.outputs.sha}}
+
+      - name: Packaging binaries
+        id: packaging
+        run: 7z a -mm=Deflate -mfb=258 -mpass=15 -r MultiModManagerCS-v${{needs.build.outputs.semver}}.zip addons/
+        
+      - name: Publish artifacts
+        uses: softprops/action-gh-release@v1
+        id: publish-job
+        if: |
+          startsWith(github.ref, 'refs/tags/') && ( steps.packaging.outcome == 'success' && steps.packresources.outcome == 'success' )
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: |
+            *.zip
