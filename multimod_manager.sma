@@ -28,6 +28,9 @@ public plugin_natives()
 
 public plugin_precache()
 {
+	register_dictionary("common.txt");
+	register_dictionary("multimod_manager.txt");
+
 	get_mapname(g_szCurrentMap, charsmax(g_szCurrentMap));
 	mb_strtolower(g_szCurrentMap);
 
@@ -37,9 +40,11 @@ public plugin_precache()
 	g_Array_Nominations = ArrayCreate(1);
 
 	g_Forward_VersionCheck = CreateMultiForward("__multimod_version_check", ET_IGNORE, FP_CELL, FP_CELL);
-
-	register_dictionary("common.txt");
-	register_dictionary("multimod_manager.txt");
+	g_Forward_StartVotemod = CreateMultiForward("multimod_start_votemod", ET_IGNORE, FP_CELL);
+	g_Forward_EndVotemod = CreateMultiForward("multimod_end_votemod", ET_IGNORE, FP_CELL);
+	g_Forward_StartVotemap = CreateMultiForward("multimod_start_votemap", ET_IGNORE, FP_CELL);
+	g_Forward_EndVotemap = CreateMultiForward("multimod_end_votemap", ET_IGNORE, FP_CELL);
+	g_Forward_AdminForceVotemod = CreateMultiForward("multimod_admin_force_votemod", ET_STOP, FP_CELL);
 
 	Cvars_Init();
 	MultiMod_Init();
@@ -49,6 +54,9 @@ public plugin_precache()
 public plugin_init()
 {
 	register_plugin(PLUGIN_NAME, PLUGIN_VERSION, "FEDERICOMB");
+
+	register_dictionary("common.txt");
+	register_dictionary("multimod_manager.txt");
 
 	register_event_ex("TextMsg", "OnEvent_GameRestart", RegisterEvent_Global, "2&#Game_C", "2&#Game_w");
 	register_event_ex("TextMsg", "OnEvent_GameRestart", RegisterEvent_Global, "2&#Game_will_restart_in");

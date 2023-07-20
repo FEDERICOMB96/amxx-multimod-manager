@@ -3,17 +3,17 @@
 #endif
 #define _multimod_manager_natives_included_
 
-/* ===========================================================================
-*                 [ MULTIMOD MANAGER NATIVES ]
-* ============================================================================ */
-
 /**
  * Multimod Manager version check.
  * Do not modify this!
  */
 #define MM_VERSION_MAJOR 1
-#define MM_VERSION_MINOR 0
-#define MM_VERSION_PATCH 164
+#define MM_VERSION_MINOR 1
+#define MM_VERSION_PATCH 0
+
+/* ===========================================================================
+*                 [ MULTIMOD MANAGER NATIVES ]
+* ============================================================================ */
 
 /**
  * Return the current mod index based on JSON position.
@@ -81,7 +81,49 @@ native mm_get_nextmod_name(szOutput[], const iLen);
  */
 native mm_force_votemod();
 
-/*
+/* ===========================================================================
+*                 [ MULTIMOD MANAGER FORWARDS ]
+* ============================================================================ */
+
+/**
+ * Called when a votemod gets started
+ *
+ * @param bSecondVote   True if this is the second votemod for tiebreaker
+ */
+forward multimod_start_votemod(const bool:bSecondVote);
+
+/**
+ * Called when a votemod gets ended
+ *
+ * @param bSecondVote   True if this is the second votemod for tiebreaker
+ */
+forward multimod_end_votemod(const bool:bSecondVote);
+
+/**
+ * Called when a votemap gets started
+ *
+ * @param bSecondVote   True if this is the second votemap for tiebreaker
+ */
+forward multimod_start_votemap(const bool:bSecondVote);
+
+/**
+ * Called when a votemap gets ended
+ *
+ * @param bSecondVote   True if this is the second votemap for tiebreaker
+ */
+forward multimod_end_votemap(const bool:bSecondVote);
+
+/**
+ * Called when a admin forces a votemod
+ *
+ * @param iAdminId      Admin index
+ *
+ * @return              PLUGIN_CONTINUE to let the admin force a votemod
+ *                      PLUGIN_HANDLED or higher to stop the admin from forcing a votemod
+ */
+forward multimod_admin_force_votemod(const iAdminId);
+
+/**
 * This is the callback from the plugin core that gives major/minor versions for verifying compatibility for Multimod Manager versions.
 * If an AMXX plugin gets a failure, then you do need to upgrade to the latest version of the Multimod Manager or update the files included for AMXX plugins.
 * Do not modify this!

@@ -77,10 +77,15 @@ public ConsoleCommand_ForceVoteMod(const id, const level, const cid)
 	
 	if(CanForceVoteNextMod())
 	{
-		StartVoteNextMod();
+		ExecuteForward(g_Forward_AdminForceVotemod, g_Forward_RetVal, id);
 
-		client_print_color(0, id, "%s^1 %L %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_ADMIN_FORCE_VOTEMODE", id);
-		return PLUGIN_HANDLED;
+		if(g_Forward_RetVal == PLUGIN_CONTINUE)
+		{
+			StartVoteNextMod();
+
+			client_print_color(0, id, "%s^1 %L %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_ADMIN_FORCE_VOTEMODE", id);
+			return PLUGIN_HANDLED;
+		}
 	}
 	
 	console_print(id, "%L", LANG_PLAYER, "MM_ADMIN_CANT_FORCE_VOTEMODE");

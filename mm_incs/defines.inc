@@ -6,8 +6,8 @@
 #define PLUGIN_NAME                     "MultiMod Manager"
 
 #define MM_VERSION_MAJOR                1
-#define MM_VERSION_MINOR                0
-#define MM_VERSION_PATCH                164
+#define MM_VERSION_MINOR                1
+#define MM_VERSION_PATCH                0
 
 #define PLUGIN_VERSION                  fmt("v%d.%d.%d", MM_VERSION_MAJOR, MM_VERSION_MINOR, MM_VERSION_PATCH)
 
