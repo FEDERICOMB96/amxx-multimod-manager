@@ -61,7 +61,7 @@ jobs:
           cd dep/reapi
           curl \
             --silent \
-            https://api.github.com/repos/$REPO/releases/$VERSION | \
+            https://api.github.com/repos/$REPO/releases/5.19.0.217 | \
             grep "browser_download_url" | \
             grep -Eo 'https://[^\"]*' | \
             xargs wget
