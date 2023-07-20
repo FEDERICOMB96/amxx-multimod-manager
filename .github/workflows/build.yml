@@ -54,7 +54,7 @@ jobs:
       - name: Setup AMXXPawn Compiler
         uses: wopox1337/setup-amxxpawn@master
         with:
-          version: $amxmodx
+          version: $(amxmodx)
           
       - name: Setup ReAPI includes
         env:
