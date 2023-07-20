@@ -13,6 +13,10 @@ on:
     tags:
       - "v*.*.*"
 
+env:
+  reapi: "5.19.0.217"
+  amxmodx: "1.10.5461"
+
 jobs:
   build:
     name: "Build"
@@ -20,11 +24,6 @@ jobs:
     outputs:
       sha: ${{ steps.declare_sha.outputs.sha }}
       semver: ${{ steps.declare_sha.outputs.semver }}
-      
-    strategy:
-      matrix:
-        reapi: ['5.19.0.217']
-        amxmodx: ['1.10.5461']
 
     steps:
       - name: Checkout
@@ -55,18 +54,17 @@ jobs:
       - name: Setup AMXXPawn Compiler
         uses: wopox1337/setup-amxxpawn@master
         with:
-          version: ${{ matrix.amxmodx }}
+          version: $amxmodx
           
       - name: Setup ReAPI includes
         env:
           REPO: "s1lentq/reapi"
-          VER: ${{ matrix.reapi }}
         run: |
           mkdir -p dep/reapi
           cd dep/reapi
           curl \
             --silent \
-            https://api.github.com/repos/$REPO/releases/$VER | \
+            https://api.github.com/repos/$REPO/releases/$reapi | \
             grep "browser_download_url" | \
             grep -Eo 'https://[^\"]*' | \
             xargs wget
