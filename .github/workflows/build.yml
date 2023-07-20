@@ -65,7 +65,7 @@ jobs:
           cd dep/reapi
           curl \
             --silent \
-            https://api.github.com/repos/$REPO/releases/tag/${{ matrix.reapi }} | \
+            https://api.github.com/repos/$REPO/releases/tag/$matrix.reapi | \
             grep "browser_download_url" | \
             grep -Eo 'https://[^\"]*' | \
             xargs wget
