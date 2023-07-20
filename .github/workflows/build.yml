@@ -13,10 +13,6 @@ on:
     tags:
       - "v*.*.*"
 
-env:
-  reapi: "5.19.0.217"
-  amxmodx: "1.10.5461"
-
 jobs:
   build:
     name: "Build"
@@ -54,17 +50,18 @@ jobs:
       - name: Setup AMXXPawn Compiler
         uses: wopox1337/setup-amxxpawn@master
         with:
-          version: $(amxmodx)
+          version: "1.10.5461"
           
       - name: Setup ReAPI includes
         env:
           REPO: "s1lentq/reapi"
+          VERSION: "5.19.0.217"
         run: |
           mkdir -p dep/reapi
           cd dep/reapi
           curl \
             --silent \
-            https://api.github.com/repos/$REPO/releases/$reapi | \
+            https://api.github.com/repos/$REPO/releases/$VERSION | \
             grep "browser_download_url" | \
             grep -Eo 'https://[^\"]*' | \
             xargs wget
