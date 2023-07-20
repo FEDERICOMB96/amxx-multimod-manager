@@ -60,12 +60,13 @@ jobs:
       - name: Setup ReAPI includes
         env:
           REPO: "s1lentq/reapi"
+          VER: ${{ matrix.reapi }}
         run: |
           mkdir -p dep/reapi
           cd dep/reapi
           curl \
             --silent \
-            https://api.github.com/repos/$REPO/releases/tag/$matrix.reapi | \
+            https://api.github.com/repos/$REPO/releases/tag/$VER | \
             grep "browser_download_url" | \
             grep -Eo 'https://[^\"]*' | \
             xargs wget
