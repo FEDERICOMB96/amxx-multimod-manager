@@ -24,10 +24,9 @@ Multimod plugin for CS 1.6 / CS:CZ
 - Nominations (Mods and Maps)
 - Rock The Vote
 - Recently played mods and maps
+- Say commands _(All say commands can be found [here](https://github.com/FEDERICOMB96/amxx-multimod-manager/wiki/Say-commands))_
 - Admin commands (custom votes, manage, force votemod)
-- `API` natives and forwards<br>_(All detailed information is in the `addons/amxmodx/scripting/include/multimod_manager_natives.inc` file)_
-
-Toda la información detallada se encuentra en el archivo `include\multimod_manager_natives.inc` 
+- `API` natives and forwards _(All detailed information is [here](https://github.com/FEDERICOMB96/amxx-multimod-manager/wiki/API))_
 
 ## Credits:
 - [metita](https://github.com/metita)
@@ -58,8 +57,9 @@ Plugin de Multimod para CS 1.6 / CS:CZ
 - Nominaciones (Modos and Mapas)
 - Rock The Vote
 - Modos y mapas recientemente jugados
+- Comandos de Chat _(Todos los comandos de chat se pueden encontrar [aquí](https://github.com/FEDERICOMB96/amxx-multimod-manager/wiki/Say-commands))_
 - Comandos de Administración (votaciones personalizadas, configuracion, forzar una votacion de modo)
-- `API` natives y forwards<br>_(Toda la información detallada se encuentra en el archivo `addons/amxmodx/scripting/include/multimod_manager_natives.inc`)_
+- `API` natives y forwards _(Toda la información detallada se encuentra [aquí](https://github.com/FEDERICOMB96/amxx-multimod-manager/wiki/API))_
 
 ## Créditos:
 - [metita](https://github.com/metita)
