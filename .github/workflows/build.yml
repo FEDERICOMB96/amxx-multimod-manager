@@ -55,13 +55,12 @@ jobs:
       - name: Setup ReAPI includes
         env:
           REPO: "s1lentq/reapi"
-          VERSION: "5.19.0.217"
         run: |
           mkdir -p dep/reapi
           cd dep/reapi
           curl \
             --silent \
-            https://api.github.com/repos/$REPO/releases/5.19.0.217 | \
+            https://api.github.com/repos/$REPO/releases/latest | \
             grep "browser_download_url" | \
             grep -Eo 'https://[^\"]*' | \
             xargs wget
