@@ -1,8 +1,8 @@
 {
 	"global_chat_prefix": "!g[MULTIMOD]",
-		// !g = ^4 (Color verde)
-		// !t = ^3 (Color de equipo)
-		// !y = ^1 (Color con_color)
+		// !g = ^4 (Green color)
+		// !t = ^3 (Team color)
+		// !y = ^1 (con_color cvar)
 
 	"adminflags":
 	{
@@ -16,9 +16,9 @@
 	"rockthevote":
 	{
 		"enable": true,     // true / false
-		"cooldown": 120,    // min = 0 (desactivado)
-		"minplayers": 3,    // min = 0 (desactivado) | max = 32
-		"percentage": 75    // min = 0 (desactivado) | max = 100
+		"cooldown": 120,    // min = 0 (disabled)
+		"minplayers": 3,    // min = 0 (disabled) | max = 32
+		"percentage": 75    // min = 0 (disabled) | max = 100
 	},
 
 	"nomination":
@@ -34,60 +34,60 @@
 	"max_recent_mods": 5,   // min = 0
 	"max_recent_maps": 5,   // min = 0
 
-	"overwrite_mapcycle": true, // true / false (sobrescribe el mapcycle.txt con los mapas del modo seleccionado)
+	"overwrite_mapcycle": true, // true / false (overwrites the mapcycle.txt with the maps of the selected mod)
 
 	"resemiclip_path": "", 
-		// Ruta de donde se encuentra el complemento
-		// Dejar vacio para desactivar esta opción ("")
-		// Si la ruta no existe, se considerara como desactivado
-		// Ej.: "addons/resemiclip"
+		// Path where the add-on is located
+		// Leave empty to disable this option ("")
+		// If the path does not exist, it will be considered as disabled
+		// E.g.: "addons/resemiclip"
 
-	"change_game_description": true, // true / false (Cambia la descripción de la partida con el nombre del modo)
+	"change_game_description": true, // true / false (Changes the game description with the name of the mod)
 
 	"mods":
 	[
-		// Primer modo sera el modo por defecto, no se podrá bloquear
+		// The first mode will always be the default mode, it cannot be blocked
 		{
 			"modname": "GunGame",
-				// Nombre de tu modo.
-				// Ej.: "GunGame"
+				// Mod name.
+				// E.g.: "GunGame"
 
 
 			"mod_tag": "gg",
-				// Tag de tu modo
-				// Ej.: "gg"
+				// Mod tag
+				// E.g.: "gg"
 
 
 			"mapsfile": "gungame_maps.ini",
-				// Solo el nombre del archivo junto con la extensión.
-				// El mismo debe estar ubicado en "addons/amxmodx/configs/multimod_manager/mapsfiles/"
-				// Ej.: "gungame_maps.ini"
+				// Only the file name along with the extension.
+				// The file must be located in "addons/amxmodx/configs/multimod_manager/mapsfiles/"
+				// E.g.: "gungame_maps.ini"
 
 
 			"change_map_type": 0,
-				// "change_map_type": 0 (Cambia el mapa al terminar el tiempo del mismo)
-				// "change_map_type": 1 (Cambia el mapa al finalizar la ronda)
-				// "change_map_type": 2 (Permite jugar 1 ronda más y luego cambia el mapa)
+				// "change_map_type": 0 (The map will change at the end of the map)
+				// "change_map_type": 1 (The map will change at the end of the round)
+				// "change_map_type": 2 (Allows to play 1 more round and then changes the map)
 
 
 			"cvars":
 			[
 				"sv_gravity 900", "sv_alltalk 1"
 			],
-				// Cvars que se ejecutan al iniciar el modo, todas las que quieras.
-				// Cada cvar entre comillas y se paradas por comas.
-				// Ej.: "cvars": [ "sv_gravity 900", "sv_alltalk 1", "hostname Mi Server de CS", "mp_roundtime 6" ]
-				// Dejar "cvars": [ ] // Para no cargar cvars
+				// Cvars that are executed when starting the mode, all the ones you want
+				// Each cvar in quotes and separated by commas
+				// E.g.: "cvars": [ "sv_gravity 900", "sv_alltalk 1", "hostname My CS Server", "mp_roundtime 6" ]
+				// Leave "cvars": [ ] // to not load cvars
 
 
 			"plugins":
 			[
 				"plugin10.amxx", "plugin20.amxx"
 			],
-				// Plugins que se necesitan para este modo, todos los que quieras
-				// Cada plugin entre comillas, se parados por comas y con su extensión correspondiente.
-				// Ej.: "plugins": [ "gungame.amxx", "ultimate_sounds.amxx", "csstats.amxx" ]
-				// Dejar "plugins": [ ] // Para no cargar plugins
+				// Plugins that are needed for this mode, all the ones you want
+				// Each plugin in quotes, separated by commas and with its corresponding extension
+				// E.g.: "plugins": [ "gungame.amxx", "ultimate_sounds.amxx", "csstats.amxx" ]
+				// Leave "plugins": [ ] // to not load plugins
 
 			"resemiclip_config":
 			{
