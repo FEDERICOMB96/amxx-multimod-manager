@@ -9,7 +9,7 @@
  */
 #define MM_VERSION_MAJOR 1
 #define MM_VERSION_MINOR 1
-#define MM_VERSION_PATCH 0
+#define MM_VERSION_PATCH 1
 
 /* ===========================================================================
 *                 [ MULTIMOD MANAGER NATIVES ]
@@ -77,9 +77,9 @@ native mm_get_nextmod_name(szOutput[], const iLen);
 /**
  * Force a votemod.
  *
- * @return (int)        1 on success, 0 otherwise
+ * @return (bool)       true on success, false otherwise
  */
-native mm_force_votemod();
+native bool:mm_force_votemod();
 
 /* ===========================================================================
 *                 [ MULTIMOD MANAGER FORWARDS ]

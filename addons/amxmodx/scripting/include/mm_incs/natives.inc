@@ -151,17 +151,17 @@ public _mm_get_nextmod_name(plugin_id, argc)
 /**
  * Force a votemod.
  *
- * @return (int)        1 on success, 0 otherwise
+ * @return (bool)       true on success, false otherwise
  *
- * native mm_force_votemod();
+ * native bool:mm_force_votemod();
  */
-public _mm_force_votemod(plugin_id, argc)
+public bool:_mm_force_votemod(plugin_id, argc)
 {
 	if(CanForceVoteNextMod())
 	{
 		StartVoteNextMod();
-		return 1;
+		return true;
 	}
 	
-	return 0;
+	return false;
 }
