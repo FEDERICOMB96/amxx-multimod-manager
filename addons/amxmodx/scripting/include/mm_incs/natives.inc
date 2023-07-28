@@ -165,3 +165,56 @@ public bool:_mm_force_votemod(plugin_id, argc)
 	
 	return false;
 }
+
+/**
+ * Force a map change.
+ *
+ * @param iModId        Mod index.
+ * @param szMap         Map to change to.
+ * @param flChangeTime  Time to wait before changing map.
+ *                      0.0 to change map immediately.
+ *
+ * @return (bool)       true on success, false otherwise.
+ *
+ * native bool:mm_force_change_map(const iModId, const sMap[], const Float:flChangeTime = 0.0);
+ */
+public _mm_force_change_map(plugin_id, argc)
+{
+	enum _:args_e { arg_modid = 1, arg_map, arg_changetime };
+
+	if(argc != (args_e-1))
+	{
+		abort(AMX_ERR_NATIVE, "'mm_force_change_map' needs %d param(s) (count: %d)", (args_e-1), argc);
+		return false;
+	}
+
+	new iModId = get_param(arg_modid);
+
+	if(iModId < 0 || iModId >= ArraySize(g_GlobalConfigs[Mods]))
+	{
+		abort(AMX_ERR_NATIVE, "Invalid array size (%d)", iModId);
+		return false;
+	}
+	
+	new szMap[MAX_MAPNAME_LENGTH];
+	get_string(arg_map, szMap, charsmax(szMap));
+
+	if(!IsValidMap(szMap) || !IsValidMapForMod(iModId, szMap))
+	{
+		abort(AMX_ERR_NATIVE, "Invalid map name (%s)", szMap);
+		return false;
+	}
+
+	new Float:flChangeTime = floatmax(0.0, get_param_f(arg_changetime));
+
+	if(flChangeTime)
+	{
+		remove_task(TASK_FORCE_CHANGE_MAP);
+		set_task(flChangeTime, "OnTask_ForceChangeMap", TASK_FORCE_CHANGE_MAP);
+
+		return true;
+	}
+
+	OnCSGameRules_GoToIntermission();
+	return true;
+}

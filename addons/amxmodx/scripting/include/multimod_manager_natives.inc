@@ -8,8 +8,8 @@
  * Do not modify this!
  */
 #define MM_VERSION_MAJOR 1
-#define MM_VERSION_MINOR 1
-#define MM_VERSION_PATCH 1
+#define MM_VERSION_MINOR 2
+#define MM_VERSION_PATCH 0
 
 /* ===========================================================================
 *                 [ MULTIMOD MANAGER NATIVES ]
@@ -80,6 +80,18 @@ native mm_get_nextmod_name(szOutput[], const iLen);
  * @return (bool)       true on success, false otherwise
  */
 native bool:mm_force_votemod();
+
+/**
+ * Force a map change.
+ *
+ * @param iModId        Mod index.
+ * @param szMap         Map to change to.
+ * @param flChangeTime  Time to wait before changing map.
+ *                      0.0 to change map immediately.
+ *
+ * @return (bool)       true on success, false otherwise.
+ */
+native bool:mm_force_change_map(const iModId, const sMap[], const Float:flChangeTime = 0.0);
 
 /* ===========================================================================
 *                 [ MULTIMOD MANAGER FORWARDS ]

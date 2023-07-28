@@ -24,6 +24,7 @@ public plugin_natives()
 	register_native("mm_get_nextmod_id", "_mm_get_nextmod_id");
 	register_native("mm_get_nextmod_name", "_mm_get_nextmod_name");
 	register_native("mm_force_votemod", "_mm_force_votemod");
+	register_native("mm_force_change_map", "_mm_force_change_map");
 }
 
 public plugin_precache()
@@ -310,7 +311,7 @@ MultiMod_Init()
 		return;
 	}
 
-	if(bReloadMod || !IsValidMapForMod(g_iCurrentMod))
+	if(bReloadMod || !IsValidMapForMod(g_iCurrentMod, g_szCurrentMap))
 	{
 		g_iNextSelectMod = bReloadMod ? 0 : g_iCurrentMod; // 0 = First mod as default
 		MultiMod_SetNextMod(g_iNextSelectMod); 
@@ -850,7 +851,7 @@ MultiMod_SetGameDescription(const iMod)
 	return 0;
 }
 
-bool:IsValidMapForMod(const iModId)
+bool:IsValidMapForMod(const iModId, const szMapName[MAX_MAPNAME_LENGTH])
 {
 	if(iModId < 0 || iModId > ArraySize(g_GlobalConfigs[Mods]))
 		return false;
@@ -863,7 +864,7 @@ bool:IsValidMapForMod(const iModId)
 	{
 		ArrayGetString(aMod[Maps], i, szMap, charsmax(szMap));
 
-		if(equali(g_szCurrentMap, szMap))
+		if(equali(szMapName, szMap))
 			return true;
 	}
 
@@ -914,4 +915,9 @@ GetRandomMapForMod(const iModId, szMap[], const iLen)
 	}
 	
 	return 0;
+}
+
+public OnTask_ForceChangeMap()
+{
+	OnCSGameRules_GoToIntermission();
 }

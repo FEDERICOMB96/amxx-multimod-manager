@@ -6,8 +6,8 @@
 #define PLUGIN_NAME                     "MultiMod Manager"
 
 #define MM_VERSION_MAJOR                1
-#define MM_VERSION_MINOR                1
-#define MM_VERSION_PATCH                1
+#define MM_VERSION_MINOR                2
+#define MM_VERSION_PATCH                0
 
 #define PLUGIN_VERSION                  fmt("v%d.%d.%d", MM_VERSION_MAJOR, MM_VERSION_MINOR, MM_VERSION_PATCH)
 
@@ -65,7 +65,8 @@ enum
 	TASK_RTV,
 	TASK_SHOWTIME,
 	TASK_ENDMAP,
-	TASK_VOTE_ADMIN
+	TASK_VOTE_ADMIN,
+	TASK_FORCE_CHANGE_MAP,
 };
 
 const KEYSMENU = (1<<0) | (1<<1) | (1<<2) | (1<<3) | (1<<4) | (1<<5) | (1<<6) | (1<<7) | (1<<8) | (1<<9);
