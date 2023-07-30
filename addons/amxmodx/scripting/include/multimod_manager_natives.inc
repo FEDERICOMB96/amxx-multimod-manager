@@ -7,8 +7,8 @@
  * Multimod Manager version check.
  * Do not modify this!
  */
-#define MM_VERSION_MAJOR 1
-#define MM_VERSION_MINOR 2
+#define MM_VERSION_MAJOR 2
+#define MM_VERSION_MINOR 0
 #define MM_VERSION_PATCH 0
 
 /* ===========================================================================
@@ -16,11 +16,11 @@
 * ============================================================================ */
 
 /**
- * Return the current mod index based on JSON position.
+ * Return the loaded mods count.
  *
- * @return (int)        Index of the current mod.
+ * @return (int)        Number of loaded mods.
  */
-native mm_get_mod_id();
+native mm_get_mods_count();
 
 /**
  * Retrieves mod name.
@@ -53,26 +53,19 @@ native mm_get_mod_name(const iModId, szOutput[], const iLen);
 native mm_get_mod_tag(const iModId, szOutput[], const iLen);
 
 /**
+ * Return the current mod index based on JSON position.
+ *
+ * @return (int)        Index of the current mod.
+ */
+native mm_get_currentmod_id();
+
+/**
  * Return the next mod index based on JSON position if nextmod is already chosen.
  *
  * @return (int)        -1 if nextmod is not chosen yet.
  *                      >= 0 Index of the next mod.
  */
 native mm_get_nextmod_id();
-
-/**
- * Retrieves next mod name.
- *
- * @note If the destination buffer is too small to hold the source string, the 
- *       destination will be truncated.
- *
- * @param szOutput      Buffer to copy mod name to.
- * @param iLen          Buffer size.
- *
- * @return (int)        -1 on error.
- *                      >= 0 Number of cells written.
- */
-native mm_get_nextmod_name(szOutput[], const iLen);
 
 /**
  * Force a votemod.

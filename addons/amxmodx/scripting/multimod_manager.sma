@@ -18,11 +18,11 @@
 
 public plugin_natives()
 {
-	register_native("mm_get_mod_id", "_mm_get_mod_id");
+	register_native("mm_get_mods_count", "_mm_get_mods_count");
 	register_native("mm_get_mod_name", "_mm_get_mod_name");
 	register_native("mm_get_mod_tag", "_mm_get_mod_tag");
+	register_native("mm_get_currentmod_id", "_mm_get_currentmod_id");
 	register_native("mm_get_nextmod_id", "_mm_get_nextmod_id");
-	register_native("mm_get_nextmod_name", "_mm_get_nextmod_name");
 	register_native("mm_force_votemod", "_mm_force_votemod");
 	register_native("mm_force_change_map", "_mm_force_change_map");
 }

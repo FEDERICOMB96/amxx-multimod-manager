@@ -8,15 +8,15 @@
 * ============================================================================ */
 
 /**
- * Return the current mod index based on JSON position.
+ * Return the loaded mods count.
  *
- * @return (int)        Index of the current mod.
+ * @return (int)        Number of loaded mods.
  *
- * native mm_get_mod_id();
+ * native mm_get_mods_count();
  */
-public _mm_get_mod_id(plugin_id, argc)
+public _mm_get_mods_count(plugin_id, argc)
 {
-	return g_iCurrentMod;
+	return ArraySize(g_GlobalConfigs[Mods]);
 }
 
 /**
@@ -100,6 +100,18 @@ public _mm_get_mod_tag(plugin_id, argc)
 }
 
 /**
+ * Return the current mod index based on JSON position.
+ *
+ * @return (int)        Index of the current mod.
+ *
+ * native mm_get_currentmod_id();
+ */
+public _mm_get_currentmod_id(plugin_id, argc)
+{
+	return g_iCurrentMod;
+}
+
+/**
  * Return the next mod index based on JSON position if nextmod is already chosen.
  *
  * @return (int)        -1 if nextmod is not chosen yet.
@@ -113,39 +125,6 @@ public _mm_get_nextmod_id(plugin_id, argc)
 		return -1;
 
 	return g_iNextSelectMod;
-}
-
-/**
- * Retrieves next mod name.
- *
- * @note If the destination buffer is too small to hold the source string, the 
- *       destination will be truncated.
- *
- * @param szOutput      Buffer to copy mod name to.
- * @param iLen          Buffer size.
- *
- * @return (int)        -1 on error.
- *                      >= 0 Number of cells written.
- *
- * native mm_get_nextmod_name(szOutput[], const iLen);
- */
-public _mm_get_nextmod_name(plugin_id, argc)
-{
-	enum _:args_e { arg_output = 1, arg_len };
-
-	if(argc != (args_e-1))
-	{
-		abort(AMX_ERR_NATIVE, "'mm_get_nextmod_name' needs %d param(s) (count: %d)", (args_e-1), argc);
-		return -1;
-	}
-	
-	if(!g_bSelectedNextMod)
-		return set_string(arg_output, "No hay modo elegido aún", get_param(arg_len));
-	
-	new aMods[ArrayMods_e];
-	ArrayGetArray(g_GlobalConfigs[Mods], g_iNextSelectMod, aMods);
-		
-	return set_string(arg_output, aMods[ModName], get_param(arg_len));
 }
 
 /**
