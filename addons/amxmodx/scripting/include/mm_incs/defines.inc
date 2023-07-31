@@ -7,7 +7,7 @@
 
 #define MM_VERSION_MAJOR                2
 #define MM_VERSION_MINOR                1
-#define MM_VERSION_PATCH                1
+#define MM_VERSION_PATCH                2
 
 #define PLUGIN_VERSION                  fmt("v%d.%d.%d", MM_VERSION_MAJOR, MM_VERSION_MINOR, MM_VERSION_PATCH)
 
@@ -57,7 +57,7 @@
 
 #define CHECK_ADMIN_ACCESS(%0,%1)       if(~get_user_flags(%0) & %1) { client_print_color(%0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_ADMIN_NO_ACC"); return PLUGIN_HANDLED; }
 
-enum 
+enum (+= 12345)
 {
 	TASK_VOTEMAP = MAX_USERS,
 	TASK_VOTEMOD,
