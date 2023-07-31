@@ -8,8 +8,8 @@
  * Do not modify this!
  */
 #define MM_VERSION_MAJOR 2
-#define MM_VERSION_MINOR 1
-#define MM_VERSION_PATCH 2
+#define MM_VERSION_MINOR 2
+#define MM_VERSION_PATCH 0
 
 enum ChangeMap_e
 {
@@ -36,7 +36,7 @@ native mm_get_mods_count();
  *
  * @return (bool)       true if the mod is enabled, false otherwise.
  */
-native bool:mm_get_mod_enabled(const iModId);
+native bool:mm_is_mod_enabled(const iModId);
 
 /**
  * Retrieves mod name.

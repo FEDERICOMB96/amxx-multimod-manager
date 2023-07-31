@@ -19,7 +19,7 @@
 public plugin_natives()
 {
 	register_native("mm_get_mods_count", "_mm_get_mods_count");
-	register_native("mm_get_mod_enabled", "_mm_get_mod_enabled");
+	register_native("mm_is_mod_enabled", "_mm_is_mod_enabled");
 	register_native("mm_get_mod_name", "_mm_get_mod_name");
 	register_native("mm_get_mod_tag", "_mm_get_mod_tag");
 	register_native("mm_get_mod_changemap_type", "_mm_get_mod_changemap_type");

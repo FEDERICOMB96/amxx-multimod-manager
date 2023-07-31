@@ -26,15 +26,15 @@ public _mm_get_mods_count(plugin_id, argc)
  *
  * @return (bool)       true if the mod is enabled, false otherwise.
  *
- * native bool:mm_get_mod_enabled(const iModId);
+ * native bool:mm_is_mod_enabled(const iModId);
  */
-public bool:_mm_get_mod_enabled(plugin_id, argc)
+public bool:_mm_is_mod_enabled(plugin_id, argc)
 {
 	enum _:args_e { arg_modid = 1 };
 
 	if(argc != (args_e-1))
 	{
-		abort(AMX_ERR_NATIVE, "'mm_get_mod_enabled' needs %d param(s) (count: %d)", (args_e-1), argc);
+		abort(AMX_ERR_NATIVE, "'mm_is_mod_enabled' needs %d param(s) (count: %d)", (args_e-1), argc);
 		return false;
 	}
 

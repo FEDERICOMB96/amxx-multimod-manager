@@ -25,7 +25,7 @@ public SrvCmd_Test()
 
 	for(new i = 0, j, iMaxLoop; i < iModsCount; ++i)
 	{
-		bModEnabled = mm_get_mod_enabled(i);
+		bModEnabled = mm_is_mod_enabled(i);
 		mm_get_mod_name(i, sModName, sizeof(sModName));
 		mm_get_mod_tag(i, sModTag, sizeof(sModTag));
 		iModChangeMapType = mm_get_mod_changemap_type(i);
