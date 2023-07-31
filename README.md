@@ -1,7 +1,7 @@
 [![AMX MOD X](https://badgen.net/badge/Powered%20by/AMXMODX/0e83cd)](https://amxmodx.org)
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 
-# MultiMod Manager CS [v1.1.0]
+# MultiMod Manager CS [v2.1.2]
 - [English](#english)
 - [Español](#español)
 
