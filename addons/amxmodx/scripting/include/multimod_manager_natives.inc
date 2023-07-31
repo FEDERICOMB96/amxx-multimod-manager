@@ -9,7 +9,7 @@
  */
 #define MM_VERSION_MAJOR 2
 #define MM_VERSION_MINOR 1
-#define MM_VERSION_PATCH 0
+#define MM_VERSION_PATCH 1
 
 enum ChangeMap_e
 {

@@ -152,7 +152,7 @@ public ChangeMap_e:_mm_get_mod_changemap_type(plugin_id, argc)
 	if(argc != (args_e-1))
 	{
 		abort(AMX_ERR_NATIVE, "'mm_get_mod_changemap_type' needs %d param(s) (count: %d)", (args_e-1), argc);
-		return -1;
+		return CHANGEMAP_TIMELEFT;
 	}
 
 	new iModId = get_param(arg_modid);
@@ -161,7 +161,7 @@ public ChangeMap_e:_mm_get_mod_changemap_type(plugin_id, argc)
 	if(iModId < 0 || iModId >= iArraySizeMods)
 	{
 		abort(AMX_ERR_NATIVE, "Invalid array size (%d)", iModId);
-		return -1;
+		return CHANGEMAP_TIMELEFT;
 	}
 
 	new aMods[ArrayMods_e];
@@ -186,7 +186,7 @@ public Array:_mm_get_mod_maps(plugin_id, argc)
 	if(argc != (args_e-1))
 	{
 		abort(AMX_ERR_NATIVE, "'mm_get_mod_maps' needs %d param(s) (count: %d)", (args_e-1), argc);
-		return -1;
+		return Invalid_Array;
 	}
 
 	new iModId = get_param(arg_modid);
@@ -195,7 +195,7 @@ public Array:_mm_get_mod_maps(plugin_id, argc)
 	if(iModId < 0 || iModId >= iArraySizeMods)
 	{
 		abort(AMX_ERR_NATIVE, "Invalid array size (%d)", iModId);
-		return -1;
+		return Invalid_Array;
 	}
 
 	new aMods[ArrayMods_e];
@@ -220,7 +220,7 @@ public Array:_mm_get_mod_cvars(plugin_id, argc)
 	if(argc != (args_e-1))
 	{
 		abort(AMX_ERR_NATIVE, "'mm_get_mod_cvars' needs %d param(s) (count: %d)", (args_e-1), argc);
-		return -1;
+		return Invalid_Array;
 	}
 
 	new iModId = get_param(arg_modid);
@@ -229,7 +229,7 @@ public Array:_mm_get_mod_cvars(plugin_id, argc)
 	if(iModId < 0 || iModId >= iArraySizeMods)
 	{
 		abort(AMX_ERR_NATIVE, "Invalid array size (%d)", iModId);
-		return -1;
+		return Invalid_Array;
 	}
 
 	new aMods[ArrayMods_e];
@@ -254,7 +254,7 @@ public Array:_mm_get_mod_plugins(plugin_id, argc)
 	if(argc != (args_e-1))
 	{
 		abort(AMX_ERR_NATIVE, "'mm_get_mod_plugins' needs %d param(s) (count: %d)", (args_e-1), argc);
-		return -1;
+		return Invalid_Array;
 	}
 
 	new iModId = get_param(arg_modid);
@@ -263,7 +263,7 @@ public Array:_mm_get_mod_plugins(plugin_id, argc)
 	if(iModId < 0 || iModId >= iArraySizeMods)
 	{
 		abort(AMX_ERR_NATIVE, "Invalid array size (%d)", iModId);
-		return -1;
+		return Invalid_Array;
 	}
 
 	new aMods[ArrayMods_e];
