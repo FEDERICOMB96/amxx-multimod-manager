@@ -8,8 +8,15 @@
  * Do not modify this!
  */
 #define MM_VERSION_MAJOR 2
-#define MM_VERSION_MINOR 0
+#define MM_VERSION_MINOR 1
 #define MM_VERSION_PATCH 0
+
+enum ChangeMap_e
+{
+	CHANGEMAP_TIMELEFT,
+	CHANGEMAP_END_OF_ROUND,
+	CHANGEMAP_ONE_MORE_ROUND,
+};
 
 /* ===========================================================================
 *                 [ MULTIMOD MANAGER NATIVES ]
@@ -21,6 +28,15 @@
  * @return (int)        Number of loaded mods.
  */
 native mm_get_mods_count();
+
+/**
+ * Return if the mod is enabled or not.
+ *
+ * @param iModId        Mod index.
+ *
+ * @return (bool)       true if the mod is enabled, false otherwise.
+ */
+native bool:mm_get_mod_enabled(const iModId);
 
 /**
  * Retrieves mod name.
@@ -51,6 +67,46 @@ native mm_get_mod_name(const iModId, szOutput[], const iLen);
  *                      >= 0 Number of cells written.
  */
 native mm_get_mod_tag(const iModId, szOutput[], const iLen);
+
+/**
+ * Return the mod changemap type.
+ *
+ * @note See 'ChangeMap_e' enum for more information.
+ *
+ * @param iModId        Mod index.
+ *
+ * @return (int)        0 on change map timeleft.
+ *                      1 on change map end of round.
+ *                      2 on change map one more round.
+ */
+native ChangeMap_e:mm_get_mod_changemap_type(const iModId);
+
+/**
+ * Return the maps list of the mod.
+ *
+ * @param iModId        Mod index.
+ *
+ * @return (Array)      Maps list array handle, which must be freed via ArrayDestroy()
+ */
+native Array:mm_get_mod_maps(const iModId);
+
+/**
+ * Return the cvars list of the mod.
+ *
+ * @param iModId        Mod index.
+ *
+ * @return (Array)      Cvars list array handle, which must be freed via ArrayDestroy()
+ */
+native Array:mm_get_mod_cvars(const iModId);
+
+/**
+ * Return the plugin list of the mod.
+ *
+ * @param iModId        Mod index.
+ *
+ * @return (Array)      Plugins list array handle, which must be freed via ArrayDestroy()
+ */
+native Array:mm_get_mod_plugins(const iModId);
 
 /**
  * Return the current mod index based on JSON position.

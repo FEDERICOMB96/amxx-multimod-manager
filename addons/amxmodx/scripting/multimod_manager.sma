@@ -19,8 +19,13 @@
 public plugin_natives()
 {
 	register_native("mm_get_mods_count", "_mm_get_mods_count");
+	register_native("mm_get_mod_enabled", "_mm_get_mod_enabled");
 	register_native("mm_get_mod_name", "_mm_get_mod_name");
 	register_native("mm_get_mod_tag", "_mm_get_mod_tag");
+	register_native("mm_get_mod_changemap_type", "_mm_get_mod_changemap_type");
+	register_native("mm_get_mod_maps", "_mm_get_mod_maps");
+	register_native("mm_get_mod_cvars", "_mm_get_mod_cvars");
+	register_native("mm_get_mod_plugins", "_mm_get_mod_plugins");
 	register_native("mm_get_currentmod_id", "_mm_get_currentmod_id");
 	register_native("mm_get_nextmod_id", "_mm_get_nextmod_id");
 	register_native("mm_force_votemod", "_mm_force_votemod");
@@ -269,7 +274,7 @@ MultiMod_Init()
 				}
 				json_free(jObjectMod);
 
-				aMod[Plugins] = ArrayCreate(64);
+				aMod[Plugins] = ArrayCreate(PLATFORM_MAX_PATH);
 				jObjectMod = json_object_get_value(jArrayValue, "plugins");
 				for(j = 0, iObjetCount = json_array_get_count(jObjectMod); j < iObjetCount; ++j)
 				{

@@ -20,6 +20,39 @@ public _mm_get_mods_count(plugin_id, argc)
 }
 
 /**
+ * Return if the mod is enabled or not.
+ *
+ * @param iModId        Mod index.
+ *
+ * @return (bool)       true if the mod is enabled, false otherwise.
+ *
+ * native bool:mm_get_mod_enabled(const iModId);
+ */
+public bool:_mm_get_mod_enabled(plugin_id, argc)
+{
+	enum _:args_e { arg_modid = 1 };
+
+	if(argc != (args_e-1))
+	{
+		abort(AMX_ERR_NATIVE, "'mm_get_mod_enabled' needs %d param(s) (count: %d)", (args_e-1), argc);
+		return false;
+	}
+
+	new iModId = get_param(arg_modid);
+
+	if(iModId < 0 || iModId >= ArraySize(g_GlobalConfigs[Mods]))
+	{
+		abort(AMX_ERR_NATIVE, "Invalid array size (%d)", iModId);
+		return false;
+	}
+
+	new aMods[ArrayMods_e];
+	ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
+
+	return aMods[Enabled];
+}
+
+/**
  * Retrieves mod name.
  *
  * @note If the destination buffer is too small to hold the source string, the 
@@ -97,6 +130,146 @@ public _mm_get_mod_tag(plugin_id, argc)
 	ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
 
 	return set_string(arg_output, aMods[ModTag], get_param(arg_len));
+}
+
+/**
+ * Return the mod changemap type.
+ *
+ * @note See 'ChangeMap_e' enum for more information.
+ *
+ * @param iModId        Mod index.
+ *
+ * @return (int)        0 on change map timeleft.
+ *                      1 on change map end of round.
+ *                      2 on change map one more round.
+ *
+ * native ChangeMap_e:mm_get_mod_changemap_type(const iModId);
+ */
+public ChangeMap_e:_mm_get_mod_changemap_type(plugin_id, argc)
+{
+	enum _:args_e { arg_modid = 1 };
+
+	if(argc != (args_e-1))
+	{
+		abort(AMX_ERR_NATIVE, "'mm_get_mod_changemap_type' needs %d param(s) (count: %d)", (args_e-1), argc);
+		return -1;
+	}
+
+	new iModId = get_param(arg_modid);
+	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
+
+	if(iModId < 0 || iModId >= iArraySizeMods)
+	{
+		abort(AMX_ERR_NATIVE, "Invalid array size (%d)", iModId);
+		return -1;
+	}
+
+	new aMods[ArrayMods_e];
+	ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
+
+	return aMods[ChangeMapType];
+}
+
+/**
+ * Return the maps list of the mod.
+ *
+ * @param iModId        Mod index.
+ *
+ * @return (Array)      Maps list array handle, which must be freed via ArrayDestroy()
+ *
+ * native Array:mm_get_mod_maps(const iModId);
+ */
+public Array:_mm_get_mod_maps(plugin_id, argc)
+{
+	enum _:args_e { arg_modid = 1 };
+
+	if(argc != (args_e-1))
+	{
+		abort(AMX_ERR_NATIVE, "'mm_get_mod_maps' needs %d param(s) (count: %d)", (args_e-1), argc);
+		return -1;
+	}
+
+	new iModId = get_param(arg_modid);
+	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
+
+	if(iModId < 0 || iModId >= iArraySizeMods)
+	{
+		abort(AMX_ERR_NATIVE, "Invalid array size (%d)", iModId);
+		return -1;
+	}
+
+	new aMods[ArrayMods_e];
+	ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
+
+	return ArrayClone(aMods[Maps]);
+}
+
+/**
+ * Return the cvars list of the mod.
+ *
+ * @param iModId        Mod index.
+ *
+ * @return (Array)      Cvars list array handle, which must be freed via ArrayDestroy()
+ *
+ * native Array:mm_get_mod_cvars(const iModId);
+ */
+public Array:_mm_get_mod_cvars(plugin_id, argc)
+{
+	enum _:args_e { arg_modid = 1 };
+
+	if(argc != (args_e-1))
+	{
+		abort(AMX_ERR_NATIVE, "'mm_get_mod_cvars' needs %d param(s) (count: %d)", (args_e-1), argc);
+		return -1;
+	}
+
+	new iModId = get_param(arg_modid);
+	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
+
+	if(iModId < 0 || iModId >= iArraySizeMods)
+	{
+		abort(AMX_ERR_NATIVE, "Invalid array size (%d)", iModId);
+		return -1;
+	}
+
+	new aMods[ArrayMods_e];
+	ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
+
+	return ArrayClone(aMods[Cvars]);
+}
+
+/**
+ * Return the plugin list of the mod.
+ *
+ * @param iModId        Mod index.
+ *
+ * @return (Array)      Plugins list array handle, which must be freed via ArrayDestroy()
+ *
+ * native Array:mm_get_mod_plugins(const iModId);
+ */
+public Array:_mm_get_mod_plugins(plugin_id, argc)
+{
+	enum _:args_e { arg_modid = 1 };
+
+	if(argc != (args_e-1))
+	{
+		abort(AMX_ERR_NATIVE, "'mm_get_mod_plugins' needs %d param(s) (count: %d)", (args_e-1), argc);
+		return -1;
+	}
+
+	new iModId = get_param(arg_modid);
+	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
+
+	if(iModId < 0 || iModId >= iArraySizeMods)
+	{
+		abort(AMX_ERR_NATIVE, "Invalid array size (%d)", iModId);
+		return -1;
+	}
+
+	new aMods[ArrayMods_e];
+	ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
+
+	return ArrayClone(aMods[Plugins]);
 }
 
 /**
