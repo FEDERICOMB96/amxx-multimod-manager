@@ -488,6 +488,20 @@ MM_ADMIN_MODE_DISABLED = Вы^3 отключили^1 режим^4 %s
 MM_ADMIN_CANT_BLOCK_MAIN_MODE = Вы не можете заблокировать режим^3 %s^1 (Основной режим)
 MM_ADMIN_CANT_BLOCK_CURRENT_MODE = Вы не можете заблокировать режим^3 %s^1 (Текущий режим)
 
+MM_ADMIN_MANAGE_MM_M_TITLE = \yУправление модами и картами
+MM_ADMIN_DELETE_MODS = Удалить последние моды
+MM_ADMIN_DELETE_MAPS = Удалить последние карты для мода\y %s
+MM_ADMIN_DELETE_ALL_MODS = Удалить все последние моды
+MM_ADMIN_DELETE_ALL_MAPS = Удалить все последние карты для мода\y %s
+MM_ADMIN_CANT_DELETE_RECENT_MODS = Вы не можете удалить последние моды в данный момент.
+MM_ADMIN_CANT_DELETE_RECENT_MAPS = Вы не можете удалить последние карты в данный момент.
+MM_ADMIN_RECENT_MOD_DELETED = Вы удалили последний мод^4 %s
+MM_ADMIN_RECENT_MAP_DELETED = Вы удалили последнюю карту^4 %s^1 для мода^3 %s
+MM_ADMIN_RECENT_MOD_NOT_DELETED = Последний мод^4 %s^1 не был удален
+MM_ADMIN_RECENT_MAP_NOT_DELETED = Последняя карта^4 %s^1 для мода^3 %s^1 не была удалена
+MM_ADMIN_RECENT_MOD_DELETED_ALL = Вы удалили все последние моды
+MM_ADMIN_RECENT_MAP_DELETED_ALL = Вы удалили все последние карты для мода^3 %s
+
 MM_MODCHOO_VOTED_FOR = Вы проголосовали за режим:^3 %s
 MM_MODCHOO_PLAYER_VOTED_FOR = %n проголосовал(а) за режим: %s
 MM_MODCHOO_VOTED_EXT = Вы проголосовали за продление режима^3 %s^1 на^4 %d минут(ы)^1
