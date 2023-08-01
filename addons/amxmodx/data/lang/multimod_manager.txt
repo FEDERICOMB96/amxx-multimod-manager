@@ -122,6 +122,20 @@ MM_ADMIN_MODE_DISABLED = Has^3 deshabilitado^1 el modo^4 %s
 MM_ADMIN_CANT_BLOCK_MAIN_MODE = No se puede bloquear el modo^3 %s^1 (Modo principal)
 MM_ADMIN_CANT_BLOCK_CURRENT_MODE = No se puede bloquear el modo^3 %s^1 (Modo actual)
 
+MM_ADMIN_MANAGE_MM_M_TITLE = \yAdministrar modos y mapas
+MM_ADMIN_DELETE_MODS = Eliminar modos recientes
+MM_ADMIN_DELETE_MAPS = Eliminar mapas recientes del modo\y %s
+MM_ADMIN_DELETE_ALL_MODS = Eliminar todos los modos recientes
+MM_ADMIN_DELETE_ALL_MAPS = Eliminar todos los mapas recientes del modo\y %s
+MM_ADMIN_CANT_DELETE_RECENT_MODS = No puedes eliminar modos recientes en este momento.
+MM_ADMIN_CANT_DELETE_RECENT_MAPS = No puedes eliminar mapas recientes en este momento.
+MM_ADMIN_RECENT_MOD_DELETED = Has eliminado el modo reciente^4 %s
+MM_ADMIN_RECENT_MAP_DELETED = Has eliminado el mapa reciente^4 %s^1 del modo^3 %s
+MM_ADMIN_RECENT_MOD_NOT_DELETED = No se ha eliminado el modo reciente^4 %s
+MM_ADMIN_RECENT_MAP_NOT_DELETED = No se ha eliminado el mapa reciente^4 %s^1 del modo^3 %s
+MM_ADMIN_RECENT_MOD_DELETED_ALL = Has eliminado todos los modos recientes
+MM_ADMIN_RECENT_MAP_DELETED_ALL = Has eliminado todos los mapas recientes del modo^3 %s
+
 MM_MODCHOO_VOTED_FOR = Has votado por el modo:^3 %s
 MM_MODCHOO_PLAYER_VOTED_FOR = %n ha votado por el modo: %s
 MM_MODCHOO_VOTED_EXT = Has votado por extender el modo^3 %s^1 por^4 %d minuto(s)^1 más
@@ -290,6 +304,20 @@ MM_ADMIN_MODE_ENABLED = You have^3 enabled^1 the mod^4 %s
 MM_ADMIN_MODE_DISABLED = You have^3 disabled^1 the mod^4 %s
 MM_ADMIN_CANT_BLOCK_MAIN_MODE = You can't block the mod^3 %s^1 (Main mod)
 MM_ADMIN_CANT_BLOCK_CURRENT_MODE = You can't block the mod^3 %s^1 (Current mod)
+
+MM_ADMIN_MANAGE_MM_M_TITLE = \yManage mods and maps
+MM_ADMIN_DELETE_MODS = Delete recent mods
+MM_ADMIN_DELETE_MAPS = Delete recent maps of the mod\y %s
+MM_ADMIN_DELETE_ALL_MODS = Delete all recent mods
+MM_ADMIN_DELETE_ALL_MAPS = Delete all recent maps of the mod\y %s
+MM_ADMIN_CANT_DELETE_RECENT_MODS = You can't delete recent mods at this time.
+MM_ADMIN_CANT_DELETE_RECENT_MAPS = You can't delete recent maps at this time.
+MM_ADMIN_RECENT_MOD_DELETED = You have deleted the recent mod^4 %s
+MM_ADMIN_RECENT_MAP_DELETED = You have deleted the recent map^4 %s^1 of the mod^3 %s
+MM_ADMIN_RECENT_MOD_NOT_DELETED = Recent mode^4 %s^1 not removed
+MM_ADMIN_RECENT_MAP_NOT_DELETED = Recent map^4 %s^1 of the mod^3 %s^1 not removed
+MM_ADMIN_RECENT_MOD_DELETED_ALL = You have deleted all recent mods
+MM_ADMIN_RECENT_MAP_DELETED_ALL = You have deleted all recent maps of the mod^3 %s
 
 MM_MODCHOO_VOTED_FOR = You voted for the mod:^3 %s
 MM_MODCHOO_PLAYER_VOTED_FOR = %n voted for the mod: %s

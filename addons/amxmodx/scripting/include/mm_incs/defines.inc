@@ -5,9 +5,9 @@
 
 #define PLUGIN_NAME                     "MultiMod Manager"
 
-#define MM_VERSION_MAJOR                1
-#define MM_VERSION_MINOR                0
-#define MM_VERSION_PATCH                160
+#define MM_VERSION_MAJOR                2
+#define MM_VERSION_MINOR                2
+#define MM_VERSION_PATCH                0
 
 #define PLUGIN_VERSION                  fmt("v%d.%d.%d", MM_VERSION_MAJOR, MM_VERSION_MINOR, MM_VERSION_PATCH)
 
@@ -57,7 +57,7 @@
 
 #define CHECK_ADMIN_ACCESS(%0,%1)       if(~get_user_flags(%0) & %1) { client_print_color(%0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_ADMIN_NO_ACC"); return PLUGIN_HANDLED; }
 
-enum 
+enum (+= 12345)
 {
 	TASK_VOTEMAP = MAX_USERS,
 	TASK_VOTEMOD,
@@ -65,7 +65,8 @@ enum
 	TASK_RTV,
 	TASK_SHOWTIME,
 	TASK_ENDMAP,
-	TASK_VOTE_ADMIN
+	TASK_VOTE_ADMIN,
+	TASK_FORCE_CHANGE_MAP,
 };
 
 const KEYSMENU = (1<<0) | (1<<1) | (1<<2) | (1<<3) | (1<<4) | (1<<5) | (1<<6) | (1<<7) | (1<<8) | (1<<9);

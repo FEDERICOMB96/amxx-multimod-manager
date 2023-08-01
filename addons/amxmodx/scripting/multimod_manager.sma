@@ -18,16 +18,25 @@
 
 public plugin_natives()
 {
-	register_native("mm_get_mod_id", "_mm_get_mod_id");
+	register_native("mm_get_mods_count", "_mm_get_mods_count");
+	register_native("mm_is_mod_enabled", "_mm_is_mod_enabled");
 	register_native("mm_get_mod_name", "_mm_get_mod_name");
 	register_native("mm_get_mod_tag", "_mm_get_mod_tag");
+	register_native("mm_get_mod_changemap_type", "_mm_get_mod_changemap_type");
+	register_native("mm_get_mod_maps", "_mm_get_mod_maps");
+	register_native("mm_get_mod_cvars", "_mm_get_mod_cvars");
+	register_native("mm_get_mod_plugins", "_mm_get_mod_plugins");
+	register_native("mm_get_currentmod_id", "_mm_get_currentmod_id");
 	register_native("mm_get_nextmod_id", "_mm_get_nextmod_id");
-	register_native("mm_get_nextmod_name", "_mm_get_nextmod_name");
 	register_native("mm_force_votemod", "_mm_force_votemod");
+	register_native("mm_force_change_map", "_mm_force_change_map");
 }
 
 public plugin_precache()
 {
+	register_dictionary("common.txt");
+	register_dictionary("multimod_manager.txt");
+
 	get_mapname(g_szCurrentMap, charsmax(g_szCurrentMap));
 	mb_strtolower(g_szCurrentMap);
 
@@ -37,9 +46,11 @@ public plugin_precache()
 	g_Array_Nominations = ArrayCreate(1);
 
 	g_Forward_VersionCheck = CreateMultiForward("__multimod_version_check", ET_IGNORE, FP_CELL, FP_CELL);
-
-	register_dictionary("common.txt");
-	register_dictionary("multimod_manager.txt");
+	g_Forward_StartVotemod = CreateMultiForward("multimod_start_votemod", ET_IGNORE, FP_CELL);
+	g_Forward_EndVotemod = CreateMultiForward("multimod_end_votemod", ET_IGNORE, FP_CELL);
+	g_Forward_StartVotemap = CreateMultiForward("multimod_start_votemap", ET_IGNORE, FP_CELL);
+	g_Forward_EndVotemap = CreateMultiForward("multimod_end_votemap", ET_IGNORE, FP_CELL);
+	g_Forward_AdminForceVotemod = CreateMultiForward("multimod_admin_force_votemod", ET_STOP, FP_CELL);
 
 	Cvars_Init();
 	MultiMod_Init();
@@ -49,6 +60,9 @@ public plugin_precache()
 public plugin_init()
 {
 	register_plugin(PLUGIN_NAME, PLUGIN_VERSION, "FEDERICOMB");
+
+	register_dictionary("common.txt");
+	register_dictionary("multimod_manager.txt");
 
 	register_event_ex("TextMsg", "OnEvent_GameRestart", RegisterEvent_Global, "2&#Game_C", "2&#Game_w");
 	register_event_ex("TextMsg", "OnEvent_GameRestart", RegisterEvent_Global, "2&#Game_will_restart_in");
@@ -260,7 +274,7 @@ MultiMod_Init()
 				}
 				json_free(jObjectMod);
 
-				aMod[Plugins] = ArrayCreate(64);
+				aMod[Plugins] = ArrayCreate(PLATFORM_MAX_PATH);
 				jObjectMod = json_object_get_value(jArrayValue, "plugins");
 				for(j = 0, iObjetCount = json_array_get_count(jObjectMod); j < iObjetCount; ++j)
 				{
@@ -302,7 +316,7 @@ MultiMod_Init()
 		return;
 	}
 
-	if(bReloadMod || !IsValidMapForMod(g_iCurrentMod))
+	if(bReloadMod || !IsValidMapForMod(g_iCurrentMod, g_szCurrentMap))
 	{
 		g_iNextSelectMod = bReloadMod ? 0 : g_iCurrentMod; // 0 = First mod as default
 		MultiMod_SetNextMod(g_iNextSelectMod); 
@@ -319,7 +333,7 @@ MultiMod_Init()
 	MultiMod_OverwriteMapCycle(g_iCurrentMod);
 	MultiMod_GetOffMods();
 	Recent_LoadRecentModsMaps();
-	Recent_SaveRecentModsMaps(g_iCurrentMod, g_szCurrentMap);
+	Recent_SaveRecentModsMaps();
 	OnEvent_GameRestart();
 
 	new iRes;
@@ -389,7 +403,7 @@ public OnClientCommand_RecentMods(const id)
 
 	if(Recent_CountRecentMods() < 1)
 	{
-		client_print_color(id, id, "%s^1 %L", LANG_PLAYER, "MM_NO_RECENT_MODES_PLAYED", g_GlobalConfigs[ChatPrefix]);
+		client_print_color(id, id, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NO_RECENT_MODES_PLAYED");
 		return PLUGIN_HANDLED;
 	}
 
@@ -441,7 +455,7 @@ public OnClientCommand_RecentMaps(const id)
 
 	if(Recent_CountRecentMaps(g_iCurrentMod) < 1)
 	{
-		client_print_color(id, id, "%s^1 %L", LANG_PLAYER, "MM_NO_RECENT_MAPS_PLAYED", g_GlobalConfigs[ChatPrefix]);
+		client_print_color(id, id, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NO_RECENT_MAPS_PLAYED");
 		return PLUGIN_HANDLED;
 	}
 
@@ -842,7 +856,7 @@ MultiMod_SetGameDescription(const iMod)
 	return 0;
 }
 
-bool:IsValidMapForMod(const iModId)
+bool:IsValidMapForMod(const iModId, const szMapName[MAX_MAPNAME_LENGTH])
 {
 	if(iModId < 0 || iModId > ArraySize(g_GlobalConfigs[Mods]))
 		return false;
@@ -855,7 +869,7 @@ bool:IsValidMapForMod(const iModId)
 	{
 		ArrayGetString(aMod[Maps], i, szMap, charsmax(szMap));
 
-		if(equali(g_szCurrentMap, szMap))
+		if(equali(szMapName, szMap))
 			return true;
 	}
 
@@ -906,4 +920,9 @@ GetRandomMapForMod(const iModId, szMap[], const iLen)
 	}
 	
 	return 0;
+}
+
+public OnTask_ForceChangeMap()
+{
+	OnCSGameRules_GoToIntermission();
 }

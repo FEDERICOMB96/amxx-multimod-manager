@@ -148,6 +148,8 @@ public OnTask_VoteNextMap()
 	
 	ClearSyncHud(0, g_Hud_Vote);
 	OnTask_MapChooserHudVote();
+
+	ExecuteForward(g_Forward_StartVotemap, g_Forward_RetVal, false);
 }
 
 public menu__CountVoteMap(const id, const menuid, const item)
@@ -199,6 +201,8 @@ public OnTask_CheckVoteMap()
 
 	ResetMapMenuAll();
 	menu_destroy(g_Menu_MapChooser);
+
+	ExecuteForward(g_Forward_EndVotemap, g_Forward_RetVal, false);
 
 	client_print(0, print_console, "%L:", LANG_PLAYER, "MM_VOTE_RESULT");
 
@@ -316,6 +320,8 @@ public OnTask_VoteNextMap__FIX()
 	
 	ClearSyncHud(0, g_Hud_Vote);
 	OnTask_MapChooserHudVote();
+
+	ExecuteForward(g_Forward_StartVotemap, g_Forward_RetVal, true);
 }
 
 public menu__CountVoteMapFIX(const id, const menuid, const item)
@@ -354,6 +360,8 @@ public OnTask_CheckVoteMapFIX()
 
 	ResetMapMenuAll();
 	menu_destroy(g_Menu_MapChooser);
+
+	ExecuteForward(g_Forward_EndVotemap, g_Forward_RetVal, true);
 
 	client_print(0, print_console, "%L:", LANG_PLAYER, "MM_VOTE_RESULT");
 
