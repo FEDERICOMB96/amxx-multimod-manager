@@ -363,3 +363,186 @@ MM_RTV_ALREADY_VOTED = You have already made the^3 Rock The Vote^1 for the mod c
 MM_RTV_NEED_MIN_VOTES = Needs^4 %d vote(s)^1 more to start the^3 Rock The Vote
 MM_RTV_PLAYER_VOTED = ^3%n^1 has voted for the^3 Rock The Vote^1. Total votes: ^4%d^1/^4%d
 MM_RTV_VOTING_START = The^3 Rock The Vote^1 has started! In^4 10 seconds^1 the voting for the mod change will begin
+
+[ru]
+MULTIMOD_MANAGER = Multimod Manager
+
+MM_MODE = Режим
+MM_MODES = Режимы
+MM_MAP = Карта
+MM_MAPS = Карты
+MM_VOTE = Голосование
+MM_VOTES = Голоса
+MM_PERCENT = Процент
+MM_EXT = Расширить
+MM_VOTE_RESULT = Результат голосования
+MM_MOD_WIN = Победивший режим
+MM_MAP_WIN = Победившая карта
+MM_VOTING_END = Голосование завершено!
+MM_SECOND_VOTE = Второе голосование
+MM_NO_MAP_CHOOSED_CVAR = [карта не выбрана]
+MM_ADMIN_NO_ACC = У вас нет доступа к этой команде.
+MM_ALREADY_VOTING = Сейчас уже идёт голосование...
+MM_NO_VOTES_COUNT = Голосов пока нет...
+
+MM_BACK = Назад
+MM_MORE = Далее
+MM_EXIT = Выход
+MM_AGO = %s назад
+MM_COUNT = Количество
+MM_ADMIN = Администратор
+MM_LOCKED = Заблокировано
+MM_SELECTED = Выбрано
+MM_CURRENT = Текущее
+MM_MAX = Максимум
+MM_RANDOM = Случайно
+MM_RECENT = Недавний
+MM_NOMINATED = Номинирован
+MM_YOU_NOMINATED = Вы номинировали
+
+MM_ERR_FIND_FILE = Невозможно найти файл
+MM_ERR_PARSE_FILE = Невозможно прочитать файл
+MM_ERR_NO_LOADED_MODES = Нет загруженных режимов
+MM_ERR_INVALID_MAP_LIST = Некорректный список карт для режима '%s'. Пропущено.
+MM_INVALID_JSON_FILE = Некорректный JSON-файл
+MM_EXECUTING_CVARS_MODE = Выполняются переменные мода '%s'
+
+MM_MAP_CHANGE_END_ROUND = Карта изменится в конце раунда
+MM_NEXT_MODE_HASNT_BEEN_CHOOSED = Следующий режим не выбран
+MM_NEXT_MAP_HASNT_BEEN_CHOOSED = Следующая карта не выбрана
+MM_CURRENT_MODE = Текущий режим
+MM_CURRENT_MAP = Текущая карта
+MM_NEXT_MODE = Следующий режим
+MM_NEXT_MAP = Следующая карта
+MM_TIMELEFT = Оставшееся время
+MM_NO_T_LIMIT = Без ограничений
+MM_MAX_ROUNDS = Максимум раундов
+MM_ROUNDS_LEFT = Оставшиеся раунды
+MM_WIN_LIMIT = Команда, первой достигшая %d выигранных раундов^1, победит в матче
+
+MM_NO_RECENT_MODES_PLAYED = Ещё не было сыграно ни одного режима
+MM_NO_RECENT_MAPS_PLAYED = Ещё не было сыграно ни одной карты
+MM_RECENT_MODES = Недавние режимы
+MM_RECENT_MAPS = Недавние карты
+
+MM_NEXT_VOTE_WILL_START_IN = Голосование начнется через %d секунд(ы)
+MM_NEXT_MAP_CHANGE_WILL_BE_IN = Смена карты произойдет через %d секунд(ы)
+MM_TIME_CHOOSE_MOD = Пора выбрать следующий режим...
+MM_TIME_CHOOSE_MAP = Пора выбрать следующую карту...
+MM_SELECT_NEXT_MODE = Выберите следующий режим
+MM_SELECT_NEXT_MAP = Выберите следующую карту
+MM_SELECT_VOTE_RANDOM_ITEM = Проголосуйте случайно
+MM_M_EXTEND_CURRENT_MODE = \wПродлить\y %s\w на\y %d минут(ы)\w
+MM_VOTED_FOR = Вы проголосовали за^3 %s
+MM_PLAYER_VOTED_FOR = ^3%n^1 проголосовал(а) за^3 %s
+MM_CHO_NO_VOTES_MOD = Голосов не было, случайным образом выбран режим^3 %s
+MM_CHO_NO_VOTES_MAP = Голосов не было, случайным образом выбрана карта^3 %s
+MM_MOD_CHO_FIN_EXT = Голосование завершено, текущий режим продлен^3 на %d минут(ы)^1 с результатом^4 %d^1 /^4 %d^1 голос(а) (%d%%)
+MM_MOD_CHO_FIN_NEXT = Голосование завершено, победивший режим^3 %s^1 с результатом^4 %d^1 /^4 %d^1 голос(а) (%d%%)
+MM_MOD_CHO_ONLY_MAP = Режим^3 %s^1 имеет только карту^4 %s
+MM_MAP_CHO_FIN_NEXT = Голосование завершено, победившая карта^3 %s^1 с результатом^4 %d^1 /^4 %d^1 голос(а) (%d%%)
+MM_RTV_CHO_NO_RESULT = (RTV) Голосование за смену карты не удалось!
+
+MM_ADMIN_VOTE_DISCONNECTED = ^3%n^1 отключился, поэтому его голос был отменен
+MM_ADMIN_FORCE_VOTEMODE = ^3%n^1 начал голосование за следующий режим
+MM_ADMIN_CANT_FORCE_VOTEMODE = Вы не можете принудительно начать голосование за режим в данный момент.
+MM_ADMIN_SELECT_NEXTMOD = Выберите\y следующий режим\r (%s)
+MM_ADMIN_SELECT_NEXTMAP = Выберите\y следующую карту\r (%a)
+MM_ADMIN_SELECT_NEXTMAP_UNKNOWN = Выберите\y следующую карту\r (Неизвестно)
+MM_ADMIN_CHANGE_TO_MODE_AND_MAP = Переключиться на:^n\w- Режим:\y %s^n\w- Карта:\y %a
+MM_ADMIN_CHANGE_TO_MODE_AND_MAP_UNKNOWN = Переключиться на:^n\w- Режим:\y %s^n\w- Карта:\y (Неизвестно)
+MM_ADMIN_START_VOTEMODE = Начать\y голосование за режим
+MM_ADMIN_START_VOTEMAP = Начать\y голосование за карту\r (%s)
+MM_ADMIN_MANAGE_MODS = Управление\y режимами
+
+MM_ADMIN_VOTEMOD_M_TITLE_SELECT_MODE = \yВыберите режим
+MM_ADMIN_VOTEMAP_NO_MODS = Нет доступных режимов для выбора
+MM_ADMIN_VOTEMOD_MODE_SELECTED = Вы выбрали режим^4 %s
+MM_ADMIN_VOTEMOD_MODE_SELECTED_INFO = Теперь вы можете переключиться на карту выбранного режима или начать голосование
+MM_ADMIN_VOTEMOD_M_TITLE_VOTE = \yГолосование за режимы %d/%d
+MM_ADMIN_VOTEMOD_START_VOTE = Начать голосование за режим
+MM_ADMIN_VOTEMOD_MIN_MODES = Вы должны выбрать как минимум 2 режима (максимум %d)
+MM_ADMIN_VOTEMOD_SELECTED_MODES = \yВыбранные режимы\w (%d%s)
+MM_ADMIN_VOTEMOD_ADMIN_NAME = \yГолос от\w %n
+MM_ADMIN_VOTEMOD_START_VOTE_SAY = ^3%n^1 начал голосование за смену режима
+
+MM_ADMIN_VOTEMAP_M_TITLE_SELECT_MAP = \yВыберите карту режима\r (%s)\y
+MM_ADMIN_VOTEMAP_NO_MAPS = Нет доступных карт для выбора
+MM_ADMIN_VOTEMAP_MAP_SELECTED = Вы выбрали карту^4 %a^1 режима^3 %s
+MM_ADMIN_VOTEMAP_MAP_SELECTED_INFO = Теперь вы можете переключиться на выбранную карту
+MM_ADMIN_VOTEMAP_M_TITLE_VOTE = \yГолосование за карты режима\w %s\y %d/%d
+MM_ADMIN_VOTEMAP_START_VOTE = Начать голосование за карту
+MM_ADMIN_VOTEMAP_MIN_MAPS = Вы должны выбрать как минимум 2 карты (максимум %d)
+MM_ADMIN_VOTEMAP_SELECTED_MAPS = \yВыбранные карты\w (%d%s)
+MM_ADMIN_VOTEMAP_ADMIN_NAME = \yГолос от\w %n
+MM_ADMIN_VOTEMAP_START_VOTE_SAY = ^3%n^1 начал голосование за смену карты
+
+MM_ADMIN_VOTE_CONFIRM = Подтвердить голосование
+MM_ADMIN_VOTE_REF = Отклонить голосование
+MM_ADMIN_RES_REF = ^3%n^1 отклонил(а) голосование
+MM_ADMIN_CHANGE_MOD_MAP = ^3%n^1 сменил(а) режим на^4 %s^1 на карте^4 %s
+
+MM_ADMIN_M_TITLE_MANAGE_MODS = \yУправление режимами
+MM_ADMIN_MODE_ENABLED = Вы^3 включили^1 режим^4 %s
+MM_ADMIN_MODE_DISABLED = Вы^3 отключили^1 режим^4 %s
+MM_ADMIN_CANT_BLOCK_MAIN_MODE = Вы не можете заблокировать режим^3 %s^1 (Основной режим)
+MM_ADMIN_CANT_BLOCK_CURRENT_MODE = Вы не можете заблокировать режим^3 %s^1 (Текущий режим)
+
+MM_ADMIN_MANAGE_MM_M_TITLE = \yУправление модами и картами
+MM_ADMIN_DELETE_MODS = Удалить последние моды
+MM_ADMIN_DELETE_MAPS = Удалить последние карты для мода\y %s
+MM_ADMIN_DELETE_ALL_MODS = Удалить все последние моды
+MM_ADMIN_DELETE_ALL_MAPS = Удалить все последние карты для мода\y %s
+MM_ADMIN_CANT_DELETE_RECENT_MODS = Вы не можете удалить последние моды в данный момент.
+MM_ADMIN_CANT_DELETE_RECENT_MAPS = Вы не можете удалить последние карты в данный момент.
+MM_ADMIN_RECENT_MOD_DELETED = Вы удалили последний мод^4 %s
+MM_ADMIN_RECENT_MAP_DELETED = Вы удалили последнюю карту^4 %s^1 для мода^3 %s
+MM_ADMIN_RECENT_MOD_NOT_DELETED = Последний мод^4 %s^1 не был удален
+MM_ADMIN_RECENT_MAP_NOT_DELETED = Последняя карта^4 %s^1 для мода^3 %s^1 не была удалена
+MM_ADMIN_RECENT_MOD_DELETED_ALL = Вы удалили все последние моды
+MM_ADMIN_RECENT_MAP_DELETED_ALL = Вы удалили все последние карты для мода^3 %s
+
+MM_MODCHOO_VOTED_FOR = Вы проголосовали за режим:^3 %s
+MM_MODCHOO_PLAYER_VOTED_FOR = %n проголосовал(а) за режим: %s
+MM_MODCHOO_VOTED_EXT = Вы проголосовали за продление режима^3 %s^1 на^4 %d минут(ы)^1
+MM_MODCHOO_PLAYER_VOTED_EXT = %n проголосовал(а) за продление режима %s на %d минут(ы)
+MM_MODCHOO_NEXT = Следующим будет режим^3 %s
+MM_MODCHOO_NEED_SECOND_VOTE = Имеется^4 %d режимов^1 с^4 %d^1 голосами каждый, следующее голосование через^3 10 секунд
+MM_MODCHOO_SECOND_ROUND_EXT_INFO1 = Ни один режим не превысил^4 большинства голосов^1 второй раз.
+MM_MODCHOO_SECOND_ROUND_EXT_INFO2 = Среди наиболее популярных вариантов случайно выбирается продление режима^3 %s^1.
+MM_MODCHOO_SECOND_ROUND_EXT_INFO3 = Текущий режим будет продлен^3 на еще %d минут(ы).
+MM_MODCHOO_SECOND_ROUND_NEXT_INFO1 = Ни один режим не превысил^4 большинства голосов^1 второй раз.
+MM_MODCHOO_SECOND_ROUND_NEXT_INFO2 = Среди наиболее популярных вариантов случайно выбирается режим^3 %s^1.
+
+MM_MAPCHOO_VOTED_FOR = Вы проголосовали за карту:^3 %s
+MM_MAPCHOO_PLAYER_VOTED_FOR = %n проголосовал(а) за карту: %s
+MM_MAPCHOO_NEXT = Следующей будет карта^3 %s
+MM_MAPCHOO_CAN_NOM = Вы можете номинировать карты для следующего режима еще^4 %d секунд
+MM_MAPCHOO_NEED_SECOND_VOTE = Имеется^4 %d карт^1 с^4 %d^1 голосами каждая, следующее голосование через^3 10 секунд
+MM_MAPCHOO_SECOND_ROUND_NEXT_INFO1 = Ни одна карта не превысила^4 большинства голосов^1 второй раз.
+MM_MAPCHOO_SECOND_ROUND_NEXT_INFO2 = Среди наиболее популярных вариантов случайно выбирается карта^3 %s^1.
+
+MM_NOMS_MOD_NOT_ENABLED = Номинирование режимов отключено!
+MM_NOMS_MAP_NOT_ENABLED = Номинирование карт отключено!
+MM_NOMS_NOT_ALLOWED = Номинирование сейчас недоступно!
+MM_NOMS_MODS_NOT_ENOUGH = Недостаточно режимов для номинирования в данный момент!
+MM_NOMS_MAPS_NOT_ENOUGH = Недостаточно карт для номинирования в данный момент!
+MM_NOMS_M_TITLE_NOMINATE_MODS = Номинировать режимы
+MM_NOMS_M_TITLE_NOMINATE_MAPS = Номинировать карты
+MM_NOMS_PLAYER_NOMINATED_MOD = ^3%n^1 номинировал(а) режим:^4 %s
+MM_NOMS_PLAYER_NOMINATED_MAP = ^3%n^1 номинировал(а) карту:^4 %a
+MM_NOMS_PLAYER_DEL_NOM_MOD = ^3%n^1 отменил(а) номинацию режима:^4 %s
+MM_NOMS_PLAYER_DEL_NOM_MAP = ^3%n^1 отменил(а) номинацию карты:^4 %a
+MM_NOMS_ALREADY_NOMINATED_MOD = Режим^4 %s^1 уже был номинирован!
+MM_NOMS_ALREADY_NOMINATED_MOD_INFO1 = Вы уже выдвинули режим^4 %s^1, нельзя номинировать более одного режима одновременно!
+MM_NOMS_ALREADY_NOMINATED_MAP = Карта^4 %s^1 уже была номинирована!
+MM_NOMS_ALREADY_NOMINATED_MAP_INFO1 = Вы уже выдвинули карту^4 %s^1, нельзя номинировать более одной карты одновременно!
+
+MM_RTV_NOT_ENABLED = Досрочное голосование отключено!
+MM_RTV_COOLDOWN = Вы должны подождать^4 %d секунд^1, чтобы использовать досрочное голосование
+MM_RTV_ALREADY_MOD_CHOOSED = Голосование за смену режима уже проведено!
+MM_RTV_MIN_PLAYERS = Для использования досрочного голосования необходимо минимум^4 %d игрок(ов) в игре
+MM_RTV_ALREADY_VOTED = Вы уже проголосовали в досрочном голосовании за смену режима!
+MM_RTV_NEED_MIN_VOTES = Необходимо еще^4 %d голосов^1 для начала досрочного голосования
+MM_RTV_PLAYER_VOTED = ^3%n^1 проголосовал(а) в досрочном голосовании. Всего голосов: ^4%d^1/^4%d
+MM_RTV_VOTING_START = Досрочное голосование началось! Через^4 10 секунд^1 начнется голосование за смену режима
