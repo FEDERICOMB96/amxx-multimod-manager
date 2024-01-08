@@ -118,7 +118,9 @@ public OnTask_VoteNextMod()
 
 	set_task(15.1, "OnTaskCheckVoteMod");
 	
-	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
+	if(g_bCvar_amx_multimod_voice)
+		client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
+
 	client_print_color(0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_TIME_CHOOSE_MOD");
 	
 	ClearSyncHud(0, g_Hud_Vote);
@@ -340,7 +342,9 @@ public OnTask_VoteNextMod__FIX()
 
 	set_task(15.1, "OnTask_CheckVoteModFIX");
 	
-	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
+	if(g_bCvar_amx_multimod_voice)
+		client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
+		
 	client_print_color(0, print_team_grey, "%s^1 %L^3 (%L)", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_TIME_CHOOSE_MOD", LANG_PLAYER, "MM_SECOND_VOTE");
 	
 	ClearSyncHud(0, g_Hud_Vote);

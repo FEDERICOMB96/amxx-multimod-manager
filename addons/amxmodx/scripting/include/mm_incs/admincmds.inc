@@ -453,7 +453,9 @@ ShowMenu_StartCustomVotemod()
 	remove_task(g_Admin_VoteUserId + TASK_VOTE_ADMIN);
 	set_task(15.1, "OnTask_CountVotes_Mod", g_Admin_VoteUserId + TASK_VOTE_ADMIN);
 	
-	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
+	if(g_bCvar_amx_multimod_voice)
+		client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
+
 	client_print_color(0, print_team_blue, "%s %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_ADMIN_VOTEMOD_START_VOTE_SAY", g_Admin_VoteUserId);
 }
 
@@ -742,7 +744,9 @@ ShowMenu_StartCustomVotemap()
 	remove_task(g_Admin_VoteUserId + TASK_VOTE_ADMIN);
 	set_task(15.1, "OnTask_AdminCountVotes_Map", g_Admin_VoteUserId + TASK_VOTE_ADMIN);
 	
-	client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
+	if(g_bCvar_amx_multimod_voice)
+		client_cmd(0, "spk ^"%s^"", g_SOUND_GmanChoose[random_num(0, charsmax(g_SOUND_GmanChoose))]);
+		
 	client_print_color(0, print_team_blue, "%s %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_ADMIN_VOTEMAP_START_VOTE_SAY", g_Admin_VoteUserId);
 }
 
