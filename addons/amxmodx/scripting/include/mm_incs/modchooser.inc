@@ -245,7 +245,8 @@ public OnTaskCheckVoteMod()
 
 			client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MODCHOO_NEED_SECOND_VOTE", j, iResult);
 
-			client_cmd(0, "spk ^"run officer(e40) voltage(e30) accelerating(s70) is required^"");
+			if(g_bCvar_amx_multimod_voice)
+				client_cmd(0, "spk ^"run officer(e40) voltage(e30) accelerating(s70) is required^"");
 
 			set_task(10.0, "OnTask_VoteNextMod__FIX");
 

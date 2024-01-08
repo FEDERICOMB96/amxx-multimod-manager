@@ -366,7 +366,9 @@ public OnEvent_HLTV()
 	{
 		g_bChangeMapOneMoreRound = false;
 
-		client_cmd(0, "spk ^"%s^"", g_SOUND_ExtendTime);
+		if(g_bCvar_amx_multimod_voice)
+			client_cmd(0, "spk ^"%s^"", g_SOUND_ExtendTime);
+
 		client_print_color(0, print_team_default, "%s^1 %L", LANG_PLAYER, "MM_MAP_CHANGE_END_ROUND", g_GlobalConfigs[ChatPrefix]);
 	}
 }
@@ -656,15 +658,18 @@ public OnTask_AlertStartNextVote()
 		return;
 	}
 
-	if(g_iCountdownTime == 10)
-		client_cmd(0, "spk ^"get red(e80) ninety(s45) to check(e20) use bay(s18) mass(e42) cap(s50)^"");
+	if(g_bCvar_amx_multimod_voice)
+	{
+		if(g_iCountdownTime == 10)
+			client_cmd(0, "spk ^"get red(e80) ninety(s45) to check(e20) use bay(s18) mass(e42) cap(s50)^"");
+
+		if(g_iCountdownTime <= 5)
+			client_cmd(0, "spk ^"fvox/%s^"", g_SOUND_CountDown[g_iCountdownTime]);
+	}
 
 	set_hudmessage(255, 255, 255, -1.0, 0.35, 0, 0.0, 1.1, 0.0, 0.0, -1);
 	ShowSyncHudMsg(0, g_Hud_Alert, "%L", LANG_PLAYER, "MM_NEXT_VOTE_WILL_START_IN", g_iCountdownTime);
 
-	if(g_iCountdownTime <= 5)
-		client_cmd(0, "spk ^"fvox/%s^"", g_SOUND_CountDown[g_iCountdownTime]);
-	
 	--g_iCountdownTime;
 	
 	remove_task(TASK_SHOWTIME);

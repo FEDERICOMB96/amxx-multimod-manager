@@ -242,7 +242,8 @@ public OnTask_CheckVoteMap()
 
 			client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MAPCHOO_NEED_SECOND_VOTE", j, iResult);
 
-			client_cmd(0, "spk ^"run officer(e40) voltage(e30) accelerating(s70) is required^"");
+			if(g_bCvar_amx_multimod_voice)
+				client_cmd(0, "spk ^"run officer(e40) voltage(e30) accelerating(s70) is required^"");
 
 			set_task(10.0, "OnTask_VoteNextMap__FIX");
 
@@ -506,7 +507,9 @@ public OnTask_ChangeTimeLeft()
 	{
 		case CHANGEMAP_END_OF_ROUND:
 		{
-			client_cmd(0, "spk ^"%s^"", g_SOUND_ExtendTime);
+			if(g_bCvar_amx_multimod_voice)
+				client_cmd(0, "spk ^"%s^"", g_SOUND_ExtendTime);
+
 			client_print_color(0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MAP_CHANGE_END_ROUND");
 		}
 		case CHANGEMAP_ONE_MORE_ROUND:
@@ -546,7 +549,8 @@ public OnTask_AlertChangeMap()
 	set_hudmessage(255, 255, 255, -1.0, 0.35, 0, 0.0, 1.1, 0.0, 0.0, -1);
 	ShowSyncHudMsg(0, g_Hud_Alert, "%L", g_iChangeMapTime, LANG_PLAYER, "MM_NEXT_MAP_CHANGE_WILL_BE_IN");
 
-	client_cmd(0, "spk ^"fvox/%s^"", g_SOUND_CountDown[g_iChangeMapTime]);
+	if(g_bCvar_amx_multimod_voice)
+		client_cmd(0, "spk ^"fvox/%s^"", g_SOUND_CountDown[g_iChangeMapTime]);
 
 	--g_iChangeMapTime;
 	

@@ -101,7 +101,8 @@ public ClientCommand_RockTheVote(const id)
 	{
 		g_bIsVotingRtv = true;
 		
-		client_cmd(0, "spk ^"get red(e80) ninety(s45) to check(e20) use bay(s18) mass(e42) cap(s50)^"");
+		if(g_bCvar_amx_multimod_voice)
+			client_cmd(0, "spk ^"get red(e80) ninety(s45) to check(e20) use bay(s18) mass(e42) cap(s50)^"");
 		
 		client_print_color(0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_RTV_VOTING_START");
 

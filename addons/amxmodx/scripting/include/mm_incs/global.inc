@@ -58,6 +58,7 @@ new g_bCvar_amx_last_voting, g_pCvar_amx_last_voting;
 new g_bCvar_amx_vote_delay_mm;
 new Float:g_bCvar_mp_chattime, g_pCvar_mp_chattime;
 new g_bCvar_mp_timelimit;
+new g_bCvar_amx_multimod_voice;
 
 
 /* ===========================================================================

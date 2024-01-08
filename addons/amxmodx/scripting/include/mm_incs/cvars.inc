@@ -17,6 +17,7 @@ Cvars_Init()
 	bind_pcvar_num(create_cvar("amx_vote_delay_mm", "5"), g_bCvar_amx_vote_delay_mm);
 	bind_pcvar_float((g_pCvar_mp_chattime = get_cvar_pointer("mp_chattime")), g_bCvar_mp_chattime);
 	bind_pcvar_num(get_cvar_pointer("mp_timelimit"), g_bCvar_mp_timelimit);
+	bind_pcvar_num(create_cvar("amx_multimod_voice", "1"), g_bCvar_amx_multimod_voice);
 
 	set_pcvar_string(g_pCvar_amx_nextmap, fmt("%L", LANG_SERVER, "MM_NO_MAP_CHOOSED_CVAR"));
 	set_pcvar_num(g_pCvar_amx_last_voting, 0);
