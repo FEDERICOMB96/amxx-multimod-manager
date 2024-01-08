@@ -71,7 +71,7 @@ public ClientCommand_RockTheVote(const id)
 		return PLUGIN_HANDLED;
 	}
 
-	new iPlayersNum = get_playersnum();
+	new iPlayersNum = get_playersnum_ex(GetPlayers_ExcludeBots);
 
 	if(g_GlobalConfigs[RTV_MinPlayers] && (iPlayersNum < g_GlobalConfigs[RTV_MinPlayers]))
 	{
