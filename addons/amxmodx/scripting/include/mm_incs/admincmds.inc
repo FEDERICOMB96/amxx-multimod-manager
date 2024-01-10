@@ -988,7 +988,7 @@ public menu_ManageMods(const id, const menuid, const item)
 	{
 		menu_destroy(menuid);
 
-		ShowMenu_AdminMultimod(id);
+		ShowMenu_ManageMultiMod(id);
 		return PLUGIN_HANDLED;
 	}
 
@@ -1017,13 +1017,10 @@ public menu_ManageMods(const id, const menuid, const item)
 		return PLUGIN_HANDLED;
 	}
 
-	//(aMods[Enabled] == true) ? (aMods[Enabled] = false) : (aMods[Enabled] = true);
-	//aMods[Enabled] = !aMods[Enabled];
-	#emit ADDR.alt aMods
-	#emit CONST.pri 0
-	#emit LIDX
-	#emit NOT
-	#emit STOR.S.pri aMods
+	new bool:bTemp = aMods[Enabled];
+	bTemp = !bTemp;
+	aMods[Enabled] = bTemp;
+	
 	client_print_color(id, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, aMods[Enabled] ? "MM_ADMIN_MODE_ENABLED" : "MM_ADMIN_MODE_DISABLED", aMods[ModName]);
 
 	ArraySetArray(g_GlobalConfigs[Mods], iModId, aMods);
