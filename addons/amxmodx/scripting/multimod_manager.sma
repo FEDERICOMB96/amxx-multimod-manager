@@ -369,7 +369,7 @@ public OnEvent_HLTV()
 		if(g_bCvar_amx_multimod_voice)
 			client_cmd(0, "spk ^"%s^"", g_SOUND_ExtendTime);
 
-		client_print_color(0, print_team_default, "%s^1 %L", LANG_PLAYER, "MM_MAP_CHANGE_END_ROUND", g_GlobalConfigs[ChatPrefix]);
+		client_print_color(0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MAP_CHANGE_END_ROUND");
 	}
 }
 
@@ -388,7 +388,7 @@ public OnCSGameRules_GoToIntermission()
 	message_begin(MSG_ALL, SVC_INTERMISSION);
 	message_end();
 	
-	client_print_color(0, print_team_blue, "%s^1 %L:^3 %s", LANG_PLAYER, "MM_NEXT_MAP", g_GlobalConfigs[ChatPrefix], g_bCvar_amx_nextmap);
+	client_print_color(0, print_team_blue, "%s^1 %L:^3 %s", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NEXT_MAP", g_bCvar_amx_nextmap);
 
 	g_bGameOver = true;
 	set_member_game(m_iEndIntermissionButtonHit, 0);
