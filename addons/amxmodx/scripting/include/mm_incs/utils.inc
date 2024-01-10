@@ -110,7 +110,7 @@ stock bool:UTIL_IsModOff(const iMod)
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], iMod, aMods);
 
-	return bool:aMods[Enabled];
+	return bool:!aMods[Enabled];
 }
 
 stock UTIL_GetModId(const szModName[])
