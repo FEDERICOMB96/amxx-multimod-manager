@@ -46,7 +46,7 @@ AdminCmd_ClientPutInServer(const id)
 
 AdminCmd_ClientDisconnected(const id)
 {
-	if(IsPlayer(g_Admin_VoteUserId) && likely(g_Admin_VoteUserId == id) && task_exists(id + TASK_VOTE_ADMIN))
+	if(IsPlayer(g_Admin_VoteUserId) && (g_Admin_VoteUserId == id) && task_exists(id + TASK_VOTE_ADMIN))
 	{
 		remove_task(id + TASK_VOTE_ADMIN);
 		client_print_color(0, print_team_blue, "%s^1 %L %L!", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_ADMIN_VOTE_DISCONNECTED", id);
@@ -55,7 +55,7 @@ AdminCmd_ClientDisconnected(const id)
 		menu_destroy(g_Menu_AdminCmd);
 	}
 	
-	if(likely(g_Admin_VoteUserId == id))
+	if(g_Admin_VoteUserId == id)
 		g_Admin_VoteUserId = 0;
 
 	// Si votó y se fue antes de terminar la votacion, su voto es removido!
@@ -195,7 +195,7 @@ ShowMenu_SelectMod(const id)
 		if(UTIL_IsModOff(iModId))
 			menu_additem(iMenu, fmt("%s\r (%L)", aMods[ModName], LANG_PLAYER, "MM_LOCKED"), .callback=menu_makecallback("UTIL_DisableItem"));
 		else
-			menu_additem(iMenu, fmt("%s%s", aMods[ModName], likely(g_Admin_SelectedMod[id] == iModId) ? fmt("\y (%L)", LANG_PLAYER, "MM_SELECTED") : (likely(g_iCurrentMod == iModId) ? fmt("\y (%L)", LANG_PLAYER, "MM_CURRENT") : "")));
+			menu_additem(iMenu, fmt("%s%s", aMods[ModName], (g_Admin_SelectedMod[id] == iModId) ? fmt("\y (%L)", LANG_PLAYER, "MM_SELECTED") : ((g_iCurrentMod == iModId) ? fmt("\y (%L)", LANG_PLAYER, "MM_CURRENT") : "")));
 	}
 
 	menu_setprop(iMenu, MPROP_NEXTNAME, fmt("%L", LANG_PLAYER, "MM_MORE"));
@@ -210,7 +210,7 @@ public menu_SelectMod(const id, const menuid, const item)
 {
 	CHECK_CONNECTED_NEWMENU(id, menuid)
 
-	if(likely(item == MENU_EXIT))
+	if(item == MENU_EXIT)
 	{
 		menu_destroy(menuid);
 
@@ -251,7 +251,7 @@ ShowMenu_SelectMap(const id)
 	new iMenu = menu_create(fmt("%L", LANG_PLAYER, "MM_ADMIN_VOTEMAP_M_TITLE_SELECT_MAP", aMods[ModName]), "menu_SelectMap");
 
 	for(new iMapId = 0; iMapId < iArraySize; ++iMapId)
-		menu_additem(iMenu, fmt("%a%s", ArrayGetStringHandle(aMods[Maps], iMapId), likely(g_Admin_SelectedMap[id] == iMapId+1) ? fmt("\y (%L)", LANG_PLAYER, "MM_SELECTED") : ""));
+		menu_additem(iMenu, fmt("%a%s", ArrayGetStringHandle(aMods[Maps], iMapId), (g_Admin_SelectedMap[id] == iMapId+1) ? fmt("\y (%L)", LANG_PLAYER, "MM_SELECTED") : ""));
 
 	menu_setprop(iMenu, MPROP_NEXTNAME, fmt("%L", LANG_PLAYER, "MM_MORE"));
 	menu_setprop(iMenu, MPROP_BACKNAME, fmt("%L", LANG_PLAYER, "MM_BACK"));
@@ -265,7 +265,7 @@ public menu_SelectMap(const id, const menuid, const item)
 {
 	CHECK_CONNECTED_NEWMENU(id, menuid)
 
-	if(likely(item == MENU_EXIT))
+	if(item == MENU_EXIT)
 	{
 		menu_destroy(menuid);
 
@@ -347,8 +347,8 @@ ShowMenu_Votemod(const id)
 			iKeys |= (1<<j);
 			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^t^t\r%d.\d %s%s\y [ X ]^n", ++j, aMods[ModName], (g_iCurrentMod == i) ? fmt(" (%L)", LANG_PLAYER, "MM_CURRENT") : "");
 		}
-		else if(IsFullSelected(id) || likely(bBlocked == true))
-			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\d%d. %s%s%s^n", ++j, aMods[ModName], (g_iCurrentMod == i) ? fmt(" (%L)", LANG_PLAYER, "MM_CURRENT") : "", likely(bBlocked == true) ? fmt("\r (%L)", LANG_PLAYER, "MM_LOCKED") : "");
+		else if(IsFullSelected(id) || bBlocked)
+			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\d%d. %s%s%s^n", ++j, aMods[ModName], (g_iCurrentMod == i) ? fmt(" (%L)", LANG_PLAYER, "MM_CURRENT") : "", bBlocked ? fmt("\r (%L)", LANG_PLAYER, "MM_LOCKED") : "");
 		else
 		{
 			iKeys |= (1<<j);
@@ -433,14 +433,14 @@ ShowMenu_StartCustomVotemod()
 
 	for(new i = 0, aMods[ArrayMods_e]; i < g_Admin_VoteSelectedOptions[g_Admin_VoteUserId]; ++i)
 	{
-		if(likely(g_iCurrentMod == g_Admin_VoteOptions[g_Admin_VoteUserId][i]))
+		if(g_iCurrentMod == g_Admin_VoteOptions[g_Admin_VoteUserId][i])
 		{
-			menu_additem(g_Menu_AdminCmd, fmt("%L%s", LANG_PLAYER, "MM_M_EXTEND_CURRENT_MODE", g_szCurrentMod, g_bCvar_amx_extendmap_step, likely(i == (g_Admin_VoteSelectedOptions[g_Admin_VoteUserId]-1)) ? "^n" : ""));
+			menu_additem(g_Menu_AdminCmd, fmt("%L%s", LANG_PLAYER, "MM_M_EXTEND_CURRENT_MODE", g_szCurrentMod, g_bCvar_amx_extendmap_step, (i == (g_Admin_VoteSelectedOptions[g_Admin_VoteUserId]-1)) ? "^n" : ""));
 			continue;
 		}
 
 		ArrayGetArray(g_GlobalConfigs[Mods], g_Admin_VoteOptions[g_Admin_VoteUserId][i], aMods);
-		menu_additem(g_Menu_AdminCmd, fmt("\w%s%s", aMods[ModName], likely(i == (g_Admin_VoteSelectedOptions[g_Admin_VoteUserId]-1)) ? "^n" : ""));
+		menu_additem(g_Menu_AdminCmd, fmt("\w%s%s", aMods[ModName], (i == (g_Admin_VoteSelectedOptions[g_Admin_VoteUserId]-1)) ? "^n" : ""));
 	}
 
 	menu_additem(g_Menu_AdminCmd, fmt("\y%L", LANG_PLAYER, "MM_SELECT_VOTE_RANDOM_ITEM"));
@@ -566,7 +566,7 @@ public OnTask_CountVotes_Mod(const taskid)
 
 			new iArraySizeMaps = ArraySize(aMods[Maps]);
 
-			if(likely(ArraySize(aMods[Maps]) < 2))
+			if(ArraySize(aMods[Maps]) < 2)
 			{
 				new szMap[MAX_MAPNAME_LENGTH];
 				ArrayGetString(aMods[Maps], 0, szMap, MAX_MAPNAME_LENGTH-1);
@@ -731,7 +731,7 @@ ShowMenu_StartCustomVotemap()
 	for(new i = 0; i < g_Admin_VoteSelectedOptions[g_Admin_VoteUserId]; ++i)
 	{
 		menu_additem(g_Menu_AdminCmd, fmt("\w%a%s", 
-			ArrayGetStringHandle(aMods[Maps], g_Admin_VoteOptions[g_Admin_VoteUserId][i]), likely(i == (g_Admin_VoteSelectedOptions[g_Admin_VoteUserId]-1)) ? "^n" : ""));
+			ArrayGetStringHandle(aMods[Maps], g_Admin_VoteOptions[g_Admin_VoteUserId][i]), (i == (g_Admin_VoteSelectedOptions[g_Admin_VoteUserId]-1)) ? "^n" : ""));
 	}
 
 	menu_additem(g_Menu_AdminCmd, fmt("\y%L", LANG_PLAYER, "MM_SELECT_VOTE_RANDOM_ITEM"));
@@ -857,7 +857,7 @@ ShowMenu_VoteAdminConfirm(const id, const szMod[], const szMap[], const bool:bMo
 {
 	CHECK_CONNECTED(id)
 
-	new iMenu = menu_create(fmt("\y%L^n^n\y-\w %L\r:\y %s^n\y-\w %L\r:\y %s", LANG_PLAYER, "MM_VOTING_END", LANG_PLAYER, likely(bModWinner == true) ? "MM_MOD_WIN" : "MM_MODE", szMod, LANG_PLAYER, "MM_MAP_WIN", szMap), "menu_VoteAdminConfirm");
+	new iMenu = menu_create(fmt("\y%L^n^n\y-\w %L\r:\y %s^n\y-\w %L\r:\y %s", LANG_PLAYER, "MM_VOTING_END", LANG_PLAYER, bModWinner ? "MM_MOD_WIN" : "MM_MODE", szMod, LANG_PLAYER, "MM_MAP_WIN", szMap), "menu_VoteAdminConfirm");
 
 	menu_additem(iMenu, fmt("%L", LANG_PLAYER, "MM_ADMIN_VOTE_CONFIRM"));
 	menu_additem(iMenu, fmt("%L", LANG_PLAYER, "MM_ADMIN_VOTE_REF"));
@@ -969,7 +969,7 @@ ShowMenu_ManageMods(const id, menupage=0)
 	for(new iModId = 0; iModId < iArraySizeMods; ++iModId)
 	{
 		ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
-		menu_additem(iMenu, fmt("%s%s", aMods[ModName], likely(aMods[Enabled] == true) ? "" : fmt("\r (%L)", LANG_PLAYER, "MM_LOCKED")));
+		menu_additem(iMenu, fmt("%s%s", aMods[ModName], aMods[Enabled] ? "" : fmt("\r (%L)", LANG_PLAYER, "MM_LOCKED")));
 	}
 
 	menu_setprop(iMenu, MPROP_NEXTNAME, fmt("%L", LANG_PLAYER, "MM_MORE"));
@@ -984,7 +984,7 @@ public menu_ManageMods(const id, const menuid, const item)
 {
 	CHECK_CONNECTED_NEWMENU(id, menuid)
 
-	if(likely(item == MENU_EXIT))
+	if(item == MENU_EXIT)
 	{
 		menu_destroy(menuid);
 
@@ -999,7 +999,7 @@ public menu_ManageMods(const id, const menuid, const item)
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
 
-	if(likely(iModId == 0))
+	if(iModId == 0)
 	{
 		menu_destroy(menuid);
 
@@ -1008,7 +1008,7 @@ public menu_ManageMods(const id, const menuid, const item)
 		return PLUGIN_HANDLED;
 	}
 
-	if(likely(g_iCurrentMod == iModId))
+	if(g_iCurrentMod == iModId)
 	{
 		menu_destroy(menuid);
 
@@ -1017,14 +1017,14 @@ public menu_ManageMods(const id, const menuid, const item)
 		return PLUGIN_HANDLED;
 	}
 
-	//likely(aMods[Enabled] == true) ? (aMods[Enabled] = false) : (aMods[Enabled] = true);
+	//(aMods[Enabled] == true) ? (aMods[Enabled] = false) : (aMods[Enabled] = true);
 	//aMods[Enabled] = !aMods[Enabled];
 	#emit ADDR.alt aMods
 	#emit CONST.pri 0
 	#emit LIDX
 	#emit NOT
 	#emit STOR.S.pri aMods
-	client_print_color(id, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, likely(aMods[Enabled] == true) ? "MM_ADMIN_MODE_ENABLED" : "MM_ADMIN_MODE_DISABLED", aMods[ModName]);
+	client_print_color(id, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, aMods[Enabled] ? "MM_ADMIN_MODE_ENABLED" : "MM_ADMIN_MODE_DISABLED", aMods[ModName]);
 
 	ArraySetArray(g_GlobalConfigs[Mods], iModId, aMods);
 	MultiMod_SaveOffMods();
@@ -1041,7 +1041,7 @@ ShowMenu_DeleteRecentMods(const id, menupage=0)
 
 	new iArraySizeMods = Recent_CountRecentMods();
 
-	if(likely(iArraySizeMods == 0))
+	if(iArraySizeMods == 0)
 	{
 		client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NO_RECENT_MODES_PLAYED");
 		return PLUGIN_HANDLED;
@@ -1067,7 +1067,7 @@ public menu_DeleteRecentMods(const id, const menuid, const item)
 {
 	CHECK_CONNECTED_NEWMENU(id, menuid)
 
-	if(likely(item == MENU_EXIT))
+	if(item == MENU_EXIT)
 	{
 		menu_destroy(menuid);
 
@@ -1122,7 +1122,7 @@ ShowMenu_DeleteRecentMaps(const id, menupage=0)
 	{
 		ArrayGetArray(g_GlobalConfigs[RecentMaps], iMapId, aRecents);
 
-		if(unlikely(g_iCurrentMod == UTIL_GetModId(aRecents[RECENT_MOD_NAME])))
+		if(g_iCurrentMod != UTIL_GetModId(aRecents[RECENT_MOD_NAME]))
 			continue;
 
 		menu_additem(iMenu, aRecents[RECENT_MAP_NAME], fmt("%d", iMapId));
@@ -1140,7 +1140,7 @@ public menu_DeleteRecentMaps(const id, const menuid, const item)
 {
 	CHECK_CONNECTED_NEWMENU(id, menuid)
 
-	if(likely(item == MENU_EXIT))
+	if(item == MENU_EXIT)
 	{
 		menu_destroy(menuid);
 
@@ -1161,7 +1161,7 @@ public menu_DeleteRecentMaps(const id, const menuid, const item)
 		new aRecents[ArrayRecentMaps_e];
 		ArrayGetArray(g_GlobalConfigs[RecentMaps], iMapId, aRecents);
 
-		if(likely(g_iCurrentMod == UTIL_GetModId(aRecents[RECENT_MOD_NAME])) && equal(aRecents[RECENT_MAP_NAME], szItemName))
+		if((g_iCurrentMod == UTIL_GetModId(aRecents[RECENT_MOD_NAME])) && equal(aRecents[RECENT_MAP_NAME], szItemName))
 		{
 			ArrayDeleteItem(g_GlobalConfigs[RecentMaps], iMapId);
 			
@@ -1186,7 +1186,7 @@ DeleteAllRecentMods(const id)
 
 	new iArraySizeMods = Recent_CountRecentMods();
 
-	if(likely(iArraySizeMods == 0))
+	if(iArraySizeMods == 0)
 	{
 		client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NO_RECENT_MODES_PLAYED");
 
@@ -1223,7 +1223,7 @@ DeleteAllRecentMaps(const id)
 	{
 		ArrayGetArray(g_GlobalConfigs[RecentMaps], iMapId, aRecents);
 
-		if(unlikely(g_iCurrentMod == UTIL_GetModId(aRecents[RECENT_MOD_NAME])))
+		if(g_iCurrentMod != UTIL_GetModId(aRecents[RECENT_MOD_NAME]))
 			continue;
 
 		ArrayDeleteItem(g_GlobalConfigs[RecentMaps], iMapId);
@@ -1253,7 +1253,7 @@ bool:IsOptionSelected(const id, const value)
 
 bool:IsFullSelected(const id)
 {
-	return bool:likely(g_Admin_VoteSelectedOptions[id] == g_GlobalConfigs[AdminMaxOptionsInMenu]);
+	return bool:(g_Admin_VoteSelectedOptions[id] == g_GlobalConfigs[AdminMaxOptionsInMenu]);
 }
 
 bool:PushOption(const id, const value)
@@ -1268,13 +1268,13 @@ bool:PushOption(const id, const value)
 bool:DeleteOption(const id, const value)
 {
 	new iPos = -1;
-	for(new i = 0; (i < g_Admin_VoteSelectedOptions[id]) && likely(iPos == -1); ++i)
+	for(new i = 0; (i < g_Admin_VoteSelectedOptions[id]) && (iPos == -1); ++i)
 	{
 		if(g_Admin_VoteOptions[id][i] == value)
 			iPos = i;
 	}
 
-	if(unlikely(iPos == -1))
+	if(iPos != -1)
 	{
 		for(new i = iPos; i < g_Admin_VoteSelectedOptions[id]-1; ++i)
 		{
@@ -1290,7 +1290,7 @@ bool:DeleteOption(const id, const value)
 
 bool:ResetAdminVoteMenuAll()
 {
-	for(new i = 1; i < MAX_USERS; ++i) if(GetPlayerBit(g_bConnected, i) && likely(g_Admin_VoteId[i] == -1))
+	for(new i = 1; i < MAX_USERS; ++i) if(GetPlayerBit(g_bConnected, i) && (g_Admin_VoteId[i] == -1))
 	{
 		menu_cancel(i);
 		reset_menu(i);

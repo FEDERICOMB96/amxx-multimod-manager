@@ -477,7 +477,7 @@ ShowMenu_RecentMaps(const id, menupage=0)
 	{
 		ArrayGetArray(g_GlobalConfigs[RecentMaps], iMapId, aRecents);
 
-		if(unlikely(g_iCurrentMod == UTIL_GetModId(aRecents[RECENT_MOD_NAME])))
+		if(g_iCurrentMod != UTIL_GetModId(aRecents[RECENT_MOD_NAME]))
 			continue;
 
 		UTIL_GetTimeElapsed((get_systime() - aRecents[RECENT_MAP_SYSTIME]), szTimeAgo, charsmax(szTimeAgo));
@@ -729,7 +729,7 @@ MultiMod_ClearPluginsFile()
 
 MultiMod_OverwriteMapCycle(const iMod)
 {
-	if(likely(g_GlobalConfigs[OverwriteMapcycle] == true))
+	if(g_GlobalConfigs[OverwriteMapcycle])
 	{
 		new aDataNextMod[ArrayMods_e];
 		ArrayGetArray(g_GlobalConfigs[Mods], iMod, aDataNextMod);
@@ -778,7 +778,7 @@ MultiMod_GetOffMods()
 
 			j = 0;
 			bFoundIt = false;
-			while(j < iArraySizeMods && likely(bFoundIt == false))
+			while(j < iArraySizeMods && !bFoundIt)
 			{
 				ArrayGetArray(g_GlobalConfigs[Mods], j, aMods);
 
@@ -809,7 +809,7 @@ bool:MultiMod_SaveOffMods()
 	{
 		ArrayGetArray(g_GlobalConfigs[Mods], i, aMods);
 
-		if(likely(aMods[Enabled] == false))
+		if(!aMods[Enabled])
 			json_array_append_string(array, aMods[ModName]);
 	}
 
@@ -849,7 +849,7 @@ MultiMod_SetGameDescription(const iMod)
 	if(iMod < 0 || iMod > ArraySize(g_GlobalConfigs[Mods]))
 		return 0;
 		
-	if(likely(g_GlobalConfigs[ChangeGameDescription] == true))
+	if(g_GlobalConfigs[ChangeGameDescription])
 	{
 		new aMod[ArrayMods_e];
 		ArrayGetArray(g_GlobalConfigs[Mods], iMod, aMod);

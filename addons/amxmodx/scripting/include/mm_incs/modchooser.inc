@@ -54,7 +54,7 @@ public OnTask_VoteNextMod()
 	new aMods[ArrayMods_e];
 	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
 
-	if(likely((iArraySizeMods - 1 - iOffMods) < 2)) // No cuento el modo actual (-1) y los modos desactivados (UTIL_GetOffModsCount)
+	if((iArraySizeMods - 1 - iOffMods) < 2) // No cuento el modo actual (-1) y los modos desactivados (UTIL_GetOffModsCount)
 	{
 		g_iNextSelectMod = 0;
 		MultiMod_SetNextMod(g_iNextSelectMod);
@@ -70,7 +70,7 @@ public OnTask_VoteNextMod()
 		MapChooser_InitNextVoteMap(40);
 		return;
 	}
-	else if(likely((iArraySizeMods - 1 - iOffMods) <= iRecentMods))
+	else if((iArraySizeMods - 1 - iOffMods) <= iRecentMods)
 		iRecentMods = 0;
 
 	new iMaxMods = min(g_GlobalConfigs[ModsInMenu], (iArraySizeMods - 1 - iOffMods - iRecentMods));
@@ -94,7 +94,7 @@ public OnTask_VoteNextMod()
 		} while(IsModInMenu(iModId) || g_iCurrentMod == iModId || UTIL_IsModOff(iModId) || (iRecentMods && Recent_IsRecentMod(aMods[ModName]))); // La opcion está en el menú, es el modo actual o se encuentra desactivado
 
 		g_iSVM_ModInMenu[g_iModVoteNum] = iModId;
-		menu_additem(g_Menu_ModChooser, fmt("\w%s%s", aMods[ModName], likely(g_iModVoteNum == (iMaxMods-1)) ? "^n" : ""), fmt("%d", g_iModVoteNum));
+		menu_additem(g_Menu_ModChooser, fmt("\w%s%s", aMods[ModName], (g_iModVoteNum == (iMaxMods-1)) ? "^n" : ""), fmt("%d", g_iModVoteNum));
 	}
 
 	if(IsAvailableExtendMap())
@@ -321,12 +321,12 @@ public OnTask_VoteNextMod__FIX()
 	{
 		if(g_iSVM_ModInMenu_SecondRound[i] == OPTION_EXTEND_MOD)
 		{
-			menu_additem(g_Menu_ModChooser, fmt("\w%L%s", LANG_PLAYER, "MM_M_EXTEND_CURRENT_MODE", g_szCurrentMod, g_bCvar_amx_extendmap_step, likely(i == (g_iModVoteNum-1)) ? fmt("^n^n\d(%L)", LANG_PLAYER, "MM_SECOND_VOTE") : ""));
+			menu_additem(g_Menu_ModChooser, fmt("\w%L%s", LANG_PLAYER, "MM_M_EXTEND_CURRENT_MODE", g_szCurrentMod, g_bCvar_amx_extendmap_step, (i == (g_iModVoteNum-1)) ? fmt("^n^n\d(%L)", LANG_PLAYER, "MM_SECOND_VOTE") : ""));
 			continue;
 		}
 
 		ArrayGetArray(g_GlobalConfigs[Mods], g_iSVM_ModInMenu_SecondRound[i], aData);
-		menu_additem(g_Menu_ModChooser, fmt("\w%s%s", aData[ModName], likely(i == (g_iModVoteNum-1)) ? fmt("^n^n\d(%L)", LANG_PLAYER, "MM_SECOND_VOTE") : ""));
+		menu_additem(g_Menu_ModChooser, fmt("\w%s%s", aData[ModName], (i == (g_iModVoteNum-1)) ? fmt("^n^n\d(%L)", LANG_PLAYER, "MM_SECOND_VOTE") : ""));
 	}
 
 	arrayset(g_VoteModId, -1, MAX_USERS);
@@ -563,7 +563,7 @@ public OnTask_ModChooserHudVote()
 
 bool:IsAvailableExtendMap()
 {
-	return bool:(likely((g_bCvar_mp_winlimit + g_bCvar_mp_maxrounds) == 0) && likely(get_pcvar_float(g_pCvar_mp_timelimit) < float(g_bCvar_amx_extendmap_max)) && !g_bIsRockTheVote);
+	return bool:(((g_bCvar_mp_winlimit + g_bCvar_mp_maxrounds) == 0) && (get_pcvar_float(g_pCvar_mp_timelimit) < float(g_bCvar_amx_extendmap_max)) && !g_bIsRockTheVote);
 }
 
 ExtendTimeleft(const iTime)
@@ -584,7 +584,7 @@ bool:IsModInMenu(const i)
 
 bool:ResetModMenuAll()
 {
-	for(new i = 1; i < MAX_USERS; ++i) if(GetPlayerBit(g_bConnected, i) && likely(g_VoteModId[i] == -1))
+	for(new i = 1; i < MAX_USERS; ++i) if(GetPlayerBit(g_bConnected, i) && (g_VoteModId[i] == -1))
 	{
 		menu_cancel(i);
 		reset_menu(i);

@@ -52,7 +52,7 @@ LoadRecentMods()
 
 				if((iModId = UTIL_GetModId(aRecents[RECENT_MOD_NAME])) != -1)
 				{
-					if(likely(g_iCurrentMod == iModId))
+					if(g_iCurrentMod == iModId)
 						continue;
 					
 					ArrayPushArray(g_GlobalConfigs[RecentMods], aRecents);
@@ -116,10 +116,10 @@ LoadRecentMaps()
 						json_object_get_name(jObject, j, szMapName, MAX_MAPNAME_LENGTH-1);
 						jArrayMapData = json_object_get_value(jObject, szMapName);
 						
-						if(likely(g_iCurrentMod == iModId) && equali(g_szCurrentMap, szMapName))
+						if((g_iCurrentMod == iModId) && equali(g_szCurrentMap, szMapName))
 							continue;
 						
-						iMapNum = json_array_get_number(jArrayMapData, 0) - (likely(g_iCurrentMod == iModId) ? 1 : 0);
+						iMapNum = json_array_get_number(jArrayMapData, 0) - ((g_iCurrentMod == iModId) ? 1 : 0);
 
 						if(iMapNum > 0)
 						{
@@ -223,7 +223,7 @@ Recent_CountRecentMaps(const iMod)
 	{
 		ArrayGetArray(g_GlobalConfigs[RecentMaps], i, aRecents);
 
-		if(likely(iMod == UTIL_GetModId(aRecents[RECENT_MOD_NAME])))
+		if(iMod == UTIL_GetModId(aRecents[RECENT_MOD_NAME]))
 			++iCount;
 	}
 	
@@ -237,7 +237,7 @@ bool:Recent_IsRecentMap(const iMod, const szMapName[])
 	{
 		ArrayGetArray(g_GlobalConfigs[RecentMaps], i, aRecents);
 
-		if(likely(iMod == UTIL_GetModId(aRecents[RECENT_MOD_NAME])) && equali(aRecents[RECENT_MAP_NAME], szMapName))
+		if((iMod == UTIL_GetModId(aRecents[RECENT_MOD_NAME])) && equali(aRecents[RECENT_MAP_NAME], szMapName))
 			return true;
 	}
 

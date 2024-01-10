@@ -92,7 +92,7 @@ stock UTIL_GetOffModsCount()
 	{
 		ArrayGetArray(g_GlobalConfigs[Mods], i, aMods);
 
-		if(unlikely(aMods[Enabled] == true))
+		if(!aMods[Enabled])
 			++j;
 
 		++i;
@@ -104,13 +104,13 @@ stock UTIL_GetOffModsCount()
 stock bool:UTIL_IsModOff(const iMod)
 {
 	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
-	if(likely(iMod < 0) || likely(iMod >= iArraySizeMods))
+	if((iMod < 0) || (iMod >= iArraySizeMods))
 		return true;
 
 	new aMods[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], iMod, aMods);
 
-	return bool:unlikely(aMods[Enabled] == true);
+	return bool:aMods[Enabled];
 }
 
 stock UTIL_GetModId(const szModName[])
