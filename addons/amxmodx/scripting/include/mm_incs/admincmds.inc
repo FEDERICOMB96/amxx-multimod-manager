@@ -1041,6 +1041,8 @@ ShowMenu_DeleteRecentMods(const id, menupage=0)
 	if(iArraySizeMods == 0)
 	{
 		client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NO_RECENT_MODES_PLAYED");
+
+		ShowMenu_ManageMultiMod(id);
 		return PLUGIN_HANDLED;
 	}
 
@@ -1109,6 +1111,8 @@ ShowMenu_DeleteRecentMaps(const id, menupage=0)
 	if(Recent_CountRecentMaps(g_iCurrentMod) < 1)
 	{
 		client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NO_RECENT_MAPS_PLAYED");
+
+		ShowMenu_ManageMultiMod(id);
 		return PLUGIN_HANDLED;
 	}
 
