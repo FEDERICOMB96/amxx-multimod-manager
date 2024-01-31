@@ -67,7 +67,7 @@ ShowMenu_NominateMod(const id, menupage=0)
 
 	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
 
-	if(likely((iArraySizeMods - 1 - UTIL_GetOffModsCount() - Recent_CountRecentMods()) <= g_GlobalConfigs[ModsInMenu]))
+	if((iArraySizeMods - 1 - UTIL_GetOffModsCount() - Recent_CountRecentMods()) <= g_GlobalConfigs[ModsInMenu])
 	{
 		client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NOMS_MODS_NOT_ENOUGH");
 		return PLUGIN_HANDLED;
@@ -150,7 +150,7 @@ ShowMenu_NominateMap(const id, menupage=0)
 
 	new iArraySizeMaps = ArraySize(aMods[Maps]);
 
-	if(likely((iArraySizeMaps - Recent_CountRecentMaps(g_iNextSelectMod)) <= g_GlobalConfigs[MapsInMenu]))
+	if((iArraySizeMaps - Recent_CountRecentMaps(g_iNextSelectMod)) <= g_GlobalConfigs[MapsInMenu])
 	{
 		client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NOMS_MAPS_NOT_ENOUGH");
 		return PLUGIN_HANDLED;
