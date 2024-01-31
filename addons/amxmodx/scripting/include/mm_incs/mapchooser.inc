@@ -216,7 +216,7 @@ public OnTask_CheckVoteMap()
 			iResult = g_iVoteMapCountGlobal[i];
 		}
 
-		client_print(0, print_console, "%L: %a - %L: %d - Porcentaje: %d%%", LANG_PLAYER, "MM_MAP",	ArrayGetStringHandle(aMods[Maps], g_iSVM_MapInMenu[i]), 
+		client_print(0, print_console, "%L: %a - %L: %d - %L: %d%%", LANG_PLAYER, "MM_MAP", ArrayGetStringHandle(aMods[Maps], g_iSVM_MapInMenu[i]), 
 			LANG_PLAYER, "MM_VOTES", g_iVoteMapCountGlobal[i], LANG_PLAYER, "MM_PERCENT", UTIL_GetPercent(g_iVoteMapCountGlobal[i], g_iVoteMapCount));
 	}
 
@@ -551,7 +551,7 @@ public OnTask_AlertChangeMap()
 	}
 	
 	set_hudmessage(255, 255, 255, -1.0, 0.35, 0, 0.0, 1.1, 0.0, 0.0, -1);
-	ShowSyncHudMsg(0, g_Hud_Alert, "%L", g_iChangeMapTime, LANG_PLAYER, "MM_NEXT_MAP_CHANGE_WILL_BE_IN");
+	ShowSyncHudMsg(0, g_Hud_Alert, "%L", LANG_PLAYER, "MM_NEXT_MAP_CHANGE_WILL_BE_IN", g_iChangeMapTime);
 
 	if(g_bCvar_amx_multimod_voice)
 		client_cmd(0, "spk ^"fvox/%s^"", g_SOUND_CountDown[g_iChangeMapTime]);

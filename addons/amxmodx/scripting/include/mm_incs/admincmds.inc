@@ -49,7 +49,7 @@ AdminCmd_ClientDisconnected(const id)
 	if(IsPlayer(g_Admin_VoteUserId) && (g_Admin_VoteUserId == id) && task_exists(id + TASK_VOTE_ADMIN))
 	{
 		remove_task(id + TASK_VOTE_ADMIN);
-		client_print_color(0, print_team_blue, "%s^1 %L %L!", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_ADMIN_VOTE_DISCONNECTED", id);
+		client_print_color(0, print_team_blue, "%s^1 %L!", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_ADMIN_VOTE_DISCONNECTED", id);
 
 		ResetAdminVoteMenuAll();
 		menu_destroy(g_Menu_AdminCmd);
@@ -83,7 +83,7 @@ public ConsoleCommand_ForceVoteMod(const id, const level, const cid)
 		{
 			StartVoteNextMod();
 
-			client_print_color(0, id, "%s^1 %L %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_ADMIN_FORCE_VOTEMODE", id);
+			client_print_color(0, id, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_ADMIN_FORCE_VOTEMODE", id);
 			return PLUGIN_HANDLED;
 		}
 	}
@@ -142,7 +142,7 @@ ShowMenu_AdminMultimod(const id)
 		menu_additem(iMenu, fmt("%L^n", LANG_PLAYER, "MM_ADMIN_CHANGE_TO_MODE_AND_MAP_UNKNOWN", aMods[ModName]), .callback=menu_makecallback("UTIL_DisableItem"));
 
 	menu_additem(iMenu, fmt("%L", LANG_PLAYER, "MM_ADMIN_START_VOTEMODE"));
-	menu_additem(iMenu, fmt("%L", LANG_PLAYER, "MM_ADMIN_START_VOTEMODE", aMods[ModName]));
+	menu_additem(iMenu, fmt("%L", LANG_PLAYER, "MM_ADMIN_START_VOTEMAP", aMods[ModName]));
 
 	menu_setprop(iMenu, MPROP_EXITNAME, fmt("%L", LANG_PLAYER, "MM_EXIT"));
 
@@ -183,7 +183,7 @@ ShowMenu_SelectMod(const id)
 	CHECK_CONNECTED(id)
 	CHECK_ADMIN_ACCESS(id, g_GlobalConfigs[AdminFlags_SelectMenu])
 
-	new iMenu = menu_create(fmt("%L", LANG_PLAYER, "MM_ADMIN_SELECT_MODE"), "menu_SelectMod");
+	new iMenu = menu_create(fmt("%L", LANG_PLAYER, "MM_ADMIN_VOTEMOD_M_TITLE_SELECT_MODE"), "menu_SelectMod");
 
 	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
 	new aMods[ArrayMods_e];
@@ -367,10 +367,10 @@ ShowMenu_Votemod(const id)
 	if(iEndLoop != iArraySize)
 	{
 		iKeys |= MENU_KEY_9;
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r9.\w %L^n\r0.\w %s^n", LANG_PLAYER, "MM_MORE", LANG_PLAYER, iStartLoop ? "MM_BACK" : "MM_EXIT");
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r9.\w %L^n\r0.\w %L^n", LANG_PLAYER, "MM_MORE", LANG_PLAYER, iStartLoop ? "MM_BACK" : "MM_EXIT");
 	}
 	else
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r0.\w %s", LANG_PLAYER, iStartLoop ? "MM_BACK" : "MM_EXIT");
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r0.\w %L", LANG_PLAYER, iStartLoop ? "MM_BACK" : "MM_EXIT");
 	
 	if(g_Admin_VoteSelectedOptions[id])
 	{
@@ -487,10 +487,10 @@ public menu_StartCustomVotemod(const id, const menuid, const item)
 
 		g_Admin_VoteId[id] = iModId+1;
 
-		client_print_color(id, print_team_default, "%s^1 %L%s", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_VOTED_FOR", aMods[ModName], (bRandom) ? fmt("^3 [%s]", LANG_PLAYER, "MM_RANDOM") : "");
+		client_print_color(id, print_team_default, "%s^1 %L%s", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_VOTED_FOR", aMods[ModName], (bRandom) ? fmt("^3 [%L]", LANG_PLAYER, "MM_RANDOM") : "");
 
 		if(g_bCvar_amx_vote_answers)
-			client_print(0, print_console, "%L%s", LANG_PLAYER, "MM_PLAYER_VOTED_FOR", id, aMods[ModName], (bRandom) ? fmt("[%s]", LANG_PLAYER, "MM_RANDOM") : "");
+			client_print(0, print_console, "%L%s", LANG_PLAYER, "MM_PLAYER_VOTED_FOR", id, aMods[ModName], (bRandom) ? fmt(" [%L]", LANG_PLAYER, "MM_RANDOM") : "");
 	}
 
 	return PLUGIN_HANDLED;
@@ -664,10 +664,10 @@ ShowMenu_Votemap(const id)
 	if(iEndLoop != iArraySize)
 	{
 		iKeys |= MENU_KEY_9;
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r9.\w %L^n\r0.\w %s^n", LANG_PLAYER, "MM_MORE", LANG_PLAYER, iStartLoop ? "MM_BACK" : "MM_EXIT");
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r9.\w %L^n\r0.\w %L^n", LANG_PLAYER, "MM_MORE", LANG_PLAYER, iStartLoop ? "MM_BACK" : "MM_EXIT");
 	}
 	else
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r0.\w %s", LANG_PLAYER, iStartLoop ? "MM_BACK" : "MM_EXIT");
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\r0.\w %L", LANG_PLAYER, iStartLoop ? "MM_BACK" : "MM_EXIT");
 	
 	if(g_Admin_VoteSelectedOptions[id])
 	{
@@ -781,10 +781,10 @@ public menu_StartCustomVotemap(const id, const menuid, const item)
 
 		g_Admin_VoteId[id] = iMapId+1;
 
-		client_print_color(id, print_team_default, "%s^1 %L%s", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_VOTED_FOR", szMap, (bRandom) ? fmt("^3 [%s]", LANG_PLAYER, "MM_RANDOM") : "");
+		client_print_color(id, print_team_default, "%s^1 %L%s", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_VOTED_FOR", szMap, (bRandom) ? fmt("^3 [%L]", LANG_PLAYER, "MM_RANDOM") : "");
 
 		if(g_bCvar_amx_vote_answers)
-			client_print(0, print_console, "%L%s", LANG_PLAYER, "MM_PLAYER_VOTED_FOR", id, szMap, (bRandom) ? fmt("[%s]", LANG_PLAYER, "MM_RANDOM") : "");
+			client_print(0, print_console, "%L%s", LANG_PLAYER, "MM_PLAYER_VOTED_FOR", id, szMap, (bRandom) ? fmt(" [%L]", LANG_PLAYER, "MM_RANDOM") : "");
 	}
 
 	return PLUGIN_HANDLED;
@@ -815,7 +815,7 @@ public OnTask_AdminCountVotes_Map(const taskid)
 			iWinner = i;
 		}
 
-		client_print(0, print_console, "%L: %s - %L: %d - %L: %d%%", LANG_PLAYER, "MM_MAP", ArrayGetStringHandle(aMods[Maps], g_Admin_VoteOptions[admin][i]), LANG_PLAYER, "MM_VOTES", g_Admin_iVoteCountId[i], LANG_PLAYER, "MM_PERCENT", UTIL_GetPercent(g_Admin_iVoteCountId[i], g_Admin_VoteCountTotal));
+		client_print(0, print_console, "%L: %a - %L: %d - %L: %d%%", LANG_PLAYER, "MM_MAP", ArrayGetStringHandle(aMods[Maps], g_Admin_VoteOptions[admin][i]), LANG_PLAYER, "MM_VOTES", g_Admin_iVoteCountId[i], LANG_PLAYER, "MM_PERCENT", UTIL_GetPercent(g_Admin_iVoteCountId[i], g_Admin_VoteCountTotal));
 	}
 
 	if(iResult)
