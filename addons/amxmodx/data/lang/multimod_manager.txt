@@ -546,3 +546,186 @@ MM_RTV_ALREADY_VOTED = Вы уже проголосовали в досрочн�
 MM_RTV_NEED_MIN_VOTES = Необходимо еще^4 %d голосов^1 для начала досрочного голосования
 MM_RTV_PLAYER_VOTED = ^3%n^1 проголосовал(а) в досрочном голосовании. Всего голосов: ^4%d^1/^4%d
 MM_RTV_VOTING_START = Досрочное голосование началось! Через^4 10 секунд^1 начнется голосование за смену режима
+
+[bg]
+MULTIMOD_MANAGER = Multimod Manager
+
+MM_MODE = Mod
+MM_MODES = Modove
+MM_MAP = Map
+MM_MAPS = Mapove
+MM_VOTE = Vot
+MM_VOTES = Votove
+MM_PERCENT = procent
+MM_EXT = Udalji
+MM_VOTE_RESULT = Rezultat ot glasuvaneto
+MM_MOD_WIN = Specheli mod
+MM_MAP_WIN = Specheli map
+MM_VOTING_END = Glasuvaneto svarshi!
+MM_SECOND_VOTE = Povtorno glasuvane
+MM_NO_MAP_CHOOSED_CVAR = [ne e izbran map]
+MM_ADMIN_NO_ACC = Nmqmate dostap do tazi komanda.
+MM_ALREADY_VOTING = V momenta teche vot...
+MM_NO_VOTES_COUNT = Nqma glasove...
+
+MM_BACK = Nazad
+MM_MORE = Oshte
+MM_EXIT = Izhod
+MM_AGO = predi %s
+MM_COUNT = Broi
+MM_ADMIN = Admin
+MM_LOCKED = Locked
+MM_SELECTED = Izbran
+MM_CURRENT = Segashen
+MM_MAX = Maximum
+MM_RANDOM = Sluchaen
+MM_RECENT = Skoroshen
+MM_NOMINATED = Izbran
+MM_YOU_NOMINATED = Vie izbrahte
+
+MM_ERR_FIND_FILE = Ne e otkrit fail
+MM_ERR_PARSE_FILE = Ne moje da bude skaniran faila
+MM_ERR_NO_LOADED_MODES = Nqma zaredeni modove
+MM_ERR_INVALID_MAP_LIST = Nevaliden map list za mod '%s'. Propuskane.
+MM_INVALID_JSON_FILE = Nevaliden JSON fail
+MM_EXECUTING_CVARS_MODE = Izpulnqvat se cvarovete ot mod: '%s'
+
+MM_MAP_CHANGE_END_ROUND = Mapa shte se smeni kraq na runda
+MM_NEXT_MODE_HASNT_BEEN_CHOOSED = Ne e izbran sledvasht mod
+MM_NEXT_MAP_HASNT_BEEN_CHOOSED = Ne e izbran sledvasht map
+MM_CURRENT_MODE = Segashen mod
+MM_CURRENT_MAP = Segashen map
+MM_NEXT_MODE = Sledvasht mod
+MM_NEXT_MAP = Sledvasht map
+MM_TIMELEFT = Ostavashto vreme
+MM_NO_T_LIMIT = Bezkraen
+MM_MAX_ROUNDS = Maximum roundove
+MM_ROUNDS_LEFT = Ostavashti roundove
+MM_WIN_LIMIT = Purviqt otborn ^3spechelil %d round(a)^1 pecheli igrata
+
+MM_NO_RECENT_MODES_PLAYED = Ne sa igrani modove skoro
+MM_NO_RECENT_MAPS_PLAYED = Ne sa igrani mapove skoro
+MM_RECENT_MODES = Skoroshen mods
+MM_RECENT_MAPS = Skoroshen maps
+
+MM_NEXT_VOTE_WILL_START_IN = Vota shte zapochne sled %d skeundi
+MM_NEXT_MAP_CHANGE_WILL_BE_IN = Mapa shte se smeni sled %d sekundi
+MM_TIME_CHOOSE_MOD = Vreme e da izberete sledvasht mod...
+MM_TIME_CHOOSE_MAP = Vreme e da izberete sledvasht map...
+MM_SELECT_NEXT_MODE = Izbra mod
+MM_SELECT_NEXT_MAP = Izbra map
+MM_SELECT_VOTE_RANDOM_ITEM = Sluchaen vot
+MM_M_EXTEND_CURRENT_MODE = \wUdalji\y %s\w s\y %d minuti
+MM_VOTED_FOR = Izbrahte^3 %s
+MM_PLAYER_VOTED_FOR = ^3%n^1 izbra^3 %s
+MM_CHO_NO_VOTES_MOD = Ne bqha podadeni glasove, izbran sluchen mod e^3 %s
+MM_CHO_NO_VOTES_MAP = Ne bqha podadeni glasove, izbran sluchen map e^3 %s
+MM_MOD_CHO_FIN_EXT = Krai na vota, segashniq mod shte prodalji ^3oshte %d minuti^1 s^4 %d^1 /^4 %d^1 glas(a) (%d%%)
+MM_MOD_CHO_FIN_NEXT = Krai na vota, specheli mod^3 %s^1 s^4 %d^1 /^4 %d^1 glas(a) (%d%%)
+MM_MOD_CHO_ONLY_MAP = Mod^3 %s^1 ima samo map:^4 %s
+MM_MAP_CHO_FIN_NEXT = Krai na vota, specheli map^3 %s^1 s^4 %d^1 /^4 %d^1 glas(a) (%d%%)
+MM_RTV_CHO_NO_RESULT = (RockTheVote) Vota za sledvasht map ne e uspeshen!
+
+MM_ADMIN_VOTE_DISCONNECTED = ^3%n^1 izleze i tehniq vot be premahnat
+MM_ADMIN_FORCE_VOTEMODE = ^3%n^1 zapochna vot za mod
+MM_ADMIN_CANT_FORCE_VOTEMODE = Ne mojete da pusnete vot za mod v momenta.
+MM_ADMIN_SELECT_NEXTMOD = Izberi\y sledvasht mod\r (%s)
+MM_ADMIN_SELECT_NEXTMAP = Izberi\y sledvasht map\r (%a)
+MM_ADMIN_SELECT_NEXTMAP_UNKNOWN = Izberi\y sledvasht map\r (Unknown)
+MM_ADMIN_CHANGE_TO_MODE_AND_MAP = Smeni na:^n\w- Mod:\y %s^n\w- Map:\y %a
+MM_ADMIN_CHANGE_TO_MODE_AND_MAP_UNKNOWN = Smeni na:^n\w- Mod:\y %s^n\w- Map:\y (Unknown)
+MM_ADMIN_START_VOTEMODE = Startirai\y vot za mod
+MM_ADMIN_START_VOTEMAP = Startirai\y vot za map\r (%s)
+MM_ADMIN_MANAGE_MODS = Upravlenie na\y modove
+
+MM_ADMIN_VOTEMOD_M_TITLE_SELECT_MODE = \yIzberi mod
+MM_ADMIN_VOTEMAP_NO_MODS = Nqma modove za izbor
+MM_ADMIN_VOTEMOD_MODE_SELECTED = Izbrahte mod mod^4 %s
+MM_ADMIN_VOTEMOD_MODE_SELECTED_INFO = Movete da smenite na mapa na izbraniq mod ili da pusnete glasuvane
+MM_ADMIN_VOTEMOD_M_TITLE_VOTE = \yVot za modove %d/%d
+MM_ADMIN_VOTEMOD_START_VOTE = Startirai vot za mod
+MM_ADMIN_VOTEMOD_MIN_MODES = Trqbva da izberete pone 2 moda (%d maximum)
+MM_ADMIN_VOTEMOD_SELECTED_MODES = \yIzbrani modove\w (%d%s)
+MM_ADMIN_VOTEMOD_ADMIN_NAME = \yVota e napraven ot\w %n
+MM_ADMIN_VOTEMOD_START_VOTE_SAY = ^3%n^1 startira vot za smqna na moda
+
+MM_ADMIN_VOTEMAP_M_TITLE_SELECT_MAP = \yIzberi map za moda\r (%s)\y
+MM_ADMIN_VOTEMAP_NO_MAPS = Nqma mapove za izbor
+MM_ADMIN_VOTEMAP_MAP_SELECTED = Vie izbrahte map^4 %a^1 za mod^3 %s
+MM_ADMIN_VOTEMAP_MAP_SELECTED_INFO = Mojete da smenite mapa
+MM_ADMIN_VOTEMAP_M_TITLE_VOTE = \yMapove za glasuvane za mod\w %s\y %d/%d
+MM_ADMIN_VOTEMAP_START_VOTE = Startirai vote za map
+MM_ADMIN_VOTEMAP_MIN_MAPS = Trqbva da izberete pone 2 mapa (%d maximum)
+MM_ADMIN_VOTEMAP_SELECTED_MAPS = \yIzbrani mapove\w (%d%s)
+MM_ADMIN_VOTEMAP_ADMIN_NAME = \yVota e napraven ot\w %n
+MM_ADMIN_VOTEMAP_START_VOTE_SAY = ^3%n^1 startira vot za smqna na mapa
+
+MM_ADMIN_VOTE_CONFIRM = Potvurdi vot
+MM_ADMIN_VOTE_REF = Otkaji vot
+MM_ADMIN_RES_REF = ^3%n^1 otkaza vota
+MM_ADMIN_CHANGE_MOD_MAP = ^3%n^1 smeni moda na^4 %s^1 na map^4 %s
+
+MM_ADMIN_M_TITLE_MANAGE_MODS = \yMod Manage
+MM_ADMIN_MODE_ENABLED = Vie^3 aktivirahte^1 mod^4 %s
+MM_ADMIN_MODE_DISABLED = Vie^3 sprqhte^1 mod^4 %s
+MM_ADMIN_CANT_BLOCK_MAIN_MODE = Ne mojete da sptete mod^3 %s^1 (Main mod)
+MM_ADMIN_CANT_BLOCK_CURRENT_MODE = Ne mojete da sptete mod^3 %s^1 (Current mod)
+
+MM_ADMIN_MANAGE_MM_M_TITLE = \yManage mods and maps
+MM_ADMIN_DELETE_MODS = Iztrii skoroshnite modove
+MM_ADMIN_DELETE_MAPS = Iztrii skoroshnite mapove za mod\y %s
+MM_ADMIN_DELETE_ALL_MODS = Iztrii vsichki skoroshni modove
+MM_ADMIN_DELETE_ALL_MAPS = Iztrii vsichki skoroshni mapove za mod\y %s
+MM_ADMIN_CANT_DELETE_RECENT_MODS = Ne mojete da iztriete skoroshnite modove v momenta.
+MM_ADMIN_CANT_DELETE_RECENT_MAPS = Ne mojete da iztriete skoroshnite mapove v momenta.
+MM_ADMIN_RECENT_MOD_DELETED = Iztrihte skoroshniq mod^4 %s
+MM_ADMIN_RECENT_MAP_DELETED = Iztrihte skoroshniq map^4 %s^1 za mod^3 %s
+MM_ADMIN_RECENT_MOD_NOT_DELETED = Skoroshniq mod^4 %s^1 ne e premahnat
+MM_ADMIN_RECENT_MAP_NOT_DELETED = Skoroshniq map^4 %s^1 za mod^3 %s^1 ne e premahnat
+MM_ADMIN_RECENT_MOD_DELETED_ALL = Iztrihte vichki skoroshni modove
+MM_ADMIN_RECENT_MAP_DELETED_ALL = Iztrihte vichki skoroshni mapove za mod^3 %s
+
+MM_MODCHOO_VOTED_FOR = Glasuvahte za mod:^3 %s
+MM_MODCHOO_PLAYER_VOTED_FOR = %n glasuva za mod: %s
+MM_MODCHOO_VOTED_EXT = Glasuvahte da udaljite mod^3 %s^1 s^4 %d minuti
+MM_MODCHOO_PLAYER_VOTED_EXT = %n glasuva da udalji mod %s s %d minuti
+MM_MODCHOO_NEXT = Sledvashtiq mod shte e^3 %s
+MM_MODCHOO_NEED_SECOND_VOTE = Ima^4 %d moda^1 s^4 %d^1 glasa, sledvasht vot e sled^3 10 sekundi
+MM_MODCHOO_SECOND_ROUND_EXT_INFO1 = Oshte vednaj ^4ne se reshi ^1koi e sledvashtiq mod.
+MM_MODCHOO_SECOND_ROUND_EXT_INFO2 = Ot nai-glasuvanite modove, na sluchen princip be izbran mod^3 %s^1.
+MM_MODCHOO_SECOND_ROUND_EXT_INFO3 = Segashniq mod be udaljen s^3 %d minuti^1.
+MM_MODCHOO_SECOND_ROUND_NEXT_INFO1 = Oshte vednaj ^4ne se reshi ^1koi e sledvashtiq mod.
+MM_MODCHOO_SECOND_ROUND_NEXT_INFO2 = Ot nai-glasuvanite modove, na sluchen princip be izbran mod^3 %s^1.
+
+MM_MAPCHOO_VOTED_FOR = Glasuvahte za map:^3 %s
+MM_MAPCHOO_PLAYER_VOTED_FOR = %n glasuva za map: %s
+MM_MAPCHOO_NEXT = Sledvashtiq map shte e^3 %s
+MM_MAPCHOO_CAN_NOM = Mojete da nominirate mapove za sledvashtiq mod za^4 %d sekundi
+MM_MAPCHOO_NEED_SECOND_VOTE = Ima^4 %d mapa^1 s^4 %d^1 glasa, sledvasht vot e sled^3 10 sekundi
+MM_MAPCHOO_SECOND_ROUND_NEXT_INFO1 = Oshte vednaj ^4ne se reshi ^1koi e sledvashtiq map.
+MM_MAPCHOO_SECOND_ROUND_NEXT_INFO2 = Ot nai-glasuvanite mapove, na sluchen princip be izbran map^3 %s^1.
+
+MM_NOMS_MOD_NOT_ENABLED = Glasuvaneto za mod ne e pozvoleno!
+MM_NOMS_MAP_NOT_ENABLED = Glasuvaneto za map ne e pozvoleno!
+MM_NOMS_NOT_ALLOWED = Nominaciite ne sa pozvoleni v momenta!
+MM_NOMS_MODS_NOT_ENOUGH = Nqma dostatachno modove za nominirane!
+MM_NOMS_MAPS_NOT_ENOUGH = Nqma dostatachno mapove za nominirane!
+MM_NOMS_M_TITLE_NOMINATE_MODS = Nominiraikte mod
+MM_NOMS_M_TITLE_NOMINATE_MAPS = Nominiraite map
+MM_NOMS_PLAYER_NOMINATED_MOD = ^3%n^1 nominira mod:^4 %s
+MM_NOMS_PLAYER_NOMINATED_MAP = ^3%n^1 nominira map:^4 %a
+MM_NOMS_PLAYER_DEL_NOM_MOD = ^3%n^1 premahna nominaciqta si za mod:^4 %s
+MM_NOMS_PLAYER_DEL_NOM_MAP = ^3%n^1 premahna nominaciqta si za map:^4 %a
+MM_NOMS_ALREADY_NOMINATED_MOD = Mod^4 %s^1 veche e nominiran!
+MM_NOMS_ALREADY_NOMINATED_MOD_INFO1 = Veche ste nominirali mod^4 %s^1, ne mojete da nominirate poveche ot edin mod!
+MM_NOMS_ALREADY_NOMINATED_MAP = Map^4 %s^1 veche e nominiran!
+MM_NOMS_ALREADY_NOMINATED_MAP_INFO1 = Veche ste nominirali map^4 %s^1, ne mojete da nominirate poveche ot edin map!
+
+MM_RTV_NOT_ENABLED = Opciata^3 Rock The Vote^1 e sprqna!
+MM_RTV_COOLDOWN = Izchakaite^4 %d sekundi^1 za da izpolzvate^3 Rock The Vote
+MM_RTV_ALREADY_MOD_CHOOSED = Vota za smqna na mod veche e napraven!
+MM_RTV_MIN_PLAYERS = Minimum^4 %d igracha^1 sa nujni za^3 Rock The Vote
+MM_RTV_ALREADY_VOTED = Veche napravihte^3 Rock The Vote^1 za smqna na mod!
+MM_RTV_NEED_MIN_VOTES = Trqbvat^4 %d vota^1 za^3 Rock The Vote
+MM_RTV_PLAYER_VOTED = ^3%n^1 glasuva za^3 Rock The Vote^1. Obshto: ^4%d^1/^4%d
+MM_RTV_VOTING_START = ^3Rock The Vote^1 Zapochna! Sled^4 10 sekundi^1 vota za smqna na mod shte zapochne.
