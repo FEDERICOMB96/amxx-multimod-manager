@@ -72,7 +72,7 @@ AdminCmd_ClientDisconnected(const id)
 
 public ConsoleCommand_ForceVoteMod(const id, const level, const cid)
 {
-	if(!cmd_access(id, level, cid, false))
+	if(!cmd_access(id, level, cid, 1))
 		return PLUGIN_HANDLED;
 	
 	if(CanForceVoteNextMod())
