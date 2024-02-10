@@ -59,7 +59,7 @@ public plugin_precache()
 
 public plugin_init()
 {
-	register_plugin(PLUGIN_NAME, PLUGIN_VERSION, "FEDERICOMB");
+	register_plugin(PLUGIN_NAME, PLUGIN_VERSION, "FEDERICOMB", PLUGIN_URL);
 
 	register_dictionary("common.txt");
 	register_dictionary("multimod_manager.txt");

@@ -21,4 +21,7 @@ Cvars_Init()
 
 	set_pcvar_string(g_pCvar_amx_nextmap, fmt("%L", LANG_SERVER, "MM_NO_MAP_CHOOSED_CVAR"));
 	set_pcvar_num(g_pCvar_amx_last_voting, 0);
+
+	set_pcvar_string(create_cvar("multimod_manager_version", PLUGIN_VERSION, FCVAR_SERVER | FCVAR_SPONLY), PLUGIN_VERSION);
+	set_pcvar_string(create_cvar("multimod_manager_url", PLUGIN_URL, FCVAR_SERVER | FCVAR_SPONLY), PLUGIN_URL);
 }
