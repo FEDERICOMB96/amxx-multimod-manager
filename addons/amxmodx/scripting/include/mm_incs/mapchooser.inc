@@ -48,16 +48,6 @@ MapChooser_InitNextVoteMap(iStartVote)
 		MapChooser_ResetAllData();
 		Nominations_ResetAllData();
 
-		g_bSelectedNextMap = true;
-
-		if(g_bIsRockTheVote)
-		{
-			RockTheVoteSendIntermission();
-			return;
-		}
-
-		g_iChangeMapTime = 10;
-
 		ExecChangeTimeleft();
 		return;
 	}
@@ -262,16 +252,6 @@ public OnTask_CheckVoteMap()
 		MapChooser_ResetAllData();
 		Nominations_ResetAllData();
 
-		g_bSelectedNextMap = true;
-
-		if(g_bIsRockTheVote)
-		{
-			RockTheVoteSendIntermission();
-			return;
-		}
-
-		g_iChangeMapTime = 10;
-
 		ExecChangeTimeleft();
 	}
 	else
@@ -286,10 +266,6 @@ public OnTask_CheckVoteMap()
 
 		MapChooser_ResetAllData();
 		Nominations_ResetAllData();
-
-		g_bSelectedNextMap = true;
-
-		g_iChangeMapTime = 10;
 
 		ExecChangeTimeleft();
 	}
@@ -415,16 +391,6 @@ public OnTask_CheckVoteMapFIX()
 		MapChooser_ResetAllData();
 		Nominations_ResetAllData();
 
-		g_bSelectedNextMap = true;
-
-		if(g_bIsRockTheVote)
-		{
-			RockTheVoteSendIntermission();
-			return;
-		}
-
-		g_iChangeMapTime = 10;
-
 		ExecChangeTimeleft();
 	}
 	else
@@ -439,10 +405,6 @@ public OnTask_CheckVoteMapFIX()
 
 		MapChooser_ResetAllData();
 		Nominations_ResetAllData();
-
-		g_bSelectedNextMap = true;
-
-		g_iChangeMapTime = 10;
 
 		ExecChangeTimeleft();
 	}
@@ -569,7 +531,25 @@ public OnTask_ChangeMap(sMap[])
 
 ExecChangeTimeleft()
 {
+	g_bSelectedNextMap = true;
+
 	remove_task(TASK_TIMELEFT);
+
+	if(g_bIsRockTheVote)
+	{
+		// Change map instantly if the ignore change map type is true or the change map type is timeleft
+		if(g_GlobalConfigs[RTV_IgnoreChangeMapType] || UTIL_GetChangeMapType(g_iCurrentMod) == CHANGEMAP_TIMELEFT)
+		{
+			RockTheVoteSendIntermission();
+			return;
+		}
+		
+		// Change map at the end of the round or one more round
+		OnTask_ChangeTimeLeft();
+		return;
+	}
+
+	g_iChangeMapTime = 10;
 
 	(UTIL_GetChangeMapType(g_iCurrentMod) == CHANGEMAP_TIMELEFT)
 		? set_task((float(get_timeleft()) - 10.1), "OnTask_AlertChangeMap", TASK_TIMELEFT)
