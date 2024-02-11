@@ -79,7 +79,7 @@ public ClientCommand_RockTheVote(const id)
 		return PLUGIN_HANDLED;
 	}
 	
-	new iPercent = (iPlayersNum * g_GlobalConfigs[RTV_Percentage]) / 100;
+	new iPercent = max(1, (iPlayersNum * g_GlobalConfigs[RTV_Percentage]) / 100);
 	
 	if(g_HasVoteRTV[id])
 	{

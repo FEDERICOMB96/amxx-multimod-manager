@@ -493,8 +493,6 @@ public OnTask_ChangeTimeLeft()
 
 RockTheVoteSendIntermission()
 {
-	g_bVoteRtvResult = true;
-
 	remove_task(TASK_TIMELEFT);
 	set_task(2.0, "OnTask_RockTheVoteSendIntermission", TASK_TIMELEFT);
 }
@@ -537,6 +535,8 @@ ExecChangeTimeleft()
 
 	if(g_bIsRockTheVote)
 	{
+		g_bVoteRtvResult = true;
+		
 		// Change map instantly if the ignore change map type is true or the change map type is timeleft
 		if(g_GlobalConfigs[RTV_IgnoreChangeMapType] || UTIL_GetChangeMapType(g_iCurrentMod) == CHANGEMAP_TIMELEFT)
 		{
