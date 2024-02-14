@@ -181,6 +181,9 @@ MM_RTV_NEED_MIN_VOTES = Se necesitan^4 %d voto(s)^1 más para iniciar el^3 Rock 
 MM_RTV_PLAYER_VOTED = ^3%n^1 ha votado por el^3 Rock The Vote^1. Votos totales: ^4%d^1/^4%d
 MM_RTV_VOTING_START = El^3 Rock The Vote^1 ha comenzado! En^4 10 segundos^1 comenzará la votación para el cambio de modo
 
+MM_LISTMODS_MENU_TITLE = \yLista de modos^n\dSelecciona uno para ver sus mapas disponibles\y
+MM_LISTMAPS_MENU_TITLE = \yLista de mapas del modo\w %s\y
+
 [en]
 MULTIMOD_MANAGER = Multimod Manager
 
@@ -363,6 +366,9 @@ MM_RTV_ALREADY_VOTED = You have already made the^3 Rock The Vote^1 for the mod c
 MM_RTV_NEED_MIN_VOTES = Needs^4 %d vote(s)^1 more to start the^3 Rock The Vote
 MM_RTV_PLAYER_VOTED = ^3%n^1 has voted for the^3 Rock The Vote^1. Total votes: ^4%d^1/^4%d
 MM_RTV_VOTING_START = The^3 Rock The Vote^1 has started! In^4 10 seconds^1 the voting for the mod change will begin
+
+MM_LISTMODS_MENU_TITLE = \yList of mods^n\dSelect one to see its available maps\y
+MM_LISTMAPS_MENU_TITLE = \yList of maps of the mod\w %s\y
 
 [ru]
 MULTIMOD_MANAGER = Multimod Manager
@@ -547,6 +553,9 @@ MM_RTV_NEED_MIN_VOTES = Необходимо еще^4 %d голосов^1 для
 MM_RTV_PLAYER_VOTED = ^3%n^1 проголосовал(а) в досрочном голосовании. Всего голосов: ^4%d^1/^4%d
 MM_RTV_VOTING_START = Досрочное голосование началось! Через^4 10 секунд^1 начнется голосование за смену режима
 
+MM_LISTMODS_MENU_TITLE = \yСписок режимов^n\dВыберите один, чтобы увидеть его доступные карты\y
+MM_LISTMAPS_MENU_TITLE = \yСписок карт режима\w %s\y
+
 [bg]
 MULTIMOD_MANAGER = Multimod Manager
 
@@ -729,3 +738,6 @@ MM_RTV_ALREADY_VOTED = Veche napravihte^3 Rock The Vote^1 za smqna na mod!
 MM_RTV_NEED_MIN_VOTES = Trqbvat^4 %d vota^1 za^3 Rock The Vote
 MM_RTV_PLAYER_VOTED = ^3%n^1 glasuva za^3 Rock The Vote^1. Obshto: ^4%d^1/^4%d
 MM_RTV_VOTING_START = ^3Rock The Vote^1 Zapochna! Sled^4 10 sekundi^1 vota za smqna na mod shte zapochne.
+
+MM_LISTMODS_MENU_TITLE = \ySpisak na modove^n\dIzberete edin, za da vidite dostupnite mu mapove\y
+MM_LISTMAPS_MENU_TITLE = \ySpisak na mapove za mod\w %s\y

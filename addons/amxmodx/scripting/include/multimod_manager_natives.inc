@@ -7,9 +7,11 @@
  * Multimod Manager version check.
  * Do not modify this!
  */
-#define MM_VERSION_MAJOR 2
-#define MM_VERSION_MINOR 2
-#define MM_VERSION_PATCH 0
+#define MM_VERSION_MAJOR  2
+#define MM_VERSION_MINOR  2
+#define MM_VERSION_COMMIT 205
+
+#define MM_NATIVES_API_VER fmt("v%d.%d.%d", MM_VERSION_MAJOR, MM_VERSION_MINOR, MM_VERSION_COMMIT)
 
 enum ChangeMap_e
 {
@@ -209,4 +211,9 @@ public __multimod_version_check(const majorVersion, const minorVersion)
 		set_fail_state(szTemp);
 		return;
 	}
+
+	new sPluginName[64];
+	get_plugin(-1, sPluginName, charsmax(sPluginName));
+
+	log_amx("[API %s] Multimod Manager check passed for plugin: %s", MM_NATIVES_API_VER, sPluginName);
 }

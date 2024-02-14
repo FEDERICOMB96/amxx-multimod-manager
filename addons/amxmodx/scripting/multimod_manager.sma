@@ -77,6 +77,7 @@ public plugin_init()
 	UTIL_RegisterClientCommandAll("nextmod", "OnClientCommand_NextMod");
 	UTIL_RegisterClientCommandAll("nextmap", "OnClientCommand_NextMap");
 	UTIL_RegisterClientCommandAll("timeleft", "OnClientCommand_Timeleft");
+	UTIL_RegisterClientCommandAll("listmods", "OnClientCommand_ListMods");
 
 	g_Hud_Vote = CreateHudSyncObj();
 	g_Hud_Alert = CreateHudSyncObj();
@@ -337,6 +338,8 @@ MultiMod_Init()
 	Recent_SaveRecentModsMaps();
 	OnEvent_GameRestart();
 
+	log_amx("Multimod Manager %s by FEDERICOMB loaded successfully. URL: %s", PLUGIN_VERSION, PLUGIN_URL);
+
 	new iRes;
 	ExecuteForward(g_Forward_VersionCheck, iRes, MM_VERSION_MAJOR, MM_VERSION_MINOR);
 }
@@ -588,6 +591,94 @@ public OnClientCommand_Timeleft(const id)
 		}
 	}
 
+	return PLUGIN_HANDLED;
+}
+
+public OnClientCommand_ListMods(const id)
+{
+	CHECK_CONNECTED(id)
+
+	ShowMenu_ListMods(id);
+	return PLUGIN_HANDLED;
+}
+
+ShowMenu_ListMods(const id)
+{
+	CHECK_CONNECTED(id)
+
+	new iMenu = menu_create(fmt("%L", LANG_PLAYER, "MM_LISTMODS_MENU_TITLE"), "menu_ListMods");
+
+	new iArraySizeMods = ArraySize(g_GlobalConfigs[Mods]);
+	new aMods[ArrayMods_e];
+
+	for(new iModId = 0; iModId < iArraySizeMods; ++iModId)
+	{
+		ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
+
+		if(UTIL_IsModOff(iModId))
+			continue;
+
+		menu_additem(iMenu, aMods[ModName]);
+	}
+	
+	menu_setprop(iMenu, MPROP_NEXTNAME, fmt("%L", LANG_PLAYER, "MM_MORE"));
+	menu_setprop(iMenu, MPROP_BACKNAME, fmt("%L", LANG_PLAYER, "MM_BACK"));
+	menu_setprop(iMenu, MPROP_EXITNAME, fmt("%L", LANG_PLAYER, "MM_EXIT"));
+
+	menu_display(id, iMenu, 0);
+	return PLUGIN_HANDLED;
+}
+
+public menu_ListMods(const id, const menuid, const item)
+{
+	CHECK_CONNECTED_NEWMENU(id, menuid)
+	CHECK_EXIT_NEWMENU(id, menuid, item)
+	
+	g_iListModSelected[id] = item;
+	menu_destroy(menuid);
+
+	ShowMenu_ListMapsOfMod(id);
+	return PLUGIN_HANDLED;
+}
+
+ShowMenu_ListMapsOfMod(const id, menupage=0)
+{
+	CHECK_CONNECTED(id)
+
+	new aMods[ArrayMods_e];
+	ArrayGetArray(g_GlobalConfigs[Mods], g_iListModSelected[id], aMods);
+
+	new iMenu = menu_create(fmt("%L", LANG_PLAYER, "MM_LISTMAPS_MENU_TITLE", aMods[ModName]), "menu_ListMapsOfMod");
+
+	new iArraySize = ArraySize(aMods[Maps]);
+	for(new iMapId = 0; iMapId < iArraySize; ++iMapId)
+		menu_additem(iMenu, fmt("%a", ArrayGetStringHandle(aMods[Maps], iMapId)));
+
+	menu_setprop(iMenu, MPROP_NEXTNAME, fmt("%L", LANG_PLAYER, "MM_MORE"));
+	menu_setprop(iMenu, MPROP_BACKNAME, fmt("%L", LANG_PLAYER, "MM_BACK"));
+	menu_setprop(iMenu, MPROP_EXITNAME, fmt("%L", LANG_PLAYER, "MM_EXIT"));
+	
+	menu_display(id, iMenu, min(menupage, menu_pages(iMenu) - 1));
+	return PLUGIN_HANDLED;
+}
+
+public menu_ListMapsOfMod(const id, const menuid, const item)
+{
+	CHECK_CONNECTED_NEWMENU(id, menuid)
+	
+	if(item == MENU_EXIT)
+	{
+		menu_destroy(menuid);
+
+		ShowMenu_ListMods(id);
+		return PLUGIN_HANDLED;
+	}
+	
+	new iNothing, iMenuPage;
+	player_menu_info(id, iNothing, iNothing, iMenuPage);
+
+	menu_destroy(menuid);
+	ShowMenu_ListMapsOfMod(id, iMenuPage);
 	return PLUGIN_HANDLED;
 }
 
