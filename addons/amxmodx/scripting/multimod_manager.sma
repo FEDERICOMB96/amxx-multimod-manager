@@ -684,21 +684,31 @@ public menu_ListMapsOfMod(const id, const menuid, const item)
 
 public OnTask_CheckVoteNextMod()
 {
-	if(g_bSelectedNextMod || g_bSelectedNextMap)
-	{
-		remove_task(TASK_ENDMAP);
+	if(!CanStartVoteNextMod())
 		return;
-	}
-
-	if(CanStartVoteNextMod())
-		StartVoteNextMod();
+	
+	StartVoteNextMod();
 }
 
 bool:CanStartVoteNextMod()
 {
-	if(g_bVoteModHasStarted || g_bSVM_ModSecondRound || g_bVoteMapHasStarted || g_bSVM_MapSecondRound || g_bIsVotingRtv || g_bVoteInProgress)
+	// Vote in progress
+	if(g_bVoteInProgress)
 		return false;
 
+	// Votemod stuff
+	if(g_bVoteModHasStarted || g_bSVM_ModSecondRound || g_bSelectedNextMod)
+		return false;
+	
+	// Votemap stuff
+	if(g_bVoteMapHasStarted || g_bSVM_MapSecondRound || g_bSelectedNextMap)
+		return false;
+	
+	// RockTheVote stuff
+	if(g_bIsVotingRtv || g_bVoteRtvResult)
+		return false;
+
+	// GameDLL stuff
 	if((g_bCvar_mp_maxrounds != 0) && (get_member_game(m_iTotalRoundsPlayed) >= (g_bCvar_mp_maxrounds - 3)))
 		return true;
 
@@ -713,7 +723,20 @@ bool:CanStartVoteNextMod()
 
 bool:CanForceVoteNextMod()
 {
-	if(g_bVoteModHasStarted || g_bSVM_ModSecondRound || g_bVoteMapHasStarted || g_bSVM_MapSecondRound || g_bIsVotingRtv || g_bVoteInProgress || g_bSelectedNextMod || g_bSelectedNextMap)
+	// Vote in progress
+	if(g_bVoteInProgress)
+		return false;
+
+	// Votemod stuff
+	if(g_bVoteModHasStarted || g_bSVM_ModSecondRound || g_bSelectedNextMod)
+		return false;
+	
+	// Votemap stuff
+	if(g_bVoteMapHasStarted || g_bSVM_MapSecondRound || g_bSelectedNextMap)
+		return false;
+	
+	// RockTheVote stuff
+	if(g_bIsVotingRtv || g_bVoteRtvResult)
 		return false;
 	
 	return true;

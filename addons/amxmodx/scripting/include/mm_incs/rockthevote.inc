@@ -59,7 +59,7 @@ public ClientCommand_RockTheVote(const id)
 		return PLUGIN_HANDLED;
 	}
 
-	if(g_bVoteRtvResult)
+	if(g_bSelectedNextMod || g_bSelectedNextMap || g_bVoteRtvResult)
 	{
 		client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_RTV_ALREADY_MOD_CHOOSED");
 		return PLUGIN_HANDLED;

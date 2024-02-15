@@ -7,7 +7,7 @@
 
 #define MM_VERSION_MAJOR                2
 #define MM_VERSION_MINOR                2
-#define MM_VERSION_COMMIT               205
+#define MM_VERSION_COMMIT               206
 
 #define PLUGIN_VERSION                  fmt("v%d.%d.%d", MM_VERSION_MAJOR, MM_VERSION_MINOR, MM_VERSION_COMMIT)
 #define PLUGIN_URL                      "https://github.com/FEDERICOMB96/amxx-multimod-manager"
