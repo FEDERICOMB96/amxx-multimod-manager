@@ -4,6 +4,7 @@
 #include <amxmisc>
 #include <reapi>
 #include <json>
+#include "mm_incs/version"
 #include "mm_incs/defines"
 #include "mm_incs/global"
 #include "mm_incs/natives"
@@ -18,6 +19,8 @@
 
 public plugin_natives()
 {
+	register_library("MultiModManagerCS");
+
 	register_native("mm_get_mods_count", "_mm_get_mods_count");
 	register_native("mm_is_mod_enabled", "_mm_is_mod_enabled");
 	register_native("mm_get_mod_name", "_mm_get_mod_name");

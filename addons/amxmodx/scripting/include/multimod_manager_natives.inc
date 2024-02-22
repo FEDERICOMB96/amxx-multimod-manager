@@ -3,15 +3,15 @@
 #endif
 #define _multimod_manager_natives_included_
 
-/**
- * Multimod Manager version check.
- * Do not modify this!
- */
-#define MM_VERSION_MAJOR  2
-#define MM_VERSION_MINOR  2
-#define MM_VERSION_COMMIT 206
+#include <multimod_manager_version>
 
-#define MM_NATIVES_API_VER fmt("v%d.%d.%d", MM_VERSION_MAJOR, MM_VERSION_MINOR, MM_VERSION_COMMIT)
+/**
+ * MultiMod Manager CS library check
+ */
+#pragma reqlib MultiModManagerCS
+#if !defined AMXMODX_NOAUTOLOAD
+   #pragma loadlib MultiModManagerCS
+#endif
 
 enum ChangeMap_e
 {
