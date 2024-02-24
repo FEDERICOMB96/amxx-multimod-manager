@@ -6,7 +6,7 @@
 #define PLUGIN_NAME                     "MultiMod Manager CS"
 #define PLUGIN_URL                      "https://github.com/FEDERICOMB96/amxx-multimod-manager"
 
-#define MM_PLUGINS_FILENAME             "plugins-multimodmanager.ini"
+#define MM_PLUGINS_FILENAME             "plugins-MultimodManagerPluginsMods.ini"
 
 #define MM_CONFIG_FOLDER                "multimod_manager"
 #define MM_MAPSFILE_FOLDER              "mapsfiles"
