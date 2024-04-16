@@ -194,8 +194,10 @@ ShowMenu_SelectMod(const id)
 
 		if(UTIL_IsModOff(iModId))
 			menu_additem(iMenu, fmt("%s\r (%L)", aMods[ModName], LANG_PLAYER, "MM_LOCKED"), .callback=menu_makecallback("UTIL_DisableItem"));
+		else if((g_Admin_SelectedMod[id] == iModId) || (g_iCurrentMod == iModId))
+			menu_additem(iMenu, fmt("%s\y (%L)", aMods[ModName], LANG_PLAYER, (g_Admin_SelectedMod[id] == iModId) ? "MM_SELECTED" : "MM_CURRENT"));
 		else
-			menu_additem(iMenu, fmt("%s%s", aMods[ModName], (g_Admin_SelectedMod[id] == iModId) ? fmt("\y (%L)", LANG_PLAYER, "MM_SELECTED") : ((g_iCurrentMod == iModId) ? fmt("\y (%L)", LANG_PLAYER, "MM_CURRENT") : "")));
+			menu_additem(iMenu, aMods[ModName]);
 	}
 
 	menu_setprop(iMenu, MPROP_NEXTNAME, fmt("%L", LANG_PLAYER, "MM_MORE"));
@@ -251,7 +253,12 @@ ShowMenu_SelectMap(const id)
 	new iMenu = menu_create(fmt("%L", LANG_PLAYER, "MM_ADMIN_VOTEMAP_M_TITLE_SELECT_MAP", aMods[ModName]), "menu_SelectMap");
 
 	for(new iMapId = 0; iMapId < iArraySize; ++iMapId)
-		menu_additem(iMenu, fmt("%a%s", ArrayGetStringHandle(aMods[Maps], iMapId), (g_Admin_SelectedMap[id] == iMapId+1) ? fmt("\y (%L)", LANG_PLAYER, "MM_SELECTED") : ""));
+	{
+		if(g_Admin_SelectedMap[id] == iMapId+1)
+			menu_additem(iMenu, fmt("%a\y (%L)", ArrayGetStringHandle(aMods[Maps], iMapId), LANG_PLAYER, "MM_SELECTED"));
+		else
+			menu_additem(iMenu, fmt("%a", ArrayGetStringHandle(aMods[Maps], iMapId)));
+	}
 
 	menu_setprop(iMenu, MPROP_NEXTNAME, fmt("%L", LANG_PLAYER, "MM_MORE"));
 	menu_setprop(iMenu, MPROP_BACKNAME, fmt("%L", LANG_PLAYER, "MM_BACK"));
@@ -345,14 +352,34 @@ ShowMenu_Votemod(const id)
 		if(IsOptionSelected(id, (g_Admin_VoteCurrentPage[id] * 7) + j))
 		{
 			iKeys |= (1<<j);
-			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^t^t\r%d.\d %s%s\y [ X ]^n", ++j, aMods[ModName], (g_iCurrentMod == i) ? fmt(" (%L)", LANG_PLAYER, "MM_CURRENT") : "");
+			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^t^t\r%d.\d %s", ++j, aMods[ModName]);
+
+			if(g_CurrentMod == i)
+				iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, " (%L)", LANG_PLAYER, "MM_CURRENT");
+			
+			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\y [ X ]^n");
 		}
 		else if(IsFullSelected(id) || bBlocked)
-			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\d%d. %s%s%s^n", ++j, aMods[ModName], (g_iCurrentMod == i) ? fmt(" (%L)", LANG_PLAYER, "MM_CURRENT") : "", bBlocked ? fmt("\r (%L)", LANG_PLAYER, "MM_LOCKED") : "");
+		{
+			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\d%d. %s", ++j, aMods[ModName]);
+
+			if(g_CurrentMod == i)
+				iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, " (%L)", LANG_PLAYER, "MM_CURRENT");
+			
+			if(bBlocked)
+				iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r (%L)", LANG_PLAYER, "MM_LOCKED");
+			
+			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n");
+		}
 		else
 		{
 			iKeys |= (1<<j);
-			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %s%s^n", ++j, aMods[ModName], (g_iCurrentMod == i) ? fmt("\y (%L)", LANG_PLAYER, "MM_CURRENT") : "");
+			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %s", ++j, aMods[ModName]);
+
+			if(g_CurrentMod == i)
+				iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\y (%L)", LANG_PLAYER, "MM_CURRENT");
+			
+			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n");
 		}
 	}
 	
@@ -969,7 +996,7 @@ ShowMenu_ManageMods(const id, menupage=0)
 	for(new iModId = 0; iModId < iArraySizeMods; ++iModId)
 	{
 		ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
-		menu_additem(iMenu, fmt("%s%s", aMods[ModName], aMods[Enabled] ? "" : fmt("\r (%L)", LANG_PLAYER, "MM_LOCKED")));
+		menu_additem(iMenu, aMods[Enabled] ? fmt("%s", aMods[ModName]) : fmt("%s\r (%L)", aMods[ModName], LANG_PLAYER, "MM_LOCKED"));
 	}
 
 	menu_setprop(iMenu, MPROP_NEXTNAME, fmt("%L", LANG_PLAYER, "MM_MORE"));
