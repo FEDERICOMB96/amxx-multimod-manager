@@ -354,7 +354,7 @@ ShowMenu_Votemod(const id)
 			iKeys |= (1<<j);
 			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^t^t\r%d.\d %s", ++j, aMods[ModName]);
 
-			if(g_CurrentMod == i)
+			if(g_iCurrentMod == i)
 				iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, " (%L)", LANG_PLAYER, "MM_CURRENT");
 			
 			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\y [ X ]^n");
@@ -363,7 +363,7 @@ ShowMenu_Votemod(const id)
 		{
 			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\d%d. %s", ++j, aMods[ModName]);
 
-			if(g_CurrentMod == i)
+			if(g_iCurrentMod == i)
 				iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, " (%L)", LANG_PLAYER, "MM_CURRENT");
 			
 			if(bBlocked)
@@ -376,7 +376,7 @@ ShowMenu_Votemod(const id)
 			iKeys |= (1<<j);
 			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\r%d.\w %s", ++j, aMods[ModName]);
 
-			if(g_CurrentMod == i)
+			if(g_iCurrentMod == i)
 				iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "\y (%L)", LANG_PLAYER, "MM_CURRENT");
 			
 			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n");
