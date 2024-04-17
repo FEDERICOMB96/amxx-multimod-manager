@@ -401,7 +401,12 @@ ShowMenu_Votemod(const id)
 	
 	if(g_Admin_VoteSelectedOptions[id])
 	{
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n^n%L", LANG_PLAYER, "MM_ADMIN_VOTEMOD_SELECTED_MODES", g_Admin_VoteSelectedOptions[id], IsFullSelected(id) ? fmt(" %L", LANG_PLAYER, "MM_MAX") : "");
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n^n%L (%d", LANG_PLAYER, "MM_ADMIN_VOTEMOD_SELECTED_MODES", g_Admin_VoteSelectedOptions[id]);
+
+		if(IsFullSelected(id))
+			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, " %L", LANG_PLAYER, "MM_MAX");
+
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, ")");
 		
 		//for(j = 0; j < g_Admin_VoteSelectedOptions[id]; ++j)
 		//{
@@ -698,7 +703,12 @@ ShowMenu_Votemap(const id)
 	
 	if(g_Admin_VoteSelectedOptions[id])
 	{
-		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n^n%L", LANG_PLAYER, "MM_ADMIN_VOTEMOD_SELECTED_MODES", g_Admin_VoteSelectedOptions[id], IsFullSelected(id) ? fmt(" %L", LANG_PLAYER, "MM_MAX") : "");
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n^n%L (%d", LANG_PLAYER, "MM_ADMIN_VOTEMAP_SELECTED_MAPS", g_Admin_VoteSelectedOptions[id]);
+
+		if(IsFullSelected(id))
+			iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, " %L", LANG_PLAYER, "MM_MAX");
+
+		iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, ")");
 		
 		//for(j = 0; j < g_Admin_VoteSelectedOptions[id]; ++j)
 		//	iLen += formatex(sMenu[iLen], charsmax(sMenu) - iLen, "^n\w%a^n", ArrayGetStringHandle(aMods[Maps], g_Admin_VoteOptions[id][j]));
