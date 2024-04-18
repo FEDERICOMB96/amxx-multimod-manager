@@ -519,10 +519,20 @@ public menu_StartCustomVotemod(const id, const menuid, const item)
 
 		g_Admin_VoteId[id] = iModId+1;
 
-		client_print_color(id, print_team_default, "%s^1 %L%s", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_VOTED_FOR", aMods[ModName], (bRandom) ? fmt("^3 [%L]", LANG_PLAYER, "MM_RANDOM") : "");
+		if(bRandom)
+		{
+			client_print_color(id, print_team_default, "%s^1 %L^3 [%L]", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_VOTED_FOR", aMods[ModName], LANG_PLAYER, "MM_RANDOM");
 
-		if(g_bCvar_amx_vote_answers)
-			client_print(0, print_console, "%L%s", LANG_PLAYER, "MM_PLAYER_VOTED_FOR", id, aMods[ModName], (bRandom) ? fmt(" [%L]", LANG_PLAYER, "MM_RANDOM") : "");
+			if(g_bCvar_amx_vote_answers)
+				client_print(0, print_console, "%L [%L]", LANG_PLAYER, "MM_PLAYER_VOTED_FOR", id, aMods[ModName], LANG_PLAYER, "MM_RANDOM");
+		}
+		else
+		{
+			client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_VOTED_FOR", aMods[ModName]);
+
+			if(g_bCvar_amx_vote_answers)
+				client_print(0, print_console, "%L", LANG_PLAYER, "MM_PLAYER_VOTED_FOR", id, aMods[ModName]);
+		}
 	}
 
 	return PLUGIN_HANDLED;
@@ -818,10 +828,20 @@ public menu_StartCustomVotemap(const id, const menuid, const item)
 
 		g_Admin_VoteId[id] = iMapId+1;
 
-		client_print_color(id, print_team_default, "%s^1 %L%s", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_VOTED_FOR", szMap, (bRandom) ? fmt("^3 [%L]", LANG_PLAYER, "MM_RANDOM") : "");
+		if(bRandom)
+		{
+			client_print_color(id, print_team_default, "%s^1 %L^3 [%L]", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_VOTED_FOR", szMap, LANG_PLAYER, "MM_RANDOM");
+			
+			if(g_bCvar_amx_vote_answers)
+				client_print(0, print_console, "%L [%L]", LANG_PLAYER, "MM_PLAYER_VOTED_FOR", id, szMap, LANG_PLAYER, "MM_RANDOM");
+		}
+		else
+		{
+			client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_VOTED_FOR", szMap);
 
-		if(g_bCvar_amx_vote_answers)
-			client_print(0, print_console, "%L%s", LANG_PLAYER, "MM_PLAYER_VOTED_FOR", id, szMap, (bRandom) ? fmt(" [%L]", LANG_PLAYER, "MM_RANDOM") : "");
+			if(g_bCvar_amx_vote_answers)
+				client_print(0, print_console, "%L", LANG_PLAYER, "MM_PLAYER_VOTED_FOR", id, szMap);
+		}
 	}
 
 	return PLUGIN_HANDLED;
@@ -1006,7 +1026,7 @@ ShowMenu_ManageMods(const id, menupage=0)
 	for(new iModId = 0; iModId < iArraySizeMods; ++iModId)
 	{
 		ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
-		menu_additem(iMenu, aMods[Enabled] ? fmt("%s", aMods[ModName]) : fmt("%s\r (%L)", aMods[ModName], LANG_PLAYER, "MM_LOCKED"));
+		menu_additem(iMenu, aMods[Enabled] ? aMods[ModName] : fmt("%s\r (%L)", aMods[ModName], LANG_PLAYER, "MM_LOCKED"));
 	}
 
 	menu_setprop(iMenu, MPROP_NEXTNAME, fmt("%L", LANG_PLAYER, "MM_MORE"));
