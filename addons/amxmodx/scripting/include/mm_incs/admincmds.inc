@@ -831,7 +831,7 @@ public menu_StartCustomVotemap(const id, const menuid, const item)
 		if(bRandom)
 		{
 			client_print_color(id, print_team_default, "%s^1 %L^3 [%L]", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_VOTED_FOR", szMap, LANG_PLAYER, "MM_RANDOM");
-			
+
 			if(g_bCvar_amx_vote_answers)
 				client_print(0, print_console, "%L [%L]", LANG_PLAYER, "MM_PLAYER_VOTED_FOR", id, szMap, LANG_PLAYER, "MM_RANDOM");
 		}
@@ -1026,7 +1026,7 @@ ShowMenu_ManageMods(const id, menupage=0)
 	for(new iModId = 0; iModId < iArraySizeMods; ++iModId)
 	{
 		ArrayGetArray(g_GlobalConfigs[Mods], iModId, aMods);
-		menu_additem(iMenu, aMods[Enabled] ? aMods[ModName] : fmt("%s\r (%L)", aMods[ModName], LANG_PLAYER, "MM_LOCKED"));
+		menu_additem(iMenu, aMods[Enabled] ? fmt("%s", aMods[ModName]) : fmt("%s\r (%L)", aMods[ModName], LANG_PLAYER, "MM_LOCKED"));
 	}
 
 	menu_setprop(iMenu, MPROP_NEXTNAME, fmt("%L", LANG_PLAYER, "MM_MORE"));
