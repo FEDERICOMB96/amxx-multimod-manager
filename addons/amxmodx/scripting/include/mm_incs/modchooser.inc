@@ -317,16 +317,27 @@ public OnTask_VoteNextMod__FIX()
 {
 	g_Menu_ModChooser = menu_create(fmt("\y%L", LANG_PLAYER, "MM_SELECT_NEXT_MODE"), "menu__CountVoteModFIX");
 
-	for(new i = 0, aData[ArrayMods_e]; i < g_iModVoteNum; ++i)
+	for(new i = 0, aData[ArrayMods_e], sItem[200], iLen; i < g_iModVoteNum; ++i)
 	{
 		if(g_iSVM_ModInMenu_SecondRound[i] == OPTION_EXTEND_MOD)
 		{
-			menu_additem(g_Menu_ModChooser, fmt("\w%L%s", LANG_PLAYER, "MM_M_EXTEND_CURRENT_MODE", g_szCurrentMod, g_bCvar_amx_extendmap_step, (i == (g_iModVoteNum-1)) ? fmt("^n^n\d(%L)", LANG_PLAYER, "MM_SECOND_VOTE") : ""));
+			iLen = formatex(sItem, charsmax(sItem), "\w%L", LANG_PLAYER, "MM_M_EXTEND_CURRENT_MODE", g_szCurrentMod, g_bCvar_amx_extendmap_step);
+
+			if(i == (g_iModVoteNum-1))
+				formatex(sItem[iLen], charsmax(sItem) - iLen, "^n^n\d(%L)", LANG_PLAYER, "MM_SECOND_VOTE");
+
+			menu_additem(g_Menu_ModChooser, sItem);
 			continue;
 		}
 
 		ArrayGetArray(g_GlobalConfigs[Mods], g_iSVM_ModInMenu_SecondRound[i], aData);
-		menu_additem(g_Menu_ModChooser, fmt("\w%s%s", aData[ModName], (i == (g_iModVoteNum-1)) ? fmt("^n^n\d(%L)", LANG_PLAYER, "MM_SECOND_VOTE") : ""));
+
+		iLen = formatex(sItem, charsmax(sItem), "\w%s", aData[ModName]);
+
+		if(i == (g_iModVoteNum-1))
+			formatex(sItem[iLen], charsmax(sItem) - iLen, "^n^n\d(%L)", LANG_PLAYER, "MM_SECOND_VOTE");
+
+		menu_additem(g_Menu_ModChooser, sItem);
 	}
 
 	arrayset(g_VoteModId, -1, MAX_USERS);

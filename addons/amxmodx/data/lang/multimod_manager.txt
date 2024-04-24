@@ -96,7 +96,7 @@ MM_ADMIN_VOTEMOD_MODE_SELECTED_INFO = Ahora puedes cambiar a un mapa del modo se
 MM_ADMIN_VOTEMOD_M_TITLE_VOTE = \yVotación de modos %d/%d
 MM_ADMIN_VOTEMOD_START_VOTE = Iniciar una votación de modo
 MM_ADMIN_VOTEMOD_MIN_MODES = Debes seleccionar al menos 2 modos (%d máximo)
-MM_ADMIN_VOTEMOD_SELECTED_MODES = \yModos seleccionados\w (%d%s)
+MM_ADMIN_VOTEMOD_SELECTED_MODES = \yModos seleccionados\w
 MM_ADMIN_VOTEMOD_ADMIN_NAME = \yVotación hecha por\w %n
 MM_ADMIN_VOTEMOD_START_VOTE_SAY = ^3%n^1 ha iniciado una votación para el cambio de modo
 
@@ -107,7 +107,7 @@ MM_ADMIN_VOTEMAP_MAP_SELECTED_INFO = Ahora puedes cambiar al mapa seleccionado
 MM_ADMIN_VOTEMAP_M_TITLE_VOTE = \yVotación de mapas para el modo\w %s\y %d/%d
 MM_ADMIN_VOTEMAP_START_VOTE = Iniciar una votación de mapa
 MM_ADMIN_VOTEMAP_MIN_MAPS = Debes seleccionar al menos 2 mapas (%d máximo)
-MM_ADMIN_VOTEMAP_SELECTED_MAPS = \yMapas seleccionados\w (%d%s)
+MM_ADMIN_VOTEMAP_SELECTED_MAPS = \yMapas seleccionados\w
 MM_ADMIN_VOTEMAP_ADMIN_NAME = \yVotación hecha por\w %n
 MM_ADMIN_VOTEMAP_START_VOTE_SAY = ^3%n^1 ha iniciado una votación para el cambio de mapa
 
@@ -282,7 +282,7 @@ MM_ADMIN_VOTEMOD_MODE_SELECTED_INFO = Now you can change to a map of the selecte
 MM_ADMIN_VOTEMOD_M_TITLE_VOTE = \yVote mods %d/%d
 MM_ADMIN_VOTEMOD_START_VOTE = Start a vote mod
 MM_ADMIN_VOTEMOD_MIN_MODES = You must select at least 2 mods (%d maximum)
-MM_ADMIN_VOTEMOD_SELECTED_MODES = \ySelected mods\w (%d%s)
+MM_ADMIN_VOTEMOD_SELECTED_MODES = \ySelected mods\w
 MM_ADMIN_VOTEMOD_ADMIN_NAME = \yVote made by\w %n
 MM_ADMIN_VOTEMOD_START_VOTE_SAY = ^3%n^1 has started a vote for the mod change
 
@@ -293,7 +293,7 @@ MM_ADMIN_VOTEMAP_MAP_SELECTED_INFO = Now you can change to the selected map
 MM_ADMIN_VOTEMAP_M_TITLE_VOTE = \yVote maps for the mod\w %s\y %d/%d
 MM_ADMIN_VOTEMAP_START_VOTE = Start a vote map
 MM_ADMIN_VOTEMAP_MIN_MAPS = You must select at least 2 maps (%d maximum)
-MM_ADMIN_VOTEMAP_SELECTED_MAPS = \ySelected maps\w (%d%s)
+MM_ADMIN_VOTEMAP_SELECTED_MAPS = \ySelected maps\w
 MM_ADMIN_VOTEMAP_ADMIN_NAME = \yVote made by\w %n
 MM_ADMIN_VOTEMAP_START_VOTE_SAY = ^3%n^1 has started a vote for the map change
 
@@ -468,7 +468,7 @@ MM_ADMIN_VOTEMOD_MODE_SELECTED_INFO = Теперь вы можете перек�
 MM_ADMIN_VOTEMOD_M_TITLE_VOTE = \yГолосование за режимы %d/%d
 MM_ADMIN_VOTEMOD_START_VOTE = Начать голосование за режим
 MM_ADMIN_VOTEMOD_MIN_MODES = Вы должны выбрать как минимум 2 режима (максимум %d)
-MM_ADMIN_VOTEMOD_SELECTED_MODES = \yВыбранные режимы\w (%d%s)
+MM_ADMIN_VOTEMOD_SELECTED_MODES = \yВыбранные режимы\w
 MM_ADMIN_VOTEMOD_ADMIN_NAME = \yГолос от\w %n
 MM_ADMIN_VOTEMOD_START_VOTE_SAY = ^3%n^1 начал голосование за смену режима
 
@@ -479,7 +479,7 @@ MM_ADMIN_VOTEMAP_MAP_SELECTED_INFO = Теперь вы можете перекл
 MM_ADMIN_VOTEMAP_M_TITLE_VOTE = \yГолосование за карты режима\w %s\y %d/%d
 MM_ADMIN_VOTEMAP_START_VOTE = Начать голосование за карту
 MM_ADMIN_VOTEMAP_MIN_MAPS = Вы должны выбрать как минимум 2 карты (максимум %d)
-MM_ADMIN_VOTEMAP_SELECTED_MAPS = \yВыбранные карты\w (%d%s)
+MM_ADMIN_VOTEMAP_SELECTED_MAPS = \yВыбранные карты\w
 MM_ADMIN_VOTEMAP_ADMIN_NAME = \yГолос от\w %n
 MM_ADMIN_VOTEMAP_START_VOTE_SAY = ^3%n^1 начал голосование за смену карты
 
@@ -654,7 +654,7 @@ MM_ADMIN_VOTEMOD_MODE_SELECTED_INFO = Movete da smenite na mapa na izbraniq mod 
 MM_ADMIN_VOTEMOD_M_TITLE_VOTE = \yVot za modove %d/%d
 MM_ADMIN_VOTEMOD_START_VOTE = Startirai vot za mod
 MM_ADMIN_VOTEMOD_MIN_MODES = Trqbva da izberete pone 2 moda (%d maximum)
-MM_ADMIN_VOTEMOD_SELECTED_MODES = \yIzbrani modove\w (%d%s)
+MM_ADMIN_VOTEMOD_SELECTED_MODES = \yIzbrani modove\w
 MM_ADMIN_VOTEMOD_ADMIN_NAME = \yVota e napraven ot\w %n
 MM_ADMIN_VOTEMOD_START_VOTE_SAY = ^3%n^1 startira vot za smqna na moda
 
@@ -665,7 +665,7 @@ MM_ADMIN_VOTEMAP_MAP_SELECTED_INFO = Mojete da smenite mapa
 MM_ADMIN_VOTEMAP_M_TITLE_VOTE = \yMapove za glasuvane za mod\w %s\y %d/%d
 MM_ADMIN_VOTEMAP_START_VOTE = Startirai vote za map
 MM_ADMIN_VOTEMAP_MIN_MAPS = Trqbva da izberete pone 2 mapa (%d maximum)
-MM_ADMIN_VOTEMAP_SELECTED_MAPS = \yIzbrani mapove\w (%d%s)
+MM_ADMIN_VOTEMAP_SELECTED_MAPS = \yIzbrani mapove\w
 MM_ADMIN_VOTEMAP_ADMIN_NAME = \yVota e napraven ot\w %n
 MM_ADMIN_VOTEMAP_START_VOTE_SAY = ^3%n^1 startira vot za smqna na mapa
 

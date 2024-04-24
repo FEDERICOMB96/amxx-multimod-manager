@@ -144,10 +144,10 @@ Plugin de Multimod para CS 1.6 / CS:CZ
 - Comandos de Administración (votaciones personalizadas, configuracion, forzar una votacion de modo)
 - `API` natives y forwards _(Toda la información detallada se encuentra [aquí](https://github.com/FEDERICOMB96/amxx-multimod-manager/wiki/API))_
 
-## Wiki
+## Wiki:
 Necesitas **ayuda**? Consulte los _artículos_ de la [wiki](https://github.com/FEDERICOMB96/amxx-multimod-manager/wiki).
 
-## Contribuyendo
+## Contribuyendo:
 ¿Tienes **algo interesante** que te gustaría **compartir**? Abra un PR y estaré encantado de revisarlo.
 
 ## Créditos:

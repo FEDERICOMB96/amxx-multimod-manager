@@ -278,8 +278,15 @@ public OnTask_VoteNextMap__FIX()
 
 	g_Menu_MapChooser = menu_create(fmt("\y%L", LANG_PLAYER, "MM_SELECT_NEXT_MAP"), "menu__CountVoteMapFIX");
 
-	for(new i = 0; i < g_iMapVoteNum; ++i)
-		menu_additem(g_Menu_MapChooser, fmt("\w%a%s", ArrayGetStringHandle(aMods[Maps], g_iSVM_MapInMenu_SecondRound[i]), (i == (g_iMapVoteNum-1)) ? "^n^n\d(SEGUNDA VOTACIÓN)" : ""));
+	for(new i = 0, sItem[200], iLen; i < g_iMapVoteNum; ++i)
+	{
+		iLen = formatex(sItem, charsmax(sItem), "\w%a", ArrayGetStringHandle(aMods[Maps], g_iSVM_MapInMenu_SecondRound[i]));
+
+		if(i == (g_iMapVoteNum-1))
+			iLen += formatex(sItem[iLen], charsmax(sItem) - iLen, "^n^n\d(%L)", LANG_PLAYER, "MM_SECOND_VOTE");
+
+		menu_additem(g_Menu_MapChooser, sItem);
+	}
 
 	menu_setprop(g_Menu_MapChooser, MPROP_PERPAGE, 0);
 	menu_setprop(g_Menu_MapChooser, MPROP_EXIT, MEXIT_NEVER);
