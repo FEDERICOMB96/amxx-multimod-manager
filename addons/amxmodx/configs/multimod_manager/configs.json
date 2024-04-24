@@ -43,7 +43,10 @@
 		// If the path does not exist, it will be considered as disabled
 		// E.g.: "addons/resemiclip"
 
-	"change_game_description": true, // true / false (Changes the game description with the name of the mod)
+	"change_game_description": 1,
+		// 0 = Disabled
+		// 1 = Changes the game description with the name (modname) of the mod
+		// 2 = Changes the game description with the tag (mod_tag) of the mod
 
 	"mods":
 	[

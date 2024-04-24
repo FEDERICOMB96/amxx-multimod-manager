@@ -147,7 +147,7 @@ enum GlobalConfigs_e
 	ReSemiclipPath[PLATFORM_MAX_PATH],
 
 	// Change Game Description
-	bool:ChangeGameDescription,
+	ChangeGameDescription,
 
 	// Mods
 	Array:Mods,

@@ -234,7 +234,7 @@ MultiMod_Init()
 		g_GlobalConfigs[MaxRecentMaps] = max(0, json_object_get_number(jConfigsFile, "max_recent_maps"));
 		g_GlobalConfigs[OverwriteMapcycle] = json_object_get_bool(jConfigsFile, "overwrite_mapcycle");
 		json_object_get_string(jConfigsFile, "resemiclip_path", g_GlobalConfigs[ReSemiclipPath], PLATFORM_MAX_PATH-1);
-		g_GlobalConfigs[ChangeGameDescription] = json_object_get_bool(jConfigsFile, "change_game_description");
+		g_GlobalConfigs[ChangeGameDescription] = clamp(json_object_get_number(jConfigsFile, "change_game_description"), 0, 2);
 
 		new JSON:jArrayMods = json_object_get_value(jConfigsFile, "mods");
 		new iCount = json_array_get_count(jArrayMods);
@@ -972,7 +972,12 @@ MultiMod_SetGameDescription(const iMod)
 		new aMod[ArrayMods_e];
 		ArrayGetArray(g_GlobalConfigs[Mods], iMod, aMod);
 
-		set_member_game(m_GameDesc, aMod[ModName]);
+		switch(g_GlobalConfigs[ChangeGameDescription])
+		{
+			case 1: set_member_game(m_GameDesc, aMod[ModName]);
+			case 2: set_member_game(m_GameDesc, aMod[ModTag]);
+		}
+		
 		return 1;
 	}
 
