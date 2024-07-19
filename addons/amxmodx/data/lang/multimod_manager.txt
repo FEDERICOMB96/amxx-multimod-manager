@@ -741,3 +741,189 @@ MM_RTV_VOTING_START = ^3Rock The Vote^1 Zapochna! Sled^4 10 sekundi^1 vota za sm
 
 MM_LISTMODS_MENU_TITLE = \ySpisak na modove^n\dIzberete edin, za da vidite dostupnite mu mapove\y
 MM_LISTMAPS_MENU_TITLE = \ySpisak na mapove za mod\w %s\y
+
+[cn]
+MULTIMOD_MANAGER = 游戏多模式管理器
+
+MM_MODE = 游戏模式
+MM_MODES = 游戏模式
+MM_MAP = 地图
+MM_MAPS = 地图
+MM_VOTE = 投票
+MM_VOTES = 投票
+MM_PERCENT = 百分率
+MM_EXT = 延长
+MM_VOTE_RESULT = 投票结果
+MM_MOD_WIN = 优胜模式
+MM_MAP_WIN = 优胜地图
+MM_VOTING_END = 投票结束!
+MM_SECOND_VOTE = 二次投票
+MM_NO_MAP_CHOOSED_CVAR = [尚未选择地图]
+MM_ADMIN_NO_ACC = 无执行此命令的权限.
+MM_ALREADY_VOTING = 当前已有一项投票...
+MM_NO_VOTES_COUNT = 没有进行投票...
+
+MM_BACK = 返回
+MM_MORE = 下一个
+MM_EXIT = 退出
+MM_AGO = %s 前
+MM_COUNT = 计数
+MM_ADMIN = 管理员
+MM_LOCKED = 锁定
+MM_SELECTED = 已选
+MM_CURRENT = 当前
+MM_MAX = 最大值
+MM_RANDOM = 随机
+MM_RECENT = 最近
+MM_NOMINATED = 已提名
+MM_YOU_NOMINATED = 你已提名
+
+MM_ERR_FIND_FILE = 未找到文件
+MM_ERR_PARSE_FILE = 文件无法解析
+MM_ERR_NO_LOADED_MODES = 没有加载的游戏模式
+MM_ERR_INVALID_MAP_LIST = '%s' 游戏模式的地图列表无效.已忽略.
+MM_INVALID_JSON_FILE = 无效的 JSON 文件
+MM_EXECUTING_CVARS_MODE = 运行 '%s' 游戏模式的参数配置
+
+MM_MAP_CHANGE_END_ROUND = 将在回合结束时换图
+MM_NEXT_MODE_HASNT_BEEN_CHOOSED = 尚未选择下个游戏模式
+MM_NEXT_MAP_HASNT_BEEN_CHOOSED = 尚未选择下张地图
+MM_CURRENT_MODE = 当前游戏模式
+MM_CURRENT_MAP = 当前地图
+MM_NEXT_MODE = 下一游戏模式
+MM_NEXT_MAP = 下张地图
+MM_TIMELEFT = 剩余时间
+MM_NO_T_LIMIT = 无限制
+MM_MAX_ROUNDS = 最大回合
+MM_ROUNDS_LEFT = 剩余回合
+MM_WIN_LIMIT = 率先取得^3 %d 个回合胜利的队伍^1 将赢得比赛
+
+MM_NO_RECENT_MODES_PLAYED = 近期没有玩过的游戏模式
+MM_NO_RECENT_MAPS_PLAYED = 近期没有玩过的地图
+MM_RECENT_MODES = 最近玩过的游戏模式
+MM_RECENT_MAPS = 最近玩过的地图
+
+MM_NEXT_VOTE_WILL_START_IN = 将在 %d 秒后发起投票
+MM_NEXT_MAP_CHANGE_WILL_BE_IN = 将在 %d 秒后换图
+MM_TIME_CHOOSE_MOD = 即将到达选择下个游戏模式的时间...
+MM_TIME_CHOOSE_MAP = 即将到达选择下张地图的时间...
+MM_SELECT_NEXT_MODE = 选择下个游戏模式
+MM_SELECT_NEXT_MAP = 选择下张地图
+MM_SELECT_VOTE_RANDOM_ITEM = 随机投票
+MM_M_EXTEND_CURRENT_MODE = \w将\y %s\w 游戏模式延长 \y %d 分钟
+MM_VOTED_FOR = 你将票投给了^3 %s
+MM_PLAYER_VOTED_FOR = ^3%n^1 将票投给了^3 %s
+MM_CHO_NO_VOTES_MOD = 尚无投票, 随机优选的游戏模式是:^3 %s
+MM_CHO_NO_VOTES_MAP = 尚无投票, 随机优选的地图是:^3 %s
+MM_MOD_CHO_FIN_EXT = 投票结束, 当前游戏模式将延长^3 %d 分钟^1 投票结果:^4 %d^1 /^4 %d^1 得票率:(%d%%)
+MM_MOD_CHO_FIN_NEXT = 投票结束, 优胜游戏模式为:^3 %s^1 投票结果:^4 %d^1 /^4 %d^1 得票率:(%d%%)
+MM_MOD_CHO_ONLY_MAP = 模式^3 %s^1 只有地图^4 %s
+MM_MAP_CHO_FIN_NEXT = 投票结束, 优胜地图为:^3 %s^1 投票结果:^4 %d^1 /^4 %d^1 得票率:(%d%%)
+MM_RTV_CHO_NO_RESULT = (RTV) 换图投票未获通过!
+
+MM_ADMIN_VOTE_DISCONNECTED = ^3%n^1 已退出游戏, 他的投票被取消
+MM_ADMIN_FORCE_VOTEMODE = ^3%n^1 发起了下个游戏模式的投票
+MM_ADMIN_CANT_FORCE_VOTEMODE = 目前无法强制进行游戏模式投票.
+MM_ADMIN_SELECT_NEXTMOD = 选择\y 下个游戏模式:\r (%s)
+MM_ADMIN_SELECT_NEXTMAP = 选择\y 下张地图:\r (%a)
+MM_ADMIN_SELECT_NEXTMAP_UNKNOWN = 选择\y 下张地图\r (未知)
+MM_ADMIN_CHANGE_TO_MODE_AND_MAP = 更改为:^n\w- 游戏模式:\y %s^n\w- 地图:\y %a
+MM_ADMIN_CHANGE_TO_MODE_AND_MAP_UNKNOWN = 更改为:^n\w- 游戏模式:\y %s^n\w- 地图:\y (未知)
+MM_ADMIN_START_VOTEMODE = 开始\y 游戏模式投票
+MM_ADMIN_START_VOTEMAP = 开始\y 换图投票\r (%s)
+MM_ADMIN_MANAGE_MODS = 管理\y 游戏模式
+
+MM_ADMIN_VOTEMOD_M_TITLE_SELECT_MODE = \y选择游戏模式
+MM_ADMIN_VOTEMAP_NO_MODS = 没有可供选择的游戏模式
+MM_ADMIN_VOTEMOD_MODE_SELECTED = 你已选择^4 %s 游戏模式
+MM_ADMIN_VOTEMOD_MODE_SELECTED_INFO = 现在你可以切换到已选游戏模式的地图或者发起投票
+MM_ADMIN_VOTEMOD_M_TITLE_VOTE = \y游戏模式投票：%d/%d
+MM_ADMIN_VOTEMOD_START_VOTE = 开始游戏模式投票
+MM_ADMIN_VOTEMOD_MIN_MODES = 至少选择两个游戏模式 (最多 %d 个)
+MM_ADMIN_VOTEMOD_SELECTED_MODES = \y已选游戏模式\w
+MM_ADMIN_VOTEMOD_ADMIN_NAME = \y投票由\w %n 发起
+MM_ADMIN_VOTEMOD_START_VOTE_SAY = ^3%n^1 发起了更改游戏模式投票
+
+MM_ADMIN_VOTEMAP_M_TITLE_SELECT_MAP = \y选择\r (%s)\y游戏模式下的地图
+MM_ADMIN_VOTEMAP_NO_MAPS = 没有可供选择的地图
+MM_ADMIN_VOTEMAP_MAP_SELECTED = 你已选择^3 %s 游戏模式的^4 %a^1 地图
+MM_ADMIN_VOTEMAP_MAP_SELECTED_INFO = 现在你可以切换到已选的地图
+MM_ADMIN_VOTEMAP_M_TITLE_VOTE = \y游戏模式\w %s 的换图投票\y %d/%d
+MM_ADMIN_VOTEMAP_START_VOTE = 开始投票换图
+MM_ADMIN_VOTEMAP_MIN_MAPS = 至少选择两张地图 (最多 %d 张)
+MM_ADMIN_VOTEMAP_SELECTED_MAPS = \y已选地图\w
+MM_ADMIN_VOTEMAP_ADMIN_NAME = \y投票由\w %n 发起
+MM_ADMIN_VOTEMAP_START_VOTE_SAY = ^3%n^1 发起了换图投票
+
+MM_ADMIN_VOTE_CONFIRM = 确认投票
+MM_ADMIN_VOTE_REF = 拒绝投票
+MM_ADMIN_RES_REF = ^3%n^1 拒绝了投票
+MM_ADMIN_CHANGE_MOD_MAP = ^3%n^1 已将游戏模式更改为:^4 %s^1 地图更改为:^4 %s
+
+MM_ADMIN_M_TITLE_MANAGE_MODS = \y管理游戏模式
+MM_ADMIN_MODE_ENABLED = 你已^3 启用^1 游戏模式:^4 %s
+MM_ADMIN_MODE_DISABLED = 你已^3 禁用^1 游戏模式:^4 %s
+MM_ADMIN_CANT_BLOCK_MAIN_MODE = 不能关闭游戏模式:^3 %s^1 (主游戏模式)
+MM_ADMIN_CANT_BLOCK_CURRENT_MODE = 不能关闭游戏模式:^3 %s^1 (当前游戏模式)
+
+MM_ADMIN_MANAGE_MM_M_TITLE = \y管理游戏模式和地图
+MM_ADMIN_DELETE_MODS = 删除最近的游戏模式
+MM_ADMIN_DELETE_MAPS = 删除游戏模式\y %s 的最近地图
+MM_ADMIN_DELETE_ALL_MODS = 删除所有的最近游戏模式
+MM_ADMIN_DELETE_ALL_MAPS = 删除游戏模式\y %s 的最近地图
+MM_ADMIN_CANT_DELETE_RECENT_MODS = 无法删除最近的游戏模式.
+MM_ADMIN_CANT_DELETE_RECENT_MAPS = 无法删除最近的地图.
+MM_ADMIN_RECENT_MOD_DELETED = 已删除最近的游戏模式:^4 %s
+MM_ADMIN_RECENT_MAP_DELETED = 已删除最近的地图:^4 %s^1.归属于游戏模式:^3 %s
+MM_ADMIN_RECENT_MOD_NOT_DELETED = 最近的游戏模式:^4 %s^1 未被删除
+MM_ADMIN_RECENT_MAP_NOT_DELETED = 最近的地图:^4 %s^1 归属于游戏模式:^3 %s^1 未被删除
+MM_ADMIN_RECENT_MOD_DELETED_ALL = 已删除所有最近的游戏模式
+MM_ADMIN_RECENT_MAP_DELETED_ALL = 已删除游戏模式^3 %s 的所有最近地图
+
+MM_MODCHOO_VOTED_FOR = 你投票支持的游戏模式: ^3 %s
+MM_MODCHOO_PLAYER_VOTED_FOR = %n 投票支持的游戏模式: %s
+MM_MODCHOO_VOTED_EXT = 投票支持将游戏模式^3 %s^1 延长^4 %d ^1 分钟
+MM_MODCHOO_PLAYER_VOTED_EXT = %n 投票支持将游戏模式 %s 延长 %d 分钟
+MM_MODCHOO_NEXT = 下个游戏模式是: ^3 %s
+MM_MODCHOO_NEED_SECOND_VOTE = 有^4 %d 个游戏模式^1,每个游戏模式有^4 %d^1 票, 10秒钟后进行^3 下一轮投票
+MM_MODCHOO_SECOND_ROUND_EXT_INFO1 = 二次投票时^4 没有游戏模式^1 获得高票.
+MM_MODCHOO_SECOND_ROUND_EXT_INFO2 = 最多得票数中, 随机优选的是延长游戏模式:^3 %s^1.
+MM_MODCHOO_SECOND_ROUND_EXT_INFO3 = 当前游戏模式将延长^3 %d ^1 分钟.
+MM_MODCHOO_SECOND_ROUND_NEXT_INFO1 = 二次投票时^4 没有游戏模式^1 获得高票.
+MM_MODCHOO_SECOND_ROUND_NEXT_INFO2 = 在最多得票数中, 随机优选的游戏模式是:^3 %s^1.
+
+MM_MAPCHOO_VOTED_FOR = 你投票支持的地图:^3 %s
+MM_MAPCHOO_PLAYER_VOTED_FOR = %n 投票支持的地图: %s
+MM_MAPCHOO_NEXT = 下张地图是:^3 %s
+MM_MAPCHOO_CAN_NOM = ^4 %d 秒钟后提名下个游戏模式的地图
+MM_MAPCHOO_NEED_SECOND_VOTE = 有^4 %d 张地图^1 每张地图有^4 %d^1 票, 10秒钟后进行^3 下一轮投票
+MM_MAPCHOO_SECOND_ROUND_NEXT_INFO1 = 二次投票时^4 没有地图^1 获得高票.
+MM_MAPCHOO_SECOND_ROUND_NEXT_INFO2 = 在最多得票数中, 随机优选的地图是:^3 %s^1.
+
+MM_NOMS_MOD_NOT_ENABLED = 未启用游戏模式提名!
+MM_NOMS_MAP_NOT_ENABLED = 未启用地图提名!
+MM_NOMS_NOT_ALLOWED = 当前不允许提名!
+MM_NOMS_MODS_NOT_ENOUGH = 没有足够数量可供提名的游戏模式!
+MM_NOMS_MAPS_NOT_ENOUGH = 没有足够数量可供提名的地图!
+MM_NOMS_M_TITLE_NOMINATE_MODS = 游戏模式提名
+MM_NOMS_M_TITLE_NOMINATE_MAPS = 地图提名
+MM_NOMS_PLAYER_NOMINATED_MOD = ^3%n^1 已提名游戏模式:^4 %s
+MM_NOMS_PLAYER_NOMINATED_MAP = ^3%n^1 已提名地图:^4 %a
+MM_NOMS_PLAYER_DEL_NOM_MOD = ^3%n^1 已取消对^4 %s 游戏模式的提名
+MM_NOMS_PLAYER_DEL_NOM_MAP = ^3%n^1 已取消对^4 %a 地图的提名
+MM_NOMS_ALREADY_NOMINATED_MOD = 游戏模式^4 %s^1 已被提名!
+MM_NOMS_ALREADY_NOMINATED_MOD_INFO1 = 你已提名游戏模式:^4 %s^1, 不能一次提名多个游戏模式!
+MM_NOMS_ALREADY_NOMINATED_MAP = 地图^4 %s^1 已被提名!
+MM_NOMS_ALREADY_NOMINATED_MAP_INFO1 = 你已提名地图^4 %s^1, 不能一次提名多张地图!
+
+MM_RTV_NOT_ENABLED = RTV^3 功能^1 已被禁用!
+MM_RTV_COOLDOWN = 须等待^4 %d 秒后^1 方可使用^3 RTV
+MM_RTV_ALREADY_MOD_CHOOSED = 更改游戏模式的投票已经进行!
+MM_RTV_MIN_PLAYERS = 游戏中需要至少^4 %d 名玩家^1 方可使用^3 RTV
+MM_RTV_ALREADY_VOTED = 你已使用^3 RTV^1 进行游戏模式的更改!
+MM_RTV_NEED_MIN_VOTES = 需要^4 %d 张票^1 方可使用^3 RTV
+MM_RTV_PLAYER_VOTED = ^3%n^1 已投票支持^3 RTV^1. 总票数: ^4%d^1/^4%d
+MM_RTV_VOTING_START = ^3 RTV^1 已开始! ^4 10 秒后^1 开始进行游戏模式更改的投票
+
+MM_LISTMODS_MENU_TITLE = \y游戏模式列表^n\d选择并查看可用地图\y
+MM_LISTMAPS_MENU_TITLE = \y游戏模式地图列表\w %s\y
