@@ -267,7 +267,7 @@ public OnTaskCheckVoteMod()
 		{
 			if(g_bIsRockTheVote)
 			{
-				g_iNextSelectMod = g_iSVM_ModInMenu[iWinner];
+				g_iNextSelectMod = g_iCurrentMod;
 				MultiMod_SetNextMod(g_iNextSelectMod);
 
 				g_bSelectedNextMod = true;
@@ -468,7 +468,7 @@ public OnTask_CheckVoteModFIX()
 		{
 			if(g_bIsRockTheVote)
 			{
-				g_iNextSelectMod = iWinner;
+				g_iNextSelectMod = g_iCurrentMod;
 				MultiMod_SetNextMod(g_iNextSelectMod);
 				
 				g_bSelectedNextMod = true;
