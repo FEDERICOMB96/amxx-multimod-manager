@@ -225,6 +225,7 @@ MultiMod_Init()
 		g_GlobalConfigs[RTV_MinPlayers] = clamp(json_object_get_number(jConfigsFile, "rockthevote.minplayers", true), 0, MAX_CLIENTS);
 		g_GlobalConfigs[RTV_Percentage] = clamp(json_object_get_number(jConfigsFile, "rockthevote.percentage", true), 0, 100);
 		g_GlobalConfigs[RTV_IgnoreChangeMapType] = json_object_get_bool(jConfigsFile, "rockthevote.ignore_change_map_type", true);
+		g_GlobalConfigs[RTV_AllowExtendCurrentMod] = json_object_get_bool(jConfigsFile, "rockthevote.allow_extend_current_mod", true);
 		g_GlobalConfigs[Nom_Mods_Enabled] = json_object_get_bool(jConfigsFile, "nomination.mods", true);
 		g_GlobalConfigs[Nom_Maps_Enabled] = json_object_get_bool(jConfigsFile, "nomination.maps", true);
 		g_GlobalConfigs[AdminMaxOptionsInMenu] = clamp(json_object_get_number(jConfigsFile, "admin_max_options_in_menu"), 2, MAX_ADMIN_VOTEOPTIONS);

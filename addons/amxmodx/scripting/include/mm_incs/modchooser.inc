@@ -574,7 +574,16 @@ public OnTask_ModChooserHudVote()
 
 bool:IsAvailableExtendMap()
 {
-	return bool:(((g_bCvar_mp_winlimit + g_bCvar_mp_maxrounds) == 0) && (get_pcvar_float(g_pCvar_mp_timelimit) < float(g_bCvar_amx_extendmap_max)) && !g_bIsRockTheVote);
+	if((g_bCvar_mp_winlimit + g_bCvar_mp_maxrounds) != 0)
+		return false;
+	
+	if(get_pcvar_float(g_pCvar_mp_timelimit) >= float(g_bCvar_amx_extendmap_max))
+		return false;
+	
+	if(g_bIsRockTheVote && !g_GlobalConfigs[RTV_AllowExtendCurrentMod])
+		return false;
+
+	return true;
 }
 
 ExtendTimeleft(const iTime)
