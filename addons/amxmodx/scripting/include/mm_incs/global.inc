@@ -31,6 +31,7 @@ new g_Forward_EndVotemod;
 new g_Forward_StartVotemap;
 new g_Forward_EndVotemap;
 new g_Forward_AdminForceVotemod;
+new g_Forward_AdminRestartMap;
 
 new g_Hud_Vote;
 new g_Hud_Alert;

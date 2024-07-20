@@ -6,6 +6,7 @@
 AdminCmd_Init()
 {
 	register_concmd("mm_force_votemod", "ConsoleCommand_ForceVoteMod", g_GlobalConfigs[AdminFlags_ForceVoteMod]);
+	register_concmd("mm_restart", "ConsoleCommand_Restart", g_GlobalConfigs[AdminFlags_Restart]);
 
 	register_clcmd("amx_multimod", "ClientCommand__AdminMultimod", g_GlobalConfigs[AdminFlags_Menu]);
 	register_clcmd("amx_manage_mm", "ClientCommand__ManageMM", g_GlobalConfigs[AdminFlags_ManageMods]);
@@ -89,6 +90,19 @@ public ConsoleCommand_ForceVoteMod(const id, const level, const cid)
 	}
 	
 	console_print(id, "%L", LANG_PLAYER, "MM_ADMIN_CANT_FORCE_VOTEMODE");
+	return PLUGIN_HANDLED;
+}
+
+public ConsoleCommand_Restart(const id, const level, const cid)
+{
+	if(!cmd_access(id, level, cid, 1))
+		return PLUGIN_HANDLED;
+	
+	ExecuteForward(g_Forward_AdminRestartMap, g_Forward_RetVal, id);
+
+	MultiMod_SetNextMod(g_iCurrentMod);
+
+	set_task(2.0, "OnTask_ChangeMap", 0, g_szCurrentMap, MAX_MAPNAME_LENGTH-1);
 	return PLUGIN_HANDLED;
 }
 
