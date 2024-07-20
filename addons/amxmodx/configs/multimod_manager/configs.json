@@ -10,7 +10,8 @@
 		"managemods": "a",  // immunity 
 		"selectmenu": "f",  // amx_map command
 		"forcevotemod": "f",// amx_map command
-		"votemenu": "j"     // amx_vote and other vote commands
+		"votemenu": "j",    // amx_vote and other vote commands
+		"restart": "a"      // mm_restart command
 	},
 
 	"rockthevote":

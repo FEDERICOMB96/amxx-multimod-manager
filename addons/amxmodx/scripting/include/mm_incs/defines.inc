@@ -117,6 +117,7 @@ enum GlobalConfigs_e
 	AdminFlags_SelectMenu,
 	AdminFlags_ForceVoteMod,
 	AdminFlags_VoteMenu,
+	AdminFlags_Restart,
 
 	// Rock The Vote
 	bool:RTV_Enabled,

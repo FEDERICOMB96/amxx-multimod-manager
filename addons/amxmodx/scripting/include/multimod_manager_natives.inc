@@ -187,6 +187,13 @@ forward multimod_end_votemap(const bool:bSecondVote);
 forward multimod_admin_force_votemod(const iAdminId);
 
 /**
+ * Called when an admin or server console forces a map restart
+ *
+ * @param iAdminId      Admin index, 0 if server console
+ */
+forward multimod_admin_restart_map(const iAdminId);
+
+/**
 * This is the callback from the plugin core that gives major/minor versions for verifying compatibility for Multimod Manager versions.
 * If an AMXX plugin gets a failure, then you do need to upgrade to the latest version of the Multimod Manager or update the files included for AMXX plugins.
 * Do not modify this!

@@ -54,6 +54,7 @@ public plugin_precache()
 	g_Forward_StartVotemap = CreateMultiForward("multimod_start_votemap", ET_IGNORE, FP_CELL);
 	g_Forward_EndVotemap = CreateMultiForward("multimod_end_votemap", ET_IGNORE, FP_CELL);
 	g_Forward_AdminForceVotemod = CreateMultiForward("multimod_admin_force_votemod", ET_STOP, FP_CELL);
+	g_Forward_AdminRestartMap = CreateMultiForward("multimod_admin_restart_map", ET_IGNORE, FP_CELL);
 
 	Cvars_Init();
 	MultiMod_Init();
@@ -220,6 +221,9 @@ MultiMod_Init()
 
 		json_object_get_string(jConfigsFile, "adminflags.votemenu", szReadFlags, charsmax(szReadFlags), true);
 		g_GlobalConfigs[AdminFlags_VoteMenu] = read_flags(szReadFlags);
+
+		json_object_get_string(jConfigsFile, "adminflags.restart", szReadFlags, charsmax(szReadFlags), true);
+		g_GlobalConfigs[AdminFlags_Restart] = read_flags(szReadFlags);
 
 		g_GlobalConfigs[RTV_Enabled] = json_object_get_bool(jConfigsFile, "rockthevote.enable", true);
 		g_GlobalConfigs[RTV_Cooldown] = max(0, json_object_get_number(jConfigsFile, "rockthevote.cooldown", true));
