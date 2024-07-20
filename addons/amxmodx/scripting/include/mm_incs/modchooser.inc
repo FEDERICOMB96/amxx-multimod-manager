@@ -99,7 +99,11 @@ public OnTask_VoteNextMod()
 
 	if(IsAvailableExtendMap())
 	{
-		menu_additem(g_Menu_ModChooser, fmt("\w%L^n", LANG_PLAYER, "MM_M_EXTEND_CURRENT_MODE", g_szCurrentMod, g_bCvar_amx_extendmap_step), fmt("%d", OPTION_EXTEND_MOD));
+		if(g_bIsRockTheVote)
+			menu_additem(g_Menu_ModChooser, fmt("\w%L^n", LANG_PLAYER, "MM_M_EXTEND_CURRENT_MODE_RTV", g_szCurrentMod), fmt("%d", OPTION_EXTEND_MOD));
+		else
+			menu_additem(g_Menu_ModChooser, fmt("\w%L^n", LANG_PLAYER, "MM_M_EXTEND_CURRENT_MODE", g_szCurrentMod, g_bCvar_amx_extendmap_step), fmt("%d", OPTION_EXTEND_MOD));
+
 		g_iSVM_ModInMenu[g_iModVoteNum] = OPTION_EXTEND_MOD;
 	}
 
@@ -147,7 +151,10 @@ public menu__CountVoteMod(const id, const menuid, const item)
 		// Extender modo..
 		if(iModId == g_iModVoteNum)
 		{
-			client_print_color(id, print_team_blue, "%s^1 %L^4 [%L]", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MODCHOO_VOTED_EXT", g_szCurrentMod, g_bCvar_amx_extendmap_step, LANG_PLAYER, "MM_RANDOM");
+			if(g_bIsRockTheVote)
+				client_print_color(id, print_team_blue, "%s^1 %L^4 [%L]", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MODCHOO_VOTED_EXT_RTV", g_szCurrentMod, LANG_PLAYER, "MM_RANDOM");
+			else
+				client_print_color(id, print_team_blue, "%s^1 %L^4 [%L]", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MODCHOO_VOTED_EXT", g_szCurrentMod, g_bCvar_amx_extendmap_step, LANG_PLAYER, "MM_RANDOM");
 		
 			if(g_bCvar_amx_vote_answers)
 				client_print(0, print_console, "%L [%L]", LANG_PLAYER, "MM_MODCHOO_PLAYER_VOTED_EXT", id, g_szCurrentMod, g_bCvar_amx_extendmap_step, LANG_PLAYER, "MM_RANDOM");
@@ -165,7 +172,10 @@ public menu__CountVoteMod(const id, const menuid, const item)
 	}
 	else if(str_to_num(szInfo) == OPTION_EXTEND_MOD)
 	{
-		client_print_color(id, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MODCHOO_VOTED_EXT", g_szCurrentMod, g_bCvar_amx_extendmap_step);
+		if(g_bIsRockTheVote)
+			client_print_color(id, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MODCHOO_VOTED_EXT_RTV", g_szCurrentMod);
+		else
+			client_print_color(id, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MODCHOO_VOTED_EXT", g_szCurrentMod, g_bCvar_amx_extendmap_step);
 		
 		if(g_bCvar_amx_vote_answers)
 			client_print(0, print_console, "%L", LANG_PLAYER, "MM_MODCHOO_PLAYER_VOTED_EXT", id, g_szCurrentMod, g_bCvar_amx_extendmap_step);
@@ -261,11 +271,29 @@ public OnTaskCheckVoteMod()
 		// Ganador, extender el modo
 		if(iWinner == g_iModVoteNum)
 		{
-			ExtendTimeleft(g_bCvar_amx_extendmap_step);
-			client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MOD_CHO_FIN_EXT", g_bCvar_amx_extendmap_step, iResult, g_iVoteModCount, UTIL_GetPercent(iResult, g_iVoteModCount));
+			if(g_bIsRockTheVote)
+			{
+				g_iNextSelectMod = g_iCurrentMod;
+				MultiMod_SetNextMod(g_iNextSelectMod);
+
+				client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MOD_CHO_FIN_EXT_RTV", iResult, g_iVoteModCount, UTIL_GetPercent(iResult, g_iVoteModCount));
+
+				ModChooser_ResetAllData();
+				Nominations_ResetAllData();
+
+				g_bSelectedNextMod = true;
+
+				MapChooser_InitNextVoteMap(40);
+			}
+			else
+			{
+				ExtendTimeleft(g_bCvar_amx_extendmap_step);
+				client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MOD_CHO_FIN_EXT", g_bCvar_amx_extendmap_step, iResult, g_iVoteModCount, UTIL_GetPercent(iResult, g_iVoteModCount));
+
+				ModChooser_ResetAllData();
+				Nominations_ResetAllData();
+			}
 			
-			ModChooser_ResetAllData();
-			Nominations_ResetAllData();
 			return;
 		}
 
@@ -321,7 +349,10 @@ public OnTask_VoteNextMod__FIX()
 	{
 		if(g_iSVM_ModInMenu_SecondRound[i] == OPTION_EXTEND_MOD)
 		{
-			iLen = formatex(sItem, charsmax(sItem), "\w%L", LANG_PLAYER, "MM_M_EXTEND_CURRENT_MODE", g_szCurrentMod, g_bCvar_amx_extendmap_step);
+			if(g_bIsRockTheVote)
+				iLen = formatex(sItem, charsmax(sItem), "\w%L", LANG_PLAYER, "MM_M_EXTEND_CURRENT_MODE_RTV", g_szCurrentMod);
+			else
+				iLen = formatex(sItem, charsmax(sItem), "\w%L", LANG_PLAYER, "MM_M_EXTEND_CURRENT_MODE", g_szCurrentMod, g_bCvar_amx_extendmap_step);
 
 			if(i == (g_iModVoteNum-1))
 				formatex(sItem[iLen], charsmax(sItem) - iLen, "^n^n\d(%L)", LANG_PLAYER, "MM_SECOND_VOTE");
@@ -374,7 +405,10 @@ public menu__CountVoteModFIX(const id, const menuid, const item)
 	
 	if(g_iSVM_ModInMenu_SecondRound[iModId] == OPTION_EXTEND_MOD)
 	{
-		client_print_color(id, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MODCHOO_VOTED_EXT", g_szCurrentMod, g_bCvar_amx_extendmap_step);
+		if(g_bIsRockTheVote)
+			client_print_color(id, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MODCHOO_VOTED_EXT_RTV", g_szCurrentMod);
+		else
+			client_print_color(id, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MODCHOO_VOTED_EXT", g_szCurrentMod, g_bCvar_amx_extendmap_step);
 		
 		if(g_bCvar_amx_vote_answers)
 			client_print(0, print_console, "%L", LANG_PLAYER, "MM_MODCHOO_PLAYER_VOTED_EXT", id, g_szCurrentMod, g_bCvar_amx_extendmap_step);
@@ -448,19 +482,37 @@ public OnTask_CheckVoteModFIX()
 		// Ganador, extender el modo
 		if(iWinner == OPTION_EXTEND_MOD)
 		{
-			ExtendTimeleft(g_bCvar_amx_extendmap_step);
-
-			if(j > 1)
+			if(g_bIsRockTheVote)
 			{
-				client_print_color(0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MODCHOO_SECOND_ROUND_EXT_INFO1");
-				client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MODCHOO_SECOND_ROUND_EXT_INFO2", g_szCurrentMod);
-				client_print_color(0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MODCHOO_SECOND_ROUND_EXT_INFO3", g_bCvar_amx_extendmap_step);
+				g_iNextSelectMod = g_iCurrentMod;
+				MultiMod_SetNextMod(g_iNextSelectMod);
+				
+				client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MOD_CHO_FIN_EXT_RTV", iResult, g_iVoteModCount, UTIL_GetPercent(iResult, g_iVoteModCount));
+
+				ModChooser_ResetAllData();
+				Nominations_ResetAllData();
+				
+				g_bSelectedNextMod = true;
+
+				MapChooser_InitNextVoteMap(40);
 			}
 			else
-				client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MOD_CHO_FIN_EXT", g_bCvar_amx_extendmap_step, iResult, g_iVoteModCount, UTIL_GetPercent(iResult, g_iVoteModCount));
+			{
+				ExtendTimeleft(g_bCvar_amx_extendmap_step);
 
-			ModChooser_ResetAllData();
-			Nominations_ResetAllData();
+				if(j > 1)
+				{
+					client_print_color(0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MODCHOO_SECOND_ROUND_EXT_INFO1");
+					client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MODCHOO_SECOND_ROUND_EXT_INFO2", g_szCurrentMod);
+					client_print_color(0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MODCHOO_SECOND_ROUND_EXT_INFO3", g_bCvar_amx_extendmap_step);
+				}
+				else
+					client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MOD_CHO_FIN_EXT", g_bCvar_amx_extendmap_step, iResult, g_iVoteModCount, UTIL_GetPercent(iResult, g_iVoteModCount));
+				
+				ModChooser_ResetAllData();
+				Nominations_ResetAllData();
+			}
+
 			return;
 		}
 
@@ -560,7 +612,12 @@ public OnTask_ModChooserHudVote()
 		iNoFirst = 1;
 
 		if(iModId[i] == OPTION_EXTEND_MOD)
-			iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "%L %s %dm: %d %L (%d%%%%)", LANG_PLAYER, "MM_EXT", g_szCurrentMod, g_bCvar_amx_extendmap_step, iVoteMods[i], LANG_PLAYER, (iVoteMods[i] == 1) ? "MM_VOTE" : "MM_VOTES", UTIL_GetPercent(iVoteMods[i], g_iVoteModCount));
+		{
+			if(g_bIsRockTheVote)
+				iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "%L %s: %d %L (%d%%%%)", LANG_PLAYER, "MM_EXT", g_szCurrentMod, iVoteMods[i], LANG_PLAYER, (iVoteMods[i] == 1) ? "MM_VOTE" : "MM_VOTES", UTIL_GetPercent(iVoteMods[i], g_iVoteModCount));
+			else
+				iLen += formatex(sHud[iLen], charsmax(sHud) - iLen, "%L %s %dm: %d %L (%d%%%%)", LANG_PLAYER, "MM_EXT", g_szCurrentMod, g_bCvar_amx_extendmap_step, iVoteMods[i], LANG_PLAYER, (iVoteMods[i] == 1) ? "MM_VOTE" : "MM_VOTES", UTIL_GetPercent(iVoteMods[i], g_iVoteModCount));
+		}
 		else
 		{
 			ArrayGetArray(g_GlobalConfigs[Mods], iModId[i], aData);
@@ -574,7 +631,16 @@ public OnTask_ModChooserHudVote()
 
 bool:IsAvailableExtendMap()
 {
-	return bool:(((g_bCvar_mp_winlimit + g_bCvar_mp_maxrounds) == 0) && (get_pcvar_float(g_pCvar_mp_timelimit) < float(g_bCvar_amx_extendmap_max)) && !g_bIsRockTheVote);
+	if((g_bCvar_mp_winlimit + g_bCvar_mp_maxrounds) != 0)
+		return false;
+	
+	if(get_pcvar_float(g_pCvar_mp_timelimit) >= float(g_bCvar_amx_extendmap_max))
+		return false;
+	
+	if(g_bIsRockTheVote && !g_GlobalConfigs[RTV_AllowExtendCurrentMod])
+		return false;
+
+	return true;
 }
 
 ExtendTimeleft(const iTime)

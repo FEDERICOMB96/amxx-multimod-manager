@@ -20,7 +20,8 @@
 		"cooldown": 120,               // min = 0 (disabled)
 		"minplayers": 3,               // min = 0 (disabled) | max = 32
 		"percentage": 75,              // min = 0 (disabled) | max = 100
-		"ignore_change_map_type": true // true / false (true = ignores the change_map_type of the mod)
+		"ignore_change_map_type": true, // true / false (true = ignores the change_map_type of the mod)
+		"allow_extend_current_mod": true // true / false (true = allows to extend the current mod)
 	},
 
 	"nomination":

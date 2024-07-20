@@ -125,6 +125,7 @@ enum GlobalConfigs_e
 	RTV_MinPlayers,
 	RTV_Percentage,
 	bool:RTV_IgnoreChangeMapType,
+	bool:RTV_AllowExtendCurrentMod,
 
 	// Nomination
 	bool:Nom_Mods_Enabled,
