@@ -81,6 +81,7 @@ public plugin_init()
 	UTIL_RegisterClientCommandAll("nextmap", "OnClientCommand_NextMap");
 	UTIL_RegisterClientCommandAll("timeleft", "OnClientCommand_Timeleft");
 	UTIL_RegisterClientCommandAll("listmods", "OnClientCommand_ListMods");
+	UTIL_RegisterClientCommandAll("thetime", "OnClientCommand_Thetime");
 
 	g_Hud_Vote = CreateHudSyncObj();
 	g_Hud_Alert = CreateHudSyncObj();
@@ -682,6 +683,17 @@ public menu_ListMapsOfMod(const id, const menuid, const item)
 
 	menu_destroy(menuid);
 	ShowMenu_ListMapsOfMod(id, iMenuPage);
+	return PLUGIN_HANDLED;
+}
+
+public OnClientCommand_Thetime(const id)
+{
+	CHECK_CONNECTED(id)
+
+	new sDateAndTime[32];
+	get_time("%d/%m/%Y - %H:%M:%S", sDateAndTime, charsmax(sDateAndTime));
+	
+	client_print_color(id, id, "%s^1 %L:^3 %s", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_THETIME", sDateAndTime);
 	return PLUGIN_HANDLED;
 }
 
