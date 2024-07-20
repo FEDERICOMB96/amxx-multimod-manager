@@ -276,20 +276,24 @@ public OnTaskCheckVoteMod()
 				g_iNextSelectMod = g_iCurrentMod;
 				MultiMod_SetNextMod(g_iNextSelectMod);
 
+				client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MOD_CHO_FIN_EXT_RTV", iResult, g_iVoteModCount, UTIL_GetPercent(iResult, g_iVoteModCount));
+
+				ModChooser_ResetAllData();
+				Nominations_ResetAllData();
+
 				g_bSelectedNextMod = true;
 
 				MapChooser_InitNextVoteMap(40);
-
-				client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MOD_CHO_FIN_EXT_RTV", iResult, g_iVoteModCount, UTIL_GetPercent(iResult, g_iVoteModCount));
 			}
 			else
 			{
 				ExtendTimeleft(g_bCvar_amx_extendmap_step);
 				client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MOD_CHO_FIN_EXT", g_bCvar_amx_extendmap_step, iResult, g_iVoteModCount, UTIL_GetPercent(iResult, g_iVoteModCount));
+
+				ModChooser_ResetAllData();
+				Nominations_ResetAllData();
 			}
 			
-			ModChooser_ResetAllData();
-			Nominations_ResetAllData();
 			return;
 		}
 
@@ -483,11 +487,14 @@ public OnTask_CheckVoteModFIX()
 				g_iNextSelectMod = g_iCurrentMod;
 				MultiMod_SetNextMod(g_iNextSelectMod);
 				
+				client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MOD_CHO_FIN_EXT_RTV", iResult, g_iVoteModCount, UTIL_GetPercent(iResult, g_iVoteModCount));
+
+				ModChooser_ResetAllData();
+				Nominations_ResetAllData();
+				
 				g_bSelectedNextMod = true;
 
 				MapChooser_InitNextVoteMap(40);
-
-				client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MOD_CHO_FIN_EXT_RTV", iResult, g_iVoteModCount, UTIL_GetPercent(iResult, g_iVoteModCount));
 			}
 			else
 			{
@@ -501,10 +508,11 @@ public OnTask_CheckVoteModFIX()
 				}
 				else
 					client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MOD_CHO_FIN_EXT", g_bCvar_amx_extendmap_step, iResult, g_iVoteModCount, UTIL_GetPercent(iResult, g_iVoteModCount));
+				
+				ModChooser_ResetAllData();
+				Nominations_ResetAllData();
 			}
-			
-			ModChooser_ResetAllData();
-			Nominations_ResetAllData();
+
 			return;
 		}
 
