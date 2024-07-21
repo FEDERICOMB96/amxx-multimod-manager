@@ -23,7 +23,7 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
@@ -44,8 +44,8 @@ jobs:
         run: |
           SHA=$(git rev-parse --short HEAD)
           echo "COMMIT_SHA=${SHA}" >> $GITHUB_ENV
-          echo "::set-output name=sha::$SHA"
-          echo "::set-output name=semver::${{ steps.semver_parser.outputs.fullversion }}"
+          echo "sha=$SHA" >> $GITHUB_OUTPUT
+          echo "semver=${{ steps.semver_parser.outputs.fullversion }}" >> $GITHUB_OUTPUT
 
       - name: Setup AMXXPawn Compiler
         uses: wopox1337/setup-amxxpawn@master
@@ -86,7 +86,7 @@ jobs:
           mv addons/ -t publish/
           
       - name: Upload artifact
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v4
         with:
           name: MultiModManagerCS-${{ env.COMMIT_SHA }}
           path: publish/*
@@ -98,7 +98,7 @@ jobs:
     
     steps:
       - name: Deploying resources artifacts
-        uses: actions/download-artifact@v2
+        uses: actions/download-artifact@v4
         with:
          name: MultiModManagerCS-${{needs.build.outputs.sha}}
 
