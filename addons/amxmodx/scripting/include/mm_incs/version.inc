@@ -21,6 +21,6 @@
 
 #define MM_VERSION_MAJOR      2
 #define MM_VERSION_MINOR      3
-#define MM_VERSION_COMMIT     218
+#define MM_VERSION_COMMIT     219
 
 #define PLUGIN_VERSION        fmt("v%d.%d.%d", MM_VERSION_MAJOR, MM_VERSION_MINOR, MM_VERSION_COMMIT)
