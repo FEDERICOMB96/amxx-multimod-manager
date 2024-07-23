@@ -57,7 +57,8 @@ jobs:
       - name: Updating app version
         shell: bash
         run: |
-          ${GITHUB_WORKSPACE}/version/appversion.sh
+          chmod +x ${GITHUB_WORKSPACE}/version/appversion.sh
+          ${GITHUB_WORKSPACE}/version/appversion.sh ${GITHUB_WORKSPACE}
 
       - name: Compile AMXX plugins
         working-directory: addons/amxmodx/scripting/
