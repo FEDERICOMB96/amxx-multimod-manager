@@ -3,6 +3,7 @@
 #endif
 #define _multimod_manager_natives_included_
 
+#include <multimod_manager_checks>
 #include <multimod_manager_version>
 
 /**

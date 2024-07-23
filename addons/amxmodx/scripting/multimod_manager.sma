@@ -4,6 +4,7 @@
 #include <amxmisc>
 #include <reapi>
 #include <json>
+#include "mm_incs/checks"
 #include "mm_incs/version"
 #include "mm_incs/defines"
 #include "mm_incs/global"
