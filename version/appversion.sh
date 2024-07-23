@@ -129,6 +129,8 @@ update_appversion()
 	echo -e "#define _mm_version_included_\r">>$APPVERSION_FILE
 	echo -e $APPVERSION_CONTENT>>$APPVERSION_FILE
 	echo -e '#define PLUGIN_VERSION "'$NEW_VERSION'"\r'>>$APPVERSION_FILE
+
+	cat $APPVERSION_FILE
 	
 	echo Updating $APPVERSION_FILE_NATIVES, new version is '"'$NEW_VERSION'"'
 	
@@ -138,6 +140,8 @@ update_appversion()
 	echo -e "#define _multimod_manager_version_included_\r">>$APPVERSION_FILE_NATIVES
 	echo -e $APPVERSION_CONTENT>>$APPVERSION_FILE_NATIVES
 	echo -e '#define MM_NATIVES_API_VER "'$NEW_VERSION'"\r'>>$APPVERSION_FILE_NATIVES
+
+	cat $APPVERSION_FILE_NATIVES
 }
 
 # Initialise
