@@ -101,27 +101,27 @@ update_appversion()
 	hours=$(date +%H:%M:%S)
 	month=$(LANG=en_us_88591; date +"%b")
 
-	APPVERSION_CONTENT=$(echo -e "\r")
-	APPVERSION_CONTENT+=$(echo -e "//\r")
-	APPVERSION_CONTENT+=$(echo -e "// This file is generated automatically.\r")
-	APPVERSION_CONTENT+=$(echo -e "// Don't edit it.\r")
-	APPVERSION_CONTENT+=$(echo -e "//\r")
-	APPVERSION_CONTENT+=$(echo -e "\r")
-	APPVERSION_CONTENT+=$(echo -e "// MultiMod Manager version\r")
-	APPVERSION_CONTENT+=$(echo -e "#define MM_VERSION $NEW_VERSION_INC\r")
-	APPVERSION_CONTENT+=$(echo -e "#define MM_VERSION_MAJOR $MAJOR\r")
-	APPVERSION_CONTENT+=$(echo -e "#define MM_VERSION_MINOR $MINOR\r")
-	APPVERSION_CONTENT+=$(echo -e "#define MM_VERSION_MAINTENANCE $MAINTENANCE\r")
-	APPVERSION_CONTENT+=$(echo -e "#define MM_VERSION_COMMIT $COMMIT_COUNT\r")
-	APPVERSION_CONTENT+=$(echo -e "#define MM_VERSION_PR_ID $PULL_REQUEST_ID\r")
-	APPVERSION_CONTENT+=$(echo -e '#define MM_VERSION_STRD "'$NEW_VERSION'"\r')
-	APPVERSION_CONTENT+=$(echo -e "\r")
-	APPVERSION_CONTENT+=$(echo -e '#define MM_COMMIT_DATE "'$month $day $year'"\r')	
-	APPVERSION_CONTENT+=$(echo -e '#define MM_COMMIT_TIME "'$hours'"\r')
-	APPVERSION_CONTENT+=$(echo -e "\r")
-	APPVERSION_CONTENT+=$(echo -e '#define MM_COMMIT_SHA "'$COMMIT_SHA'"\r')
-	APPVERSION_CONTENT+=$(echo -e '#define MM_COMMIT_URL "'$COMMIT_URL'"\r')
-	APPVERSION_CONTENT+=$(echo -e "\r")
+	APPVERSION_CONTENT=$(echo -e "")
+	APPVERSION_CONTENT+=$(echo -e "//")
+	APPVERSION_CONTENT+=$(echo -e "// This file is generated automatically.")
+	APPVERSION_CONTENT+=$(echo -e "// Don't edit it.")
+	APPVERSION_CONTENT+=$(echo -e "//")
+	APPVERSION_CONTENT+=$(echo -e "")
+	APPVERSION_CONTENT+=$(echo -e "// MultiMod Manager version")
+	APPVERSION_CONTENT+=$(echo -e "#define MM_VERSION $NEW_VERSION_INC")
+	APPVERSION_CONTENT+=$(echo -e "#define MM_VERSION_MAJOR $MAJOR")
+	APPVERSION_CONTENT+=$(echo -e "#define MM_VERSION_MINOR $MINOR")
+	APPVERSION_CONTENT+=$(echo -e "#define MM_VERSION_MAINTENANCE $MAINTENANCE")
+	APPVERSION_CONTENT+=$(echo -e "#define MM_VERSION_COMMIT $COMMIT_COUNT")
+	APPVERSION_CONTENT+=$(echo -e "#define MM_VERSION_PR_ID $PULL_REQUEST_ID")
+	APPVERSION_CONTENT+=$(echo -e '#define MM_VERSION_STRD "'$NEW_VERSION'"')
+	APPVERSION_CONTENT+=$(echo -e "")
+	APPVERSION_CONTENT+=$(echo -e '#define MM_COMMIT_DATE "'$month $day $year'"')	
+	APPVERSION_CONTENT+=$(echo -e '#define MM_COMMIT_TIME "'$hours'"')
+	APPVERSION_CONTENT+=$(echo -e "")
+	APPVERSION_CONTENT+=$(echo -e '#define MM_COMMIT_SHA "'$COMMIT_SHA'"')
+	APPVERSION_CONTENT+=$(echo -e '#define MM_COMMIT_URL "'$COMMIT_URL'"')
+	APPVERSION_CONTENT+=$(echo -e "")
 
 	echo Updating $APPVERSION_FILE, new version is '"'$NEW_VERSION'"'
 	
@@ -132,6 +132,8 @@ update_appversion()
 	echo -e $APPVERSION_CONTENT>>$APPVERSION_FILE
 	echo -e '#define PLUGIN_VERSION "'$NEW_VERSION'"\r'>>$APPVERSION_FILE
 	
+	cat $APPVERSION_FILE
+	
 	echo Updating $APPVERSION_FILE_NATIVES, new version is '"'$NEW_VERSION'"'
 	
 	echo -e "#if defined _multimod_manager_version_included_\r">$APPVERSION_FILE_NATIVES
@@ -140,6 +142,8 @@ update_appversion()
 	echo -e "#define _multimod_manager_version_included_\r">>$APPVERSION_FILE_NATIVES
 	echo -e $APPVERSION_CONTENT>>$APPVERSION_FILE_NATIVES
 	echo -e '#define MM_NATIVES_API_VER "'$NEW_VERSION'"\r'>>$APPVERSION_FILE_NATIVES
+
+	cat $APPVERSION_FILE_NATIVES
 }
 
 # Initialise
