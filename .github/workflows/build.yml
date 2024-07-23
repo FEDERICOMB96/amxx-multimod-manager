@@ -66,7 +66,6 @@ jobs:
           APPVERSION_FILE=../addons/amxmodx/scripting/include/mm_incs/version.inc
           APPVERSION_FILE_NATIVES=../addons/amxmodx/scripting/include/multimod_manager_version.inc
           GIT_DIR=../
-          BRANCH_NAME=master
           
           MAJOR=$(cat "$VERSION_FILE" | grep -wi 'MM_VERSION_MAJOR' | sed -e 's/.*MM_VERSION_MAJOR.*[^0-9]\([0-9][0-9]*\).*/\1/i' -e 's/\r//g')
           if [ $? -ne 0 -o "$MAJOR" = "" ]; then
@@ -82,8 +81,13 @@ jobs:
           if [ $? -ne 0 -o "$MAINTENANCE" = "" ]; then
             MAINTENANCE=0
           fi
+
+          BRANCH_NAME=$(git -C "$GIT_DIR" rev-parse --abbrev-ref HEAD)
+          if [ $? -ne 0 -o "$BRANCH_NAME" = "" ]; then
+            BRANCH_NAME=master
+          fi
           
-          COMMIT_COUNT=$(git -C "$GIT_DIR/" rev-list --count $BRANCH_NAME)
+          COMMIT_COUNT=$(git -C "$GIT_DIR" rev-list --count $BRANCH_NAME)
           if [ $? -ne 0 -o "$COMMIT_COUNT" = "" ]; then
             COMMIT_COUNT=0
           fi
