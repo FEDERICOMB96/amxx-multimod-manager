@@ -39,8 +39,11 @@ jobs:
         run: |
           chmod +x ${GITHUB_WORKSPACE}/version/appversion.sh
           ${GITHUB_WORKSPACE}/version/appversion.sh ${GITHUB_WORKSPACE}
-          rsync -a version/version.inc addons/amxmodx/scripting/include/mm_incs/
-          rsync -a version/multimod_manager_version.inc addons/amxmodx/scripting/include/
+
+      - name: Moving app version files
+        run: |
+          mv -f version/version.inc addons/amxmodx/scripting/include/mm_incs/
+          mv -f version/multimod_manager_version.inc addons/amxmodx/scripting/include/
 
       - name: Setup AMXXPawn Compiler
         uses: wopox1337/setup-amxxpawn@master
@@ -67,6 +70,7 @@ jobs:
         env:
           REAPI_INCLUDE: ${{ env.REAPI_INCLUDE_PATH }}
         run: |
+          tree
           mkdir ../plugins/
           for sourcefile in *.sma;
           do
