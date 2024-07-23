@@ -5,19 +5,8 @@
 
 // Do NOT modify this file!
 
-/**
- * AMX Mod X version check
- */
-#if defined AMXX_VERSION_NUM
-	#if AMXX_VERSION_NUM < 200
-		#error "[API] Multimod Manager CS requires AMX Mod X 1.10 or higher. Download from: https://www.amxmodx.org/downloads-new.php?branch=master"
-	#endif
-#else
-	#error "[API] Multimod Manager CS: please include multimod_manager_natives.inc after including amxmodx.inc."
-#endif
+#define MM_VERSION_MAJOR           2
+#define MM_VERSION_MINOR           3
+#define MM_VERSION_MAINTENANCE     0
 
-#define MM_VERSION_MAJOR      2
-#define MM_VERSION_MINOR      3
-#define MM_VERSION_COMMIT     219
-
-#define MM_NATIVES_API_VER    fmt("v%d.%d.%d", MM_VERSION_MAJOR, MM_VERSION_MINOR, MM_VERSION_COMMIT)
+#define MM_NATIVES_API_VER    fmt("v%d.%d.%d.(%s %s)", MM_VERSION_MAJOR, MM_VERSION_MINOR, MM_VERSION_MAINTENANCE, __DATE__, __TIME__)
