@@ -5,8 +5,8 @@ init()
 	SOURCE_DIR=$1
 	GIT_DIR=$SOURCE_DIR
 	VERSION_FILE=$SOURCE_DIR/version/version.h
-	APPVERSION_FILE=$SOURCE_DIR/addons/amxmodx/scripting/include/mm_incs/version.inc
-	APPVERSION_FILE_NATIVES=$SOURCE_DIR/addons/amxmodx/scripting/include/multimod_manager_version.inc
+	APPVERSION_FILE=$SOURCE_DIR/version/version.inc
+	APPVERSION_FILE_NATIVES=$SOURCE_DIR/version/multimod_manager_version.inc
 	
 	MAJOR=$(cat "$VERSION_FILE" | grep -wi 'MM_VERSION_MAJOR' | sed -e 's/.*MM_VERSION_MAJOR.*[^0-9]\([0-9][0-9]*\).*/\1/i' -e 's/\r//g')
 	if [ $? -ne 0 -o "$MAJOR" = "" ]; then
