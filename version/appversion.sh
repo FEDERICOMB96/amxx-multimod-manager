@@ -11,6 +11,7 @@ init()
 	VERSION_FILE=$SOURCE_DIR/version/version.h
 	APPVERSION_FILE=$SOURCE_DIR/version/version.inc
 	APPVERSION_FILE_NATIVES=$SOURCE_DIR/version/multimod_manager_version.inc
+	APPVERSION_CONTENT=$SOURCE_DIR/version/appvcontent.inc
 	
 	MAJOR=$(cat "$VERSION_FILE" | grep -wi 'MM_VERSION_MAJOR' | sed -e 's/.*MM_VERSION_MAJOR.*[^0-9]\([0-9][0-9]*\).*/\1/i' -e 's/\r//g')
 	if [ $? -ne 0 -o "$MAJOR" = "" ]; then
@@ -100,26 +101,26 @@ update_appversion()
 	hours=$(date +%H:%M:%S)
 	month=$(LANG=en_us_88591; date +"%b")
 
-	APPVERSION_CONTENT=$(echo -e "\n")
-	APPVERSION_CONTENT+=$(echo -e "//\n")
-	APPVERSION_CONTENT+=$(echo -e "// This file is generated automatically.\n")
-	APPVERSION_CONTENT+=$(echo -e "// Don't edit it.\n")
-	APPVERSION_CONTENT+=$(echo -e "//\n")
-	APPVERSION_CONTENT+=$(echo -e "\n")
-	APPVERSION_CONTENT+=$(echo -e "// MultiMod Manager version\n")
-	APPVERSION_CONTENT+=$(echo -e "#define MM_VERSION $NEW_VERSION_INC\n")
-	APPVERSION_CONTENT+=$(echo -e "#define MM_VERSION_MAJOR $MAJOR\n")
-	APPVERSION_CONTENT+=$(echo -e "#define MM_VERSION_MINOR $MINOR\n")
-	APPVERSION_CONTENT+=$(echo -e "#define MM_VERSION_MAINTENANCE $MAINTENANCE\n")
-	APPVERSION_CONTENT+=$(echo -e "#define MM_VERSION_COMMIT $COMMIT_COUNT\n")
-	APPVERSION_CONTENT+=$(echo -e '#define MM_VERSION_STRD "'$NEW_VERSION'"\n')
-	APPVERSION_CONTENT+=$(echo -e "\n")
-	APPVERSION_CONTENT+=$(echo -e '#define MM_COMMIT_DATE "'$month $day $year'"\n')	
-	APPVERSION_CONTENT+=$(echo -e '#define MM_COMMIT_TIME "'$hours'"\n')
-	APPVERSION_CONTENT+=$(echo -e "\n")
-	APPVERSION_CONTENT+=$(echo -e '#define MM_COMMIT_SHA "'$COMMIT_SHA'"\n')
-	APPVERSION_CONTENT+=$(echo -e '#define MM_COMMIT_URL "'$COMMIT_URL'"\n')
-	APPVERSION_CONTENT+=$(echo -e "\n")
+	echo -e "\r">$APPVERSION_CONTENT
+	echo -e "//\r">>$APPVERSION_CONTENT
+	echo -e "// This file is generated automatically.\r">>$APPVERSION_CONTENT
+	echo -e "// Don't edit it.\r">>$APPVERSION_CONTENT
+	echo -e "//\r">>$APPVERSION_CONTENT
+	echo -e "\r">>$APPVERSION_CONTENT
+	echo -e "// MultiMod Manager version\r">>$APPVERSION_CONTENT
+	echo -e "#define MM_VERSION $NEW_VERSION_INC\r">>$APPVERSION_CONTENT
+	echo -e "#define MM_VERSION_MAJOR $MAJOR\r">>$APPVERSION_CONTENT
+	echo -e "#define MM_VERSION_MINOR $MINOR\r">>$APPVERSION_CONTENT
+	echo -e "#define MM_VERSION_MAINTENANCE $MAINTENANCE\r">>$APPVERSION_CONTENT
+	echo -e "#define MM_VERSION_COMMIT $COMMIT_COUNT\r">>$APPVERSION_CONTENT
+	echo -e '#define MM_VERSION_STRD "'$NEW_VERSION'"\r'>>$APPVERSION_CONTENT
+	echo -e "\r">>$APPVERSION_CONTENT
+	echo -e '#define MM_COMMIT_DATE "'$month $day $year'"\r'>>$APPVERSION_CONTENT	
+	echo -e '#define MM_COMMIT_TIME "'$hours'"\r'>>$APPVERSION_CONTENT
+	echo -e "\r">>$APPVERSION_CONTENT
+	echo -e '#define MM_COMMIT_SHA "'$COMMIT_SHA'"\r'>>$APPVERSION_CONTENT
+	echo -e '#define MM_COMMIT_URL "'$COMMIT_URL'"\r'>>$APPVERSION_CONTENT
+	echo -e "\r">>$APPVERSION_CONTENT
 
 	echo Updating $APPVERSION_FILE, new version is '"'$NEW_VERSION'"'
 	
