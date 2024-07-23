@@ -26,6 +26,11 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Check dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y git
+
       - name: Declare SHA & package name
         id: declare_sha
         shell: bash
