@@ -57,7 +57,7 @@ jobs:
       - name: Copy files
         run: |
           mkdir compiler
-          cp addons/ -t compiler/
+          mv addons/ -t compiler/
       
       - name: Updating app version
         shell: bash
