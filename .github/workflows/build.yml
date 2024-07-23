@@ -54,20 +54,24 @@ jobs:
           7z x *.zip
           echo "REAPI_INCLUDE_PATH=$(pwd)/addons/amxmodx/scripting/include" >> $GITHUB_ENV
       
+      - name: Copy files
+        run: |
+          mkdir compiler
+          cp addons/ -t compiler/
+      
       - name: Updating app version
         shell: bash
         run: |
-          cat ${GITHUB_WORKSPACE}/addons/amxmodx/scripting/include/mm_incs/version.inc
+          cat ${GITHUB_WORKSPACE}/compiler/addons/amxmodx/scripting/include/mm_incs/version.inc
           chmod +x ${GITHUB_WORKSPACE}/version/appversion.sh
-          ${GITHUB_WORKSPACE}/version/appversion.sh ${GITHUB_WORKSPACE}
-          cat ${GITHUB_WORKSPACE}/addons/amxmodx/scripting/include/mm_incs/version.inc
+          ${GITHUB_WORKSPACE}/version/appversion.sh ${GITHUB_WORKSPACE}/compiler/
+          cat ${GITHUB_WORKSPACE}/compiler/addons/amxmodx/scripting/include/mm_incs/version.inc
 
       - name: Compile AMXX plugins
-        working-directory: addons/amxmodx/scripting/
+        working-directory: compiler/addons/amxmodx/scripting/
         env:
           REAPI_INCLUDE: ${{ env.REAPI_INCLUDE_PATH }}
         run: |
-          ls -l include/
           mkdir ../plugins/
           for sourcefile in *.sma;
           do
@@ -79,7 +83,7 @@ jobs:
       - name: Move files
         run: |
           mkdir publish
-          mv addons/ -t publish/
+          mv compiler/addons/ -t publish/
           
       - name: Upload artifact
         uses: actions/upload-artifact@v4
