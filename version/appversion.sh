@@ -78,7 +78,7 @@ update_appversion()
 }
 
 # Initialise
-init $*
+# init $*
 
 # Exit normally
 exit 0
