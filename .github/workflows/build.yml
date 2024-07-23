@@ -52,7 +52,7 @@ jobs:
             grep -Eo 'https://[^\"]*' | \
             xargs wget
           7z x *.zip
-          echo "REAPI_INCLUDE_PATH=$GITHUB_WORKSPACE/addons/amxmodx/scripting/include" >> $GITHUB_ENV
+          echo "REAPI_INCLUDE_PATH=$(PWD)/addons/amxmodx/scripting/include" >> $GITHUB_ENV
       
       - name: Updating app version
         shell: bash
@@ -65,8 +65,6 @@ jobs:
         env:
           REAPI_INCLUDE: ${{ env.REAPI_INCLUDE_PATH }}
         run: |
-          cat ${GITHUB_WORKSPACE}/addons/amxmodx/scripting/include/mm_incs/version.inc
-          cat ${GITHUB_WORKSPACE}/addons/amxmodx/scripting/include/multimod_manager_version.inc
           mkdir ../plugins/
           for sourcefile in *.sma;
           do
