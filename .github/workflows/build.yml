@@ -26,11 +26,6 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Check dependencies
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git
-
       - name: Declare SHA & package name
         id: declare_sha
         shell: bash
@@ -60,8 +55,8 @@ jobs:
           echo "REAPI_INCLUDE_PATH=$(pwd)/addons/amxmodx/scripting/include" >> $GITHUB_ENV
       
       - name: Updating app version
-        working-directory: version/
-        run: appversion.sh
+        shell: bash
+        run: ../version/appversion.sh
 
       - name: Compile AMXX plugins
         working-directory: addons/amxmodx/scripting/
