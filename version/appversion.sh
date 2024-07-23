@@ -46,35 +46,35 @@ update_appversion()
 {
 	echo Updating $APPVERSION_FILE, new version is '"'$NEW_VERSION'"'
 	
-	echo -e "#if defined _mm_version_included_\r" > $APPVERSION_FILE
-	echo -e "	#endinput\r" >> $APPVERSION_FILE
-	echo -e "#endif\r" >> $APPVERSION_FILE
-	echo -e "#define _mm_version_included_\r" >> $APPVERSION_FILE
-	echo -e "\r" >> $APPVERSION_FILE
-	echo -e "// MultiMod Manager version\r" >> $APPVERSION_FILE
-	echo -e "#define MM_VERSION $NEW_VERSION_INC\r" >> $APPVERSION_FILE
-	echo -e "#define MM_VERSION_MAJOR $MAJOR\r" >> $APPVERSION_FILE
-	echo -e "#define MM_VERSION_MINOR $MINOR\r" >> $APPVERSION_FILE
-	echo -e "#define MM_VERSION_MAINTENANCE $MAINTENANCE\r" >> $APPVERSION_FILE
-	echo -e "#define MM_VERSION_COMMIT $COMMIT_COUNT\r" >> $APPVERSION_FILE
-	echo -e "\r" >> $APPVERSION_FILE
-	echo -e "#define PLUGIN_VERSION fmt("v%d.%d.%d.%d", MM_VERSION_MAJOR, MM_VERSION_MINOR, MM_VERSION_MAINTENANCE, MM_VERSION_COMMIT)" >> $APPVERSION_FILE
+	echo -e "#if defined _mm_version_included_\r">$APPVERSION_FILE
+	echo -e "	#endinput\r">>$APPVERSION_FILE
+	echo -e "#endif\r">>$APPVERSION_FILE
+	echo -e "#define _mm_version_included_\r">>$APPVERSION_FILE
+	echo -e "\r">>$APPVERSION_FILE
+	echo -e "// MultiMod Manager version\r">>$APPVERSION_FILE
+	echo -e "#define MM_VERSION $NEW_VERSION_INC\r">>$APPVERSION_FILE
+	echo -e "#define MM_VERSION_MAJOR $MAJOR\r">>$APPVERSION_FILE
+	echo -e "#define MM_VERSION_MINOR $MINOR\r">>$APPVERSION_FILE
+	echo -e "#define MM_VERSION_MAINTENANCE $MAINTENANCE\r">>$APPVERSION_FILE
+	echo -e "#define MM_VERSION_COMMIT $COMMIT_COUNT\r">>$APPVERSION_FILE
+	echo -e "\r">>$APPVERSION_FILE
+	echo -e "#define PLUGIN_VERSION fmt("v%d.%d.%d.%d", MM_VERSION_MAJOR, MM_VERSION_MINOR, MM_VERSION_MAINTENANCE, MM_VERSION_COMMIT)\r">>$APPVERSION_FILE
 	
 	echo Updating $APPVERSION_FILE_NATIVES, new version is '"'$NEW_VERSION'"'
 	
-	echo -e "#if defined _multimod_manager_version_included_\r" > $APPVERSION_FILE_NATIVES
-	echo -e "	#endinput\r" >> $APPVERSION_FILE_NATIVES
-	echo -e "#endif\r" >> $APPVERSION_FILE_NATIVES
-	echo -e "#define _multimod_manager_version_included_\r" >> $APPVERSION_FILE_NATIVES
-	echo -e "\r" >> $APPVERSION_FILE_NATIVES
-	echo -e "// MultiMod Manager version\r" >> $APPVERSION_FILE_NATIVES
-	echo -e "#define MM_VERSION $NEW_VERSION_INC\r" >> $APPVERSION_FILE_NATIVES
-	echo -e "#define MM_VERSION_MAJOR $MAJOR\r" >> $APPVERSION_FILE_NATIVES
-	echo -e "#define MM_VERSION_MINOR $MINOR\r" >> $APPVERSION_FILE_NATIVES
-	echo -e "#define MM_VERSION_MAINTENANCE $MAINTENANCE\r" >> $APPVERSION_FILE_NATIVES
-	echo -e "#define MM_VERSION_COMMIT $COMMIT_COUNT\r" >> $APPVERSION_FILE_NATIVES
-	echo -e "\r" >> $APPVERSION_FILE_NATIVES
-	echo -e "#define MM_NATIVES_API_VER fmt("v%d.%d.%d.%d", MM_VERSION_MAJOR, MM_VERSION_MINOR, MM_VERSION_MAINTENANCE, MM_VERSION_COMMIT)" >> $APPVERSION_FILE_NATIVES
+	echo -e "#if defined _multimod_manager_version_included_\r">$APPVERSION_FILE_NATIVES
+	echo -e "	#endinput\r">>$APPVERSION_FILE_NATIVES
+	echo -e "#endif\r">>$APPVERSION_FILE_NATIVES
+	echo -e "#define _multimod_manager_version_included_\r">>$APPVERSION_FILE_NATIVES
+	echo -e "\r">>$APPVERSION_FILE_NATIVES
+	echo -e "// MultiMod Manager version\r">>$APPVERSION_FILE_NATIVES
+	echo -e "#define MM_VERSION $NEW_VERSION_INC\r">>$APPVERSION_FILE_NATIVES
+	echo -e "#define MM_VERSION_MAJOR $MAJOR\r">>$APPVERSION_FILE_NATIVES
+	echo -e "#define MM_VERSION_MINOR $MINOR\r">>$APPVERSION_FILE_NATIVES
+	echo -e "#define MM_VERSION_MAINTENANCE $MAINTENANCE\r">>$APPVERSION_FILE_NATIVES
+	echo -e "#define MM_VERSION_COMMIT $COMMIT_COUNT\r">>$APPVERSION_FILE_NATIVES
+	echo -e "\r">>$APPVERSION_FILE_NATIVES
+	echo -e "#define MM_NATIVES_API_VER fmt("v%d.%d.%d.%d", MM_VERSION_MAJOR, MM_VERSION_MINOR, MM_VERSION_MAINTENANCE, MM_VERSION_COMMIT)\r">>$APPVERSION_FILE_NATIVES
 }
 
 # Initialise

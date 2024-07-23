@@ -66,6 +66,7 @@ jobs:
           REAPI_INCLUDE: ${{ env.REAPI_INCLUDE_PATH }}
         run: |
           cat ${GITHUB_WORKSPACE}/addons/amxmodx/scripting/include/mm_incs/version.inc
+          cat ${GITHUB_WORKSPACE}/addons/amxmodx/scripting/include/multimod_manager_version.inc
           mkdir ../plugins/
           for sourcefile in *.sma;
           do
