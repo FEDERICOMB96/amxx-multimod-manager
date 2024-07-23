@@ -1,5 +1,9 @@
 #!/bin/bash
 
+#
+# Ported from s1lentq/reapi
+#
+
 init()
 {
 	SOURCE_DIR=$1
@@ -7,6 +11,7 @@ init()
 	VERSION_FILE=$SOURCE_DIR/version/version.h
 	APPVERSION_FILE=$SOURCE_DIR/version/version.inc
 	APPVERSION_FILE_NATIVES=$SOURCE_DIR/version/multimod_manager_version.inc
+	APPVERSION_CONTENT=$SOURCE_DIR/version/appvcontent.inc
 	PULL_REQUEST_ID=$2
 	
 	MAJOR=$(cat "$VERSION_FILE" | grep -wi 'MM_VERSION_MAJOR' | sed -e 's/.*MM_VERSION_MAJOR.*[^0-9]\([0-9][0-9]*\).*/\1/i' -e 's/\r//g')
@@ -34,6 +39,53 @@ init()
 		COMMIT_COUNT=0
 	fi
 	
+	#
+	# Configure remote url repository
+	#
+	# Get remote name by current branch
+	BRANCH_REMOTE=$(git -C "$GIT_DIR" config branch.$BRANCH_NAME.remote)
+	if [ $? -ne 0 -o "$BRANCH_REMOTE" = "" ]; then
+		BRANCH_REMOTE=origin
+	fi
+
+	# Get commit id
+	COMMIT_SHA=$(git -C "$GIT_DIR" rev-parse --verify HEAD)
+	COMMIT_SHA=${COMMIT_SHA:0:7}
+
+	# Get remote url
+	COMMIT_URL=$(git -C "$GIT_DIR" config remote.$BRANCH_REMOTE.url)
+
+	URL_CONSTRUCT=0
+
+	if [[ "$COMMIT_URL" == *"git@"* ]]; then
+
+		URL_CONSTRUCT=1
+
+		# Strip prefix 'git@'
+		COMMIT_URL=${COMMIT_URL#git@}
+
+		# Strip postfix '.git'
+		COMMIT_URL=${COMMIT_URL%.git}
+
+		# Replace ':' to '/'
+		COMMIT_URL=${COMMIT_URL/:/\/}
+
+	elif [[ "$COMMIT_URL" == *"https://"* ]]; then
+
+		URL_CONSTRUCT=1
+
+		# Strip prefix 'https://'
+		COMMIT_URL=${COMMIT_URL#https://}
+
+		# Strip postfix '.git'
+		COMMIT_URL=${COMMIT_URL%.git}
+
+	fi
+
+	if test "$URL_CONSTRUCT" -eq 1; then
+		COMMIT_URL=$(echo https://$COMMIT_URL/commit/)
+	fi
+
 	NEW_VERSION_INC="$MAJOR$MINOR$MAINTENANCE$COMMIT_COUNT"
 	NEW_VERSION="$MAJOR.$MINOR.$MAINTENANCE.$COMMIT_COUNT-pr#$PULL_REQUEST_ID"
 	
@@ -45,22 +97,41 @@ init()
 
 update_appversion()
 {
+	day=$(date +%d)
+	year=$(date +%Y)
+	hours=$(date +%H:%M:%S)
+	month=$(LANG=en_us_88591; date +"%b")
+
+	echo -e "\r">$APPVERSION_CONTENT
+	echo -e "//\r">>$APPVERSION_CONTENT
+	echo -e "// This file is generated automatically.\r">>$APPVERSION_CONTENT
+	echo -e "// Don't edit it.\r">>$APPVERSION_CONTENT
+	echo -e "//\r">>$APPVERSION_CONTENT
+	echo -e "\r">>$APPVERSION_CONTENT
+	echo -e "// MultiMod Manager version\r">>$APPVERSION_CONTENT
+	echo -e "#define MM_VERSION $NEW_VERSION_INC\r">>$APPVERSION_CONTENT
+	echo -e "#define MM_VERSION_MAJOR $MAJOR\r">>$APPVERSION_CONTENT
+	echo -e "#define MM_VERSION_MINOR $MINOR\r">>$APPVERSION_CONTENT
+	echo -e "#define MM_VERSION_MAINTENANCE $MAINTENANCE\r">>$APPVERSION_CONTENT
+	echo -e "#define MM_VERSION_COMMIT $COMMIT_COUNT\r">>$APPVERSION_CONTENT
+	echo -e "#define MM_VERSION_PR_ID $PULL_REQUEST_ID\r">>$APPVERSION_CONTENT
+	echo -e '#define MM_VERSION_STRD "'$NEW_VERSION'"\r'>>$APPVERSION_CONTENT
+	echo -e "\r">>$APPVERSION_CONTENT
+	echo -e '#define MM_COMMIT_DATE "'$month $day $year'"\r'>>$APPVERSION_CONTENT	
+	echo -e '#define MM_COMMIT_TIME "'$hours'"\r'>>$APPVERSION_CONTENT
+	echo -e "\r">>$APPVERSION_CONTENT
+	echo -e '#define MM_COMMIT_SHA "'$COMMIT_SHA'"\r'>>$APPVERSION_CONTENT
+	echo -e '#define MM_COMMIT_URL "'$COMMIT_URL'"\r'>>$APPVERSION_CONTENT
+	echo -e "\r">>$APPVERSION_CONTENT
+
 	echo Updating $APPVERSION_FILE, new version is '"'$NEW_VERSION'"'
 	
 	echo -e "#if defined _mm_version_included_\r">$APPVERSION_FILE
 	echo -e "	#endinput\r">>$APPVERSION_FILE
 	echo -e "#endif\r">>$APPVERSION_FILE
 	echo -e "#define _mm_version_included_\r">>$APPVERSION_FILE
-	echo -e "\r">>$APPVERSION_FILE
-	echo -e "// MultiMod Manager version\r">>$APPVERSION_FILE
-	echo -e "#define MM_VERSION $NEW_VERSION_INC\r">>$APPVERSION_FILE
-	echo -e "#define MM_VERSION_MAJOR $MAJOR\r">>$APPVERSION_FILE
-	echo -e "#define MM_VERSION_MINOR $MINOR\r">>$APPVERSION_FILE
-	echo -e "#define MM_VERSION_MAINTENANCE $MAINTENANCE\r">>$APPVERSION_FILE
-	echo -e "#define MM_VERSION_COMMIT $COMMIT_COUNT\r">>$APPVERSION_FILE
-	echo -e "#define MM_VERSION_PR_ID $PULL_REQUEST_ID\r">>$APPVERSION_FILE
-	echo -e "\r">>$APPVERSION_FILE
-	echo -e "#define PLUGIN_VERSION fmt(\"v%d.%d.%d.%d-pr#%d\", MM_VERSION_MAJOR, MM_VERSION_MINOR, MM_VERSION_MAINTENANCE, MM_VERSION_COMMIT, MM_VERSION_PR_ID)\r">>$APPVERSION_FILE
+	cat $APPVERSION_CONTENT>>$APPVERSION_FILE
+	echo -e '#define PLUGIN_VERSION "'$NEW_VERSION'"\r'>>$APPVERSION_FILE
 	
 	echo Updating $APPVERSION_FILE_NATIVES, new version is '"'$NEW_VERSION'"'
 	
@@ -68,16 +139,8 @@ update_appversion()
 	echo -e "	#endinput\r">>$APPVERSION_FILE_NATIVES
 	echo -e "#endif\r">>$APPVERSION_FILE_NATIVES
 	echo -e "#define _multimod_manager_version_included_\r">>$APPVERSION_FILE_NATIVES
-	echo -e "\r">>$APPVERSION_FILE_NATIVES
-	echo -e "// MultiMod Manager version\r">>$APPVERSION_FILE_NATIVES
-	echo -e "#define MM_VERSION $NEW_VERSION_INC\r">>$APPVERSION_FILE_NATIVES
-	echo -e "#define MM_VERSION_MAJOR $MAJOR\r">>$APPVERSION_FILE_NATIVES
-	echo -e "#define MM_VERSION_MINOR $MINOR\r">>$APPVERSION_FILE_NATIVES
-	echo -e "#define MM_VERSION_MAINTENANCE $MAINTENANCE\r">>$APPVERSION_FILE_NATIVES
-	echo -e "#define MM_VERSION_COMMIT $COMMIT_COUNT\r">>$APPVERSION_FILE_NATIVES
-	echo -e "#define MM_VERSION_PR_ID $PULL_REQUEST_ID\r">>$APPVERSION_FILE_NATIVES
-	echo -e "\r">>$APPVERSION_FILE_NATIVES
-	echo -e "#define MM_NATIVES_API_VER fmt(\"v%d.%d.%d.%d-pr#%d\", MM_VERSION_MAJOR, MM_VERSION_MINOR, MM_VERSION_MAINTENANCE, MM_VERSION_COMMIT, MM_VERSION_PR_ID)\r">>$APPVERSION_FILE_NATIVES
+	cat $APPVERSION_CONTENT>>$APPVERSION_FILE_NATIVES
+	echo -e '#define MM_NATIVES_API_VER "'$NEW_VERSION'"\r'>>$APPVERSION_FILE_NATIVES
 }
 
 # Initialise
