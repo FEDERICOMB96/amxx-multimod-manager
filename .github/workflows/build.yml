@@ -52,13 +52,14 @@ jobs:
             grep -Eo 'https://[^\"]*' | \
             xargs wget
           7z x *.zip
-          echo "REAPI_INCLUDE_PATH=$(pwd)/addons/amxmodx/scripting/include" >> $GITHUB_ENV
+          echo "REAPI_INCLUDE_PATH=$(GITHUB_WORKSPACE)/addons/amxmodx/scripting/include" >> $GITHUB_ENV
       
       - name: Updating app version
+        working-directory: version/
         shell: bash
         run: |
-          chmod +x ${GITHUB_WORKSPACE}/version/appversion.sh
-          ${GITHUB_WORKSPACE}/version/appversion.sh ${GITHUB_WORKSPACE}
+          chmod +x appversion.sh
+          appversion.sh ${GITHUB_WORKSPACE}
 
       - name: Compile AMXX plugins
         working-directory: addons/amxmodx/scripting/
@@ -66,6 +67,7 @@ jobs:
           REAPI_INCLUDE: ${{ env.REAPI_INCLUDE_PATH }}
         run: |
           pwd
+          ls
           mkdir ../plugins/
           for sourcefile in *.sma;
           do
@@ -77,6 +79,7 @@ jobs:
       - name: Move files
         run: |
           pwd
+          ls
           mkdir publish
           mv addons/ -t publish/
           
