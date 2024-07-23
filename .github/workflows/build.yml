@@ -65,8 +65,7 @@ jobs:
         env:
           REAPI_INCLUDE: ${{ env.REAPI_INCLUDE_PATH }}
         run: |
-          pwd
-          ls
+          cat ${GITHUB_WORKSPACE}/addons/amxmodx/scripting/include/mm_incs/version.inc
           mkdir ../plugins/
           for sourcefile in *.sma;
           do
@@ -77,8 +76,6 @@ jobs:
           
       - name: Move files
         run: |
-          pwd
-          ls
           mkdir publish
           mv addons/ -t publish/
           

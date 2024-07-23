@@ -10,27 +10,27 @@ init()
 	
 	MAJOR=$(cat "$VERSION_FILE" | grep -wi 'MM_VERSION_MAJOR' | sed -e 's/.*MM_VERSION_MAJOR.*[^0-9]\([0-9][0-9]*\).*/\1/i' -e 's/\r//g')
 	if [ $? -ne 0 -o "$MAJOR" = "" ]; then
-	MAJOR=0
+		MAJOR=0
 	fi
 	
 	MINOR=$(cat "$VERSION_FILE" | grep -wi 'MM_VERSION_MINOR' | sed -e 's/.*MM_VERSION_MINOR.*[^0-9]\([0-9][0-9]*\).*/\1/i' -e 's/\r//g')
 	if [ $? -ne 0 -o "$MINOR" = "" ]; then
-	MINOR=0
+		MINOR=0
 	fi
 	
 	MAINTENANCE=$(cat "$VERSION_FILE" | grep -i 'MM_VERSION_MAINTENANCE' | sed -e 's/.*MM_VERSION_MAINTENANCE.*[^0-9]\([0-9][0-9]*\).*/\1/i' -e 's/\r//g')
 	if [ $? -ne 0 -o "$MAINTENANCE" = "" ]; then
-	MAINTENANCE=0
+		MAINTENANCE=0
 	fi
 
 	BRANCH_NAME=$(git -C "$GIT_DIR" rev-parse --abbrev-ref HEAD)
 	if [ $? -ne 0 -o "$BRANCH_NAME" = "" ]; then
-	BRANCH_NAME=master
+		BRANCH_NAME=master
 	fi
 	
 	COMMIT_COUNT=$(git -C "$GIT_DIR" rev-list --count $BRANCH_NAME)
 	if [ $? -ne 0 -o "$COMMIT_COUNT" = "" ]; then
-	COMMIT_COUNT=0
+		COMMIT_COUNT=0
 	fi
 	
 	NEW_VERSION_INC="$MAJOR$MINOR$MAINTENANCE$COMMIT_COUNT"
