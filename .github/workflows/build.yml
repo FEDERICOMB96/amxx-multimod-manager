@@ -65,6 +65,7 @@ jobs:
         env:
           REAPI_INCLUDE: ${{ env.REAPI_INCLUDE_PATH }}
         run: |
+          pwd
           mkdir ../plugins/
           for sourcefile in *.sma;
           do
@@ -75,6 +76,7 @@ jobs:
           
       - name: Move files
         run: |
+          pwd
           mkdir publish
           mv addons/ -t publish/
           
