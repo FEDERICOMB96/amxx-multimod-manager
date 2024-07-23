@@ -8,6 +8,7 @@ on:
 
   pull_request:
     types: [opened, reopened, synchronize]
+  
   release:
     types: [published]
     tags:
@@ -34,7 +35,17 @@ jobs:
           echo "COMMIT_SHA=${SHA}" >> $GITHUB_ENV
           echo "sha=$SHA" >> $GITHUB_OUTPUT
 
-      - name: Updating app version
+      - name: Updating app version (only pull requests)
+        if: |
+          github.event_name == 'pull_request'
+        shell: bash
+        run: |
+          chmod +x ${GITHUB_WORKSPACE}/version/appversion.sh
+          ${GITHUB_WORKSPACE}/version/appversion.sh ${GITHUB_WORKSPACE} ${github.event.pull_request.number}
+        
+      - name: Updating app version (non pull requests)
+        if: |
+          github.event_name != 'pull_request'
         shell: bash
         run: |
           chmod +x ${GITHUB_WORKSPACE}/version/appversion.sh
@@ -70,7 +81,6 @@ jobs:
         env:
           REAPI_INCLUDE: ${{ env.REAPI_INCLUDE_PATH }}
         run: |
-          tree
           mkdir ../plugins/
           for sourcefile in *.sma;
           do
@@ -79,7 +89,7 @@ jobs:
             amxxpc $(basename $sourcefile) -o"../plugins/$(basename $amxxfile)" -i"include" -i"$REAPI_INCLUDE"
           done
           
-      - name: Move files
+      - name: Moving files to publish
         run: |
           mkdir publish
           mv addons/ -t publish/
