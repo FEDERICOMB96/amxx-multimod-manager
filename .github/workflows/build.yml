@@ -40,8 +40,8 @@ jobs:
           github.event_name == 'pull_request'
         shell: bash
         run: |
-          chmod +x ${GITHUB_WORKSPACE}/version/appversion.sh
-          ${GITHUB_WORKSPACE}/version/appversion.sh ${GITHUB_WORKSPACE} ${{ github.event.pull_request.number }}
+          chmod +x ${GITHUB_WORKSPACE}/version/appversion_pr.sh
+          ${GITHUB_WORKSPACE}/version/appversion_pr.sh ${GITHUB_WORKSPACE} ${{ github.event.pull_request.number }}
         
       - name: Updating app version (non pull requests)
         if: |
