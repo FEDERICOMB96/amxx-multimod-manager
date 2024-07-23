@@ -81,7 +81,6 @@ jobs:
         env:
           REAPI_INCLUDE: ${{ env.REAPI_INCLUDE_PATH }}
         run: |
-          cat include/mm_incs/version.inc
           mkdir ../plugins/
           for sourcefile in *.sma;
           do
