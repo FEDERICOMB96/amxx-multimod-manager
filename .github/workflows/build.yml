@@ -52,7 +52,7 @@ jobs:
             grep -Eo 'https://[^\"]*' | \
             xargs wget
           7z x *.zip
-          echo "REAPI_INCLUDE_PATH=$(PWD)/addons/amxmodx/scripting/include" >> $GITHUB_ENV
+          echo "REAPI_INCLUDE_PATH=$(pwd)/addons/amxmodx/scripting/include" >> $GITHUB_ENV
       
       - name: Updating app version
         shell: bash
