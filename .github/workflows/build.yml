@@ -67,7 +67,7 @@ jobs:
         env:
           REAPI_INCLUDE: ${{ env.REAPI_INCLUDE_PATH }}
         run: |
-          tree include/
+          ls -l include/
           mkdir ../plugins/
           for sourcefile in *.sma;
           do
