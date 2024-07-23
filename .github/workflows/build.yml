@@ -34,6 +34,14 @@ jobs:
           echo "COMMIT_SHA=${SHA}" >> $GITHUB_ENV
           echo "sha=$SHA" >> $GITHUB_OUTPUT
 
+      - name: Updating app version
+        shell: bash
+        run: |
+          cat ${GITHUB_WORKSPACE}/addons/amxmodx/scripting/include/mm_incs/version.inc
+          chmod +x ${GITHUB_WORKSPACE}/version/appversion.sh
+          ${GITHUB_WORKSPACE}/version/appversion.sh ${GITHUB_WORKSPACE}
+          cat ${GITHUB_WORKSPACE}/addons/amxmodx/scripting/include/mm_incs/version.inc
+
       - name: Setup AMXXPawn Compiler
         uses: wopox1337/setup-amxxpawn@master
         with:
@@ -54,21 +62,8 @@ jobs:
           7z x *.zip
           echo "REAPI_INCLUDE_PATH=$(pwd)/addons/amxmodx/scripting/include" >> $GITHUB_ENV
       
-      - name: Copy files
-        run: |
-          mkdir compiler
-          mv addons/ -t compiler/
-      
-      - name: Updating app version
-        shell: bash
-        run: |
-          cat ${GITHUB_WORKSPACE}/compiler/addons/amxmodx/scripting/include/mm_incs/version.inc
-          chmod +x ${GITHUB_WORKSPACE}/version/appversion.sh
-          ${GITHUB_WORKSPACE}/version/appversion.sh ${GITHUB_WORKSPACE}/compiler/
-          cat ${GITHUB_WORKSPACE}/compiler/addons/amxmodx/scripting/include/mm_incs/version.inc
-
       - name: Compile AMXX plugins
-        working-directory: compiler/addons/amxmodx/scripting/
+        working-directory: addons/amxmodx/scripting/
         env:
           REAPI_INCLUDE: ${{ env.REAPI_INCLUDE_PATH }}
         run: |
@@ -83,7 +78,7 @@ jobs:
       - name: Move files
         run: |
           mkdir publish
-          mv compiler/addons/ -t publish/
+          mv addons/ -t publish/
           
       - name: Upload artifact
         uses: actions/upload-artifact@v4
