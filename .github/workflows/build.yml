@@ -93,7 +93,6 @@ jobs:
       - name: Moving files to publish
         run: |
           mkdir publish
-          cp -f addons/amxmodx/scripting/include/mm_incs/version.inc publish/appversion.inc
           mv addons/ -t publish/
           
       - name: Upload artifact
@@ -113,10 +112,10 @@ jobs:
         with:
          name: MultiModManagerCS-${{ needs.build.outputs.sha }}
 
-      - name: Reading appversion.inc
+      - name: Reading addons/amxmodx/scripting/include/mm_incs/version.inc
         run: |
-          if [ -e appversion.inc ]; then
-            APP_VERSION=$(cat appversion.inc | grep -wi '#define MM_VERSION_STRD' | sed -e 's/#define MM_VERSION_STRD[ \t\r\n\v\f]\+\(.*\)/\1/i' -e 's/\r//g')
+          if [ -e addons/amxmodx/scripting/include/mm_incs/version.inc ]; then
+            APP_VERSION=$(cat addons/amxmodx/scripting/include/mm_incs/version.inc | grep -wi '#define MM_VERSION_STRD' | sed -e 's/#define MM_VERSION_STRD[ \t\r\n\v\f]\+\(.*\)/\1/i' -e 's/\r//g')
             if [ $? -ne 0 ]; then
               APP_VERSION=""
             else
@@ -125,7 +124,6 @@ jobs:
               echo "APP_VERSION=${APP_VERSION}" >> $GITHUB_ENV
             fi
           fi
-          rm -f appversion.inc
 
       - name: Packaging binaries
         id: packaging-job
