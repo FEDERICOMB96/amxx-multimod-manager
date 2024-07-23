@@ -63,8 +63,8 @@ jobs:
         working-directory: version/
         run: |
           VERSION_FILE=version.h
-          APPVERSION_FILE=../addons/amxmodx/scripting/include/mm_incs/version.inc
-          APPVERSION_FILE_NATIVES=../addons/amxmodx/scripting/include/multimod_manager_version.inc
+          APPVERSION_FILE=addons/amxmodx/scripting/include/mm_incs/version.inc
+          APPVERSION_FILE_NATIVES=addons/amxmodx/scripting/include/multimod_manager_version.inc
           GIT_DIR=../
           
           MAJOR=$(cat "$VERSION_FILE" | grep -wi 'MM_VERSION_MAJOR' | sed -e 's/.*MM_VERSION_MAJOR.*[^0-9]\([0-9][0-9]*\).*/\1/i' -e 's/\r//g')
