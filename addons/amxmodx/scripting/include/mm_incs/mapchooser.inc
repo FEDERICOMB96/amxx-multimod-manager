@@ -123,13 +123,14 @@ public OnTask_VoteNextMap()
 	menu_setprop(g_Menu_MapChooser, MPROP_PERPAGE, 0);
 	menu_setprop(g_Menu_MapChooser, MPROP_EXIT, MEXIT_NEVER);
 
-	UTIL_MenuDisplayAll(g_Menu_MapChooser, _, 15);
-
 	arrayset(g_VoteMapId, -1, MAX_USERS);
 	arrayset(g_iVoteMapCountGlobal, 0, MAX_SELECTMAPS);
 	g_iVoteMapCount = 0;
 	g_bVoteMapHasStarted = true;
 	g_bSVM_MapSecondRound = false;
+
+	ResetMapMenuAll();
+	UTIL_MenuDisplayAll(g_Menu_MapChooser, _, 15);
 
 	set_task(15.1, "OnTask_CheckVoteMap");
 	
@@ -291,13 +292,14 @@ public OnTask_VoteNextMap__FIX()
 	menu_setprop(g_Menu_MapChooser, MPROP_PERPAGE, 0);
 	menu_setprop(g_Menu_MapChooser, MPROP_EXIT, MEXIT_NEVER);
 
-	UTIL_MenuDisplayAll(g_Menu_MapChooser, _, 15);
-
 	arrayset(g_VoteMapId, -1, MAX_USERS);
 	arrayset(g_iVoteMapCountGlobal, 0, MAX_SELECTMAPS);
 	g_iVoteMapCount = 0;
 	g_bVoteMapHasStarted = true;
 	g_bSVM_MapSecondRound = true;
+
+	ResetMapMenuAll();
+	UTIL_MenuDisplayAll(g_Menu_MapChooser, _, 15);
 
 	set_task(15.1, "OnTask_CheckVoteMapFIX");
 	

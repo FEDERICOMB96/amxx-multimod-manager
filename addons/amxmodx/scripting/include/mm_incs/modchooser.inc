@@ -112,13 +112,14 @@ public OnTask_VoteNextMod()
 	menu_setprop(g_Menu_ModChooser, MPROP_PERPAGE, 0);
 	menu_setprop(g_Menu_ModChooser, MPROP_EXIT, MEXIT_NEVER);
 
-	UTIL_MenuDisplayAll(g_Menu_ModChooser, _, 15);
-
 	arrayset(g_VoteModId, -1, MAX_USERS);
 	arrayset(g_iVoteModCountGlobal, 0, MAX_SELECTMODS);
 	g_iVoteModCount = 0;
 	g_bVoteModHasStarted = true;
 	g_bSVM_ModSecondRound = false;
+
+	ResetModMenuAll();
+	UTIL_MenuDisplayAll(g_Menu_ModChooser, _, 15);
 
 	set_task(15.1, "OnTaskCheckVoteMod");
 	
@@ -380,6 +381,7 @@ public OnTask_VoteNextMod__FIX()
 	menu_setprop(g_Menu_ModChooser, MPROP_PERPAGE, 0);
 	menu_setprop(g_Menu_ModChooser, MPROP_EXIT, MEXIT_NEVER);
 
+	ResetModMenuAll();
 	UTIL_MenuDisplayAll(g_Menu_ModChooser, _, 15);
 
 	set_task(15.1, "OnTask_CheckVoteModFIX");
