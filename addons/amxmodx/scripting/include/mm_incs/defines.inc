@@ -39,6 +39,7 @@
 
 #define CHECK_CONNECTED(%0)             if(!GetPlayerBit(g_bConnected, %0)) { return PLUGIN_HANDLED; }
 #define CHECK_ADMINVOTEINPROGRESS(%0)   if(g_bCvar_amx_last_voting > get_gametime()) { client_print_color(%0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_ALREADY_VOTING"); return PLUGIN_HANDLED; }
+#define CHECK_VOTEINPROGRESS(%0)        if(g_bVoteInProgress) { client_print_color(%0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_ALREADY_VOTING"); return PLUGIN_HANDLED; }
 
 #define CHECK_CONNECTED_NEWMENU(%0,%1)  if(!GetPlayerBit(g_bConnected, %0)) { menu_destroy(%1); return PLUGIN_HANDLED; }
 #define CHECK_EXIT_NEWMENU(%0,%1,%2)    if(%2 == MENU_EXIT) { menu_destroy(%1); return PLUGIN_HANDLED; }

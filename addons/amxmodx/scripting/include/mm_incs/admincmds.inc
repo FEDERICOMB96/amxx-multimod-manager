@@ -114,6 +114,7 @@ public ClientCommand__AdminMultimod(const id, const level, const cid)
 		return PLUGIN_HANDLED;
 
 	CHECK_ADMINVOTEINPROGRESS(id)
+	CHECK_VOTEINPROGRESS(id)
 
 	AdminCmd_ResetUserData(id);
 
@@ -314,6 +315,11 @@ OnFunc_ChangeModAndMap(const id)
 
 	if(g_Admin_SelectedMap[id])
 	{
+		ModChooser_ResetAllData();
+		MapChooser_ResetAllData();
+		RockTheVote_ResetAllData();
+		Nominations_ResetAllData();
+
 		MultiMod_SetNextMod(g_Admin_SelectedMod[id]);
 
 		new aMods[ArrayMods_e];
@@ -442,6 +448,7 @@ public menu_SelectVoteMod(const id, const key)
 		case 7:
 		{
 			CHECK_ADMINVOTEINPROGRESS(id)
+			CHECK_VOTEINPROGRESS(id)
 
 			AdminCmd_ResetGlobalData();
 			g_Admin_VoteUserId = id;
@@ -751,6 +758,7 @@ public menu_SelectVoteMap(const id, const key)
 		case 7:
 		{
 			CHECK_ADMINVOTEINPROGRESS(id)
+			CHECK_VOTEINPROGRESS(id)
 
 			AdminCmd_ResetGlobalData();
 			g_Admin_VoteUserId = id;
