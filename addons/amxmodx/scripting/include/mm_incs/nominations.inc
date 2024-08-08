@@ -203,7 +203,7 @@ public menu_NominateMap(const id, const menuid, const item)
 	else
 	{
 		if(g_SVM_MyNominate[id])
-			client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NOMS_ALREADY_NOMINATED_MAP_INFO1");
+			client_print_color(id, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_NOMS_ALREADY_NOMINATED_MAP_INFO1", ArrayGetStringHandle(aMods[Maps], iMapId));
 		else
 		{
 			ArrayPushCell(g_Array_Nominations, iMapId);

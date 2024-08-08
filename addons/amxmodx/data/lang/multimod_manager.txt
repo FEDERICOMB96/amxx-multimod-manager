@@ -78,6 +78,8 @@ MM_MOD_CHO_FIN_EXT_RTV = Votación finalizada, el modo actual se extenderá y se
 MM_MOD_CHO_FIN_NEXT = Votación finalizada, el modo ganador es^3 %s^1 con^4 %d^1 /^4 %d^1 voto(s) (%d%%)
 MM_MOD_CHO_ONLY_MAP = El modo^3 %s^1 solo tiene el mapa^4 %s
 MM_MAP_CHO_FIN_NEXT = Votación finalizada, el mapa ganador es^3 %s^1 con^4 %d^1 /^4 %d^1 voto(s) (%d%%)
+MM_MOD_CHO_NO_RESULT = La votación para el cambio de modo no tuvo exito!
+MM_MAP_CHO_NO_RESULT = La votación para el cambio de mapa no tuvo exito!
 MM_RTV_CHO_NO_RESULT = (RockTheVote) La votación para el cambio de mapa no ha tenido éxito!
 
 MM_ADMIN_VOTE_DISCONNECTED = ^3%n^1 se desconectó, por lo tanto, su votación fue anulada
@@ -174,7 +176,7 @@ MM_NOMS_PLAYER_DEL_NOM_MAP = ^3%n^1 ha eliminado la nominación del mapa:^4 %a
 MM_NOMS_ALREADY_NOMINATED_MOD = El modo^4 %s^1 ya ha sido nominado!
 MM_NOMS_ALREADY_NOMINATED_MOD_INFO1 = Ya has nominado el modo^4 %s^1, no puedes nominar más de un modo a la vez!
 MM_NOMS_ALREADY_NOMINATED_MAP = El mapa^4 %s^1 ya ha sido nominado!
-MM_NOMS_ALREADY_NOMINATED_MAP_INFO1 = Ya has nominado el mapa^4 %s^1, no puedes nominar más de un mapa a la vez!
+MM_NOMS_ALREADY_NOMINATED_MAP_INFO1 = Ya has nominado el mapa^4 %a^1, no puedes nominar más de un mapa a la vez!
 
 MM_RTV_NOT_ENABLED = El^3 Rock The Vote^1 se encuentra deshabilitado!
 MM_RTV_COOLDOWN = Tienes que esperar^4 %d segundos^1 para utilizar el^3 Rock The Vote
@@ -268,6 +270,8 @@ MM_MOD_CHO_FIN_EXT_RTV = Voting finished, the current mod will be extended and t
 MM_MOD_CHO_FIN_NEXT = Voting finished, the winner mod is^3 %s^1 with^4 %d^1 /^4 %d^1 vote(s) (%d%%)
 MM_MOD_CHO_ONLY_MAP = The mod^3 %s^1 only has the map^4 %s
 MM_MAP_CHO_FIN_NEXT = Voting finished, the winner map is^3 %s^1 with^4 %d^1 /^4 %d^1 vote(s) (%d%%)
+MM_MOD_CHO_NO_RESULT = The voting for the mod change has not been successful!
+MM_MAP_CHO_NO_RESULT = The voting for the map change has not been successful!
 MM_RTV_CHO_NO_RESULT = (RockTheVote) The voting for the map change has not been successful!
 
 MM_ADMIN_VOTE_DISCONNECTED = ^3%n^1 disconnected, therefore, his vote was canceled
@@ -364,7 +368,7 @@ MM_NOMS_PLAYER_DEL_NOM_MAP = ^3%n^1 has removed the nomination of the map:^4 %a
 MM_NOMS_ALREADY_NOMINATED_MOD = The mod^4 %s^1 has already been nominated!
 MM_NOMS_ALREADY_NOMINATED_MOD_INFO1 = You have already nominated the mod^4 %s^1, you can't nominate more than one mod at a time!
 MM_NOMS_ALREADY_NOMINATED_MAP = The map^4 %s^1 has already been nominated!
-MM_NOMS_ALREADY_NOMINATED_MAP_INFO1 = You have already nominated the map^4 %s^1, you can't nominate more than one map at a time!
+MM_NOMS_ALREADY_NOMINATED_MAP_INFO1 = You have already nominated the map^4 %a^1, you can't nominate more than one map at a time!
 
 MM_RTV_NOT_ENABLED = The^3 Rock The Vote^1 is disabled!
 MM_RTV_COOLDOWN = You have to wait^4 %d seconds^1 to use the^3 Rock The Vote
@@ -458,6 +462,8 @@ MM_MOD_CHO_FIN_EXT_RTV = Голосование завершено, текущи
 MM_MOD_CHO_FIN_NEXT = Голосование завершено, победивший режим^3 %s^1 с результатом^4 %d^1 /^4 %d^1 голос(а) (%d%%)
 MM_MOD_CHO_ONLY_MAP = Режим^3 %s^1 имеет только карту^4 %s
 MM_MAP_CHO_FIN_NEXT = Голосование завершено, победившая карта^3 %s^1 с результатом^4 %d^1 /^4 %d^1 голос(а) (%d%%)
+MM_MOD_CHO_NO_RESULT = Голосование за смену режима не удалось!
+MM_MAP_CHO_NO_RESULT = Голосование за смену карты не удалось!
 MM_RTV_CHO_NO_RESULT = (RTV) Голосование за смену карты не удалось!
 
 MM_ADMIN_VOTE_DISCONNECTED = ^3%n^1 отключился, поэтому его голос был отменен
@@ -554,7 +560,7 @@ MM_NOMS_PLAYER_DEL_NOM_MAP = ^3%n^1 отменил(а) номинацию кар
 MM_NOMS_ALREADY_NOMINATED_MOD = Режим^4 %s^1 уже был номинирован!
 MM_NOMS_ALREADY_NOMINATED_MOD_INFO1 = Вы уже выдвинули режим^4 %s^1, нельзя номинировать более одного режима одновременно!
 MM_NOMS_ALREADY_NOMINATED_MAP = Карта^4 %s^1 уже была номинирована!
-MM_NOMS_ALREADY_NOMINATED_MAP_INFO1 = Вы уже выдвинули карту^4 %s^1, нельзя номинировать более одной карты одновременно!
+MM_NOMS_ALREADY_NOMINATED_MAP_INFO1 = Вы уже выдвинули карту^4 %a^1, нельзя номинировать более одной карты одновременно!
 
 MM_RTV_NOT_ENABLED = Досрочное голосование отключено!
 MM_RTV_COOLDOWN = Вы должны подождать^4 %d секунд^1, чтобы использовать досрочное голосование
@@ -648,6 +654,8 @@ MM_MOD_CHO_FIN_EXT_RTV = Krai na vota, segashniq mod shte prodalji i shte zapoch
 MM_MOD_CHO_FIN_NEXT = Krai na vota, specheli mod^3 %s^1 s^4 %d^1 /^4 %d^1 glas(a) (%d%%)
 MM_MOD_CHO_ONLY_MAP = Mod^3 %s^1 ima samo map:^4 %s
 MM_MAP_CHO_FIN_NEXT = Krai na vota, specheli map^3 %s^1 s^4 %d^1 /^4 %d^1 glas(a) (%d%%)
+MM_MOD_CHO_NO_RESULT = Vot za smqna na mod ne e uspeshen!
+MM_MAP_CHO_NO_RESULT = Vot za smqna na map ne e uspeshen!
 MM_RTV_CHO_NO_RESULT = (RockTheVote) Vota za sledvasht map ne e uspeshen!
 
 MM_ADMIN_VOTE_DISCONNECTED = ^3%n^1 izleze i tehniq vot be premahnat
@@ -744,7 +752,7 @@ MM_NOMS_PLAYER_DEL_NOM_MAP = ^3%n^1 premahna nominaciqta si za map:^4 %a
 MM_NOMS_ALREADY_NOMINATED_MOD = Mod^4 %s^1 veche e nominiran!
 MM_NOMS_ALREADY_NOMINATED_MOD_INFO1 = Veche ste nominirali mod^4 %s^1, ne mojete da nominirate poveche ot edin mod!
 MM_NOMS_ALREADY_NOMINATED_MAP = Map^4 %s^1 veche e nominiran!
-MM_NOMS_ALREADY_NOMINATED_MAP_INFO1 = Veche ste nominirali map^4 %s^1, ne mojete da nominirate poveche ot edin map!
+MM_NOMS_ALREADY_NOMINATED_MAP_INFO1 = Veche ste nominirali map^4 %a^1, ne mojete da nominirate poveche ot edin map!
 
 MM_RTV_NOT_ENABLED = Opciata^3 Rock The Vote^1 e sprqna!
 MM_RTV_COOLDOWN = Izchakaite^4 %d sekundi^1 za da izpolzvate^3 Rock The Vote
@@ -838,6 +846,8 @@ MM_MOD_CHO_FIN_EXT_RTV = 投票结束, 当前游戏模式将延长并换图^3 %d
 MM_MOD_CHO_FIN_NEXT = 投票结束, 优胜游戏模式为:^3 %s^1 投票结果:^4 %d^1 /^4 %d^1 得票率:(%d%%)
 MM_MOD_CHO_ONLY_MAP = 模式^3 %s^1 只有地图^4 %s
 MM_MAP_CHO_FIN_NEXT = 投票结束, 优胜地图为:^3 %s^1 投票结果:^4 %d^1 /^4 %d^1 得票率:(%d%%)
+MM_MOD_CHO_NO_RESULT = 换图投票未获通过!
+MM_MAP_CHO_NO_RESULT = 换图投票未获通过!
 MM_RTV_CHO_NO_RESULT = (RTV) 换图投票未获通过!
 
 MM_ADMIN_VOTE_DISCONNECTED = ^3%n^1 已退出游戏, 他的投票被取消
@@ -934,7 +944,7 @@ MM_NOMS_PLAYER_DEL_NOM_MAP = ^3%n^1 已取消对^4 %a 地图的提名
 MM_NOMS_ALREADY_NOMINATED_MOD = 游戏模式^4 %s^1 已被提名!
 MM_NOMS_ALREADY_NOMINATED_MOD_INFO1 = 你已提名游戏模式:^4 %s^1, 不能一次提名多个游戏模式!
 MM_NOMS_ALREADY_NOMINATED_MAP = 地图^4 %s^1 已被提名!
-MM_NOMS_ALREADY_NOMINATED_MAP_INFO1 = 你已提名地图^4 %s^1, 不能一次提名多张地图!
+MM_NOMS_ALREADY_NOMINATED_MAP_INFO1 = 你已提名地图^4 %a^1, 不能一次提名多张地图!
 
 MM_RTV_NOT_ENABLED = RTV^3 功能^1 已被禁用!
 MM_RTV_COOLDOWN = 须等待^4 %d 秒后^1 方可使用^3 RTV

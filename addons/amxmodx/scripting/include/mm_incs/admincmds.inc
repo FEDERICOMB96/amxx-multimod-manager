@@ -661,7 +661,7 @@ public OnTask_CountVotes_Mod(const taskid)
 		AdminCmd_ResetUserData(admin);
 		AdminCmd_ResetGlobalData();
 
-		client_print_color(0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_CHO_NO_RESULT");
+		client_print_color(0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MOD_CHO_NO_RESULT");
 	}
 
 	return PLUGIN_HANDLED;
@@ -917,7 +917,7 @@ public OnTask_AdminCountVotes_Map(const taskid)
 	else
 	{
 		AdminCmd_ResetUserData(admin);
-		client_print_color(0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_CHO_NO_RESULT");
+		client_print_color(0, print_team_default, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MAP_CHO_NO_RESULT");
 	}
 
 	AdminCmd_ResetGlobalData();
