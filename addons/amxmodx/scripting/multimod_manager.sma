@@ -4,19 +4,36 @@
 #include <amxmisc>
 #include <reapi>
 #include <json>
-#include "mm_incs/checks"
-#include "mm_incs/version"
-#include "mm_incs/defines"
-#include "mm_incs/global"
-#include "mm_incs/natives"
-#include "mm_incs/cvars"
-#include "mm_incs/recent_mods_maps"
-#include "mm_incs/admincmds"
-#include "mm_incs/modchooser"
-#include "mm_incs/mapchooser"
-#include "mm_incs/rockthevote"
-#include "mm_incs/nominations"
-#include "mm_incs/utils"
+
+// Local compiling
+#tryinclude "include/mm_incs/checks"
+#tryinclude "include/mm_incs/version"
+#tryinclude "include/mm_incs/defines"
+#tryinclude "include/mm_incs/global"
+#tryinclude "include/mm_incs/natives"
+#tryinclude "include/mm_incs/cvars"
+#tryinclude "include/mm_incs/recent_mods_maps"
+#tryinclude "include/mm_incs/admincmds"
+#tryinclude "include/mm_incs/modchooser"
+#tryinclude "include/mm_incs/mapchooser"
+#tryinclude "include/mm_incs/rockthevote"
+#tryinclude "include/mm_incs/nominations"
+#tryinclude "include/mm_incs/utils"
+
+// Workflow compiling
+#tryinclude "mm_incs/checks"
+#tryinclude "mm_incs/version"
+#tryinclude "mm_incs/defines"
+#tryinclude "mm_incs/global"
+#tryinclude "mm_incs/natives"
+#tryinclude "mm_incs/cvars"
+#tryinclude "mm_incs/recent_mods_maps"
+#tryinclude "mm_incs/admincmds"
+#tryinclude "mm_incs/modchooser"
+#tryinclude "mm_incs/mapchooser"
+#tryinclude "mm_incs/rockthevote"
+#tryinclude "mm_incs/nominations"
+#tryinclude "mm_incs/utils"
 
 public plugin_natives()
 {
