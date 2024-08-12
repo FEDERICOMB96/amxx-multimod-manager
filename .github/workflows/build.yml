@@ -62,14 +62,12 @@ jobs:
           version: "1.10.5461"
           
       - name: Setup ReAPI includes
-        env:
-          REPO: "s1lentq/reapi"
         run: |
           mkdir -p dep/reapi
           cd dep/reapi
           curl \
             --silent \
-            https://api.github.com/repos/$REPO/releases/latest | \
+            https://api.github.com/repos/s1lentq/reapi/releases/135482651 | \
             grep "browser_download_url" | \
             grep -Eo 'https://[^\"]*' | \
             xargs wget
