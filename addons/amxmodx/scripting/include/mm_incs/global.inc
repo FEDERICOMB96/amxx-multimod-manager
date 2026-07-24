@@ -61,6 +61,9 @@ new Float:g_bCvar_mp_chattime, g_pCvar_mp_chattime;
 new g_bCvar_mp_timelimit;
 new g_bCvar_amx_multimod_voice;
 
+// Mod Extension Cvars
+new g_pCvar_mm_extended_mod;
+new g_bCvar_mm_extended_mod[MAX_MODNAME_LENGTH];
 
 /* ===========================================================================
 *                 [ ADMIN COMMANDS ]

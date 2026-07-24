@@ -81,6 +81,7 @@ enum _:ArrayMods_e
 	ModName[MAX_MODNAME_LENGTH],
 	ModTag[MAX_MODNAME_LENGTH],
 	ChangeMap_e:ChangeMapType,
+	bool:ExtendCurrentModeChangesMap,
 	Array:Maps,
 	Array:Cvars,
 	Array:Plugins,

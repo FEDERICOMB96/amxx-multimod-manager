@@ -279,6 +279,8 @@ MultiMod_Init()
 
 			aMod[ChangeMapType] = ChangeMap_e:json_object_get_number(jArrayValue, "change_map_type");
 
+			aMod[ExtendCurrentModeChangesMap] = json_object_get_bool(jArrayValue, "extend_current_mode_changes_map");
+
 			aMod[Maps] = ArrayCreate(MAX_MAPNAME_LENGTH);
 			json_object_get_string(jArrayValue, "mapsfile", szMapFile, charsmax(szMapFile));
 			format(szMapFile, PLATFORM_MAX_PATH-1, "%s/%s/%s/%s", szConfigDir, MM_CONFIG_FOLDER, MM_MAPSFILE_FOLDER, szMapFile);
@@ -833,6 +835,12 @@ MultiMod_SetNextMod(const iNextMod)
 {
 	new aDataNextMod[ArrayMods_e];
 	ArrayGetArray(g_GlobalConfigs[Mods], iNextMod, aDataNextMod);
+
+	// Reiniciamos la CVAR si el siguiente modo no es el mismo.
+	if (!equali(aDataNextMod[ModName], g_szCurrentMod))
+	{
+		set_pcvar_string(g_pCvar_mm_extended_mod, "");
+	}
 
 	new szFileName[PLATFORM_MAX_PATH];
 	new iLen = get_configsdir(szFileName, charsmax(szFileName));

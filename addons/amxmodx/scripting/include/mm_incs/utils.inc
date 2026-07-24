@@ -165,3 +165,11 @@ stock UTIL_SimpleSortVotes(iPos[], iNum[], const iSize)
 		}
 	}
 }
+
+stock bool:UTIL_CurrentModAlreadyExtended()
+{
+	if (equali(g_bCvar_mm_extended_mod, g_szCurrentMod))
+		return true;
+
+	return false;
+}

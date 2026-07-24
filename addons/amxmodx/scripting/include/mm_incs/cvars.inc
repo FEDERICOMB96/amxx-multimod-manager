@@ -24,4 +24,6 @@ Cvars_Init()
 
 	set_pcvar_string(create_cvar("multimod_manager_version", PLUGIN_VERSION, FCVAR_SERVER | FCVAR_SPONLY), PLUGIN_VERSION);
 	set_pcvar_string(create_cvar("multimod_manager_url", PLUGIN_URL, FCVAR_SERVER | FCVAR_SPONLY), PLUGIN_URL);
+
+	bind_pcvar_string((g_pCvar_mm_extended_mod = create_cvar("mm_extended_mod", "")),g_bCvar_mm_extended_mod,charsmax(g_bCvar_mm_extended_mod));
 }

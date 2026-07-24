@@ -97,7 +97,7 @@ public OnTask_VoteNextMod()
 		menu_additem(g_Menu_ModChooser, fmt("\w%s%s", aMods[ModName], (g_iModVoteNum == (iMaxMods-1)) ? "^n" : ""), fmt("%d", g_iModVoteNum));
 	}
 
-	if(IsAvailableExtendMap())
+	if(IsAvailableExtendMap() && !UTIL_CurrentModAlreadyExtended())
 	{
 		if(g_bIsRockTheVote)
 			menu_additem(g_Menu_ModChooser, fmt("\w%L^n", LANG_PLAYER, "MM_M_EXTEND_CURRENT_MODE_RTV", g_szCurrentMod), fmt("%d", OPTION_EXTEND_MOD));
@@ -288,13 +288,34 @@ public OnTaskCheckVoteMod()
 			}
 			else
 			{
-				ExtendTimeleft(g_bCvar_amx_extendmap_step);
-				client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MOD_CHO_FIN_EXT", g_bCvar_amx_extendmap_step, iResult, g_iVoteModCount, UTIL_GetPercent(iResult, g_iVoteModCount));
+				ArrayGetArray(g_GlobalConfigs[Mods], g_iCurrentMod, aData);
 
-				ModChooser_ResetAllData();
-				Nominations_ResetAllData();
+				if(aData[ExtendCurrentModeChangesMap])
+				{
+					g_iNextSelectMod = g_iCurrentMod;
+					MultiMod_SetNextMod(g_iNextSelectMod);
+
+					client_print_color(0, print_team_blue, "%s^1 El modo actual continuara. Comenzando votación para cambio de mapa.", g_GlobalConfigs[ChatPrefix]);
+
+					ModChooser_ResetAllData();
+					Nominations_ResetAllData();
+
+					g_bSelectedNextMod = true;
+
+					set_pcvar_string(g_pCvar_mm_extended_mod, g_szCurrentMod);
+
+					MapChooser_InitNextVoteMap(40);
+				}
+				else
+				{
+					ExtendTimeleft(g_bCvar_amx_extendmap_step);
+
+					client_print_color(0, print_team_blue, "%s^1 %L", g_GlobalConfigs[ChatPrefix], LANG_PLAYER, "MM_MOD_CHO_FIN_EXT", g_bCvar_amx_extendmap_step, iResult, g_iVoteModCount, UTIL_GetPercent(iResult, g_iVoteModCount));
+
+					ModChooser_ResetAllData();
+					Nominations_ResetAllData();
+				}
 			}
-			
 			return;
 		}
 

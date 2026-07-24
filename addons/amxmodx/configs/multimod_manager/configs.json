@@ -75,6 +75,10 @@
 				// "change_map_type": 1 (The map will change at the end of the round)
 				// "change_map_type": 2 (Allows to play 1 more round and then changes the map)
 
+			"extend_current_mode_changes_map": false,
+				// false = Extends the map by the amount set by the cvar.
+				// true = Starts a map vote for the current mod.
+
 
 			"cvars":
 			[
@@ -112,6 +116,7 @@
 			"mod_tag": "dm",
 			"mapsfile":"deathmatch_maps.ini",
 			"change_map_type": 1,
+			"extend_current_mode_changes_map": false,
 			"cvars":
 			[
 				"sv_gravity 900", "sv_alltalk 1"
@@ -137,6 +142,7 @@
 			"mod_tag": "fr",
 			"mapsfile":"fruta_maps.ini",
 			"change_map_type": 1,
+			"extend_current_mode_changes_map": false,
 			"cvars":
 			[
 				"sv_gravity 900", "sv_alltalk 1"
@@ -162,6 +168,7 @@
 			"mod_tag": "zp",
 			"mapsfile":"zp_maps.ini",
 			"change_map_type": 1,
+			"extend_current_mode_changes_map": false,
 			"cvars":
 			[
 				"sv_gravity 900", "sv_alltalk 1"
@@ -187,6 +194,7 @@
 			"mod_tag": "pb",
 			"mapsfile":"paintball_maps.ini",
 			"change_map_type": 1,
+			"extend_current_mode_changes_map": false,
 			"cvars":
 			[
 				"sv_gravity 900", "sv_alltalk 1"
@@ -212,6 +220,7 @@
 			"mod_tag": "hns",
 			"mapsfile":"hns_maps.ini",
 			"change_map_type": 1,
+			"extend_current_mode_changes_map": false,
 			"cvars":
 			[
 				"sv_gravity 900", "sv_alltalk 1"
@@ -237,6 +246,7 @@
 			"mod_tag": "sf",
 			"mapsfile":"surf_maps.ini",
 			"change_map_type": 1,
+			"extend_current_mode_changes_map": false,
 			"cvars":
 			[
 				"sv_gravity 900", "sv_alltalk 1"
